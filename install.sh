@@ -1,10 +1,13 @@
-git submodule init
-git submodule update
+#!/bin/bash
 
 currdir=`dirname $0`
-currdir=`readlink -e $currdir`
+currdir=$(cd "$currdir" && pwd)
 PREFIX="${currdir}/install"
 echo "Prefix set to $PREFIX"
+
+
+git submodule init
+git submodule update
 
 mkdir -p build
 cd build
