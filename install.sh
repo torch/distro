@@ -2,7 +2,9 @@ git submodule init
 git submodule update
 
 currdir=`dirname $0`
+currdir=`readlink -e $currdir`
 PREFIX="${currdir}/install"
+echo "Prefix set to $PREFIX"
 
 mkdir -p build
 cd build
