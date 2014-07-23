@@ -1,10 +1,15 @@
 #!/bin/bash
-
 currdir=`dirname $0`
 currdir=$(cd "$currdir" && pwd)
+#######################################
 PREFIX="${currdir}/install"
+#######################################
+
 echo "Prefix set to $PREFIX"
 
+if [[ `uname` == 'Linux' ]]; then
+    export CMAKE_LIBRARY_PATH=/opt/OpenBLAS/include:/opt/OpenBLAS/lib:$CMAKE_LIBRARY_PATH
+fi
 
 git submodule init
 git submodule update
@@ -42,7 +47,12 @@ then
     cd ${currdir}/extra/cunn && $PREFIX/bin/luarocks make rocks/cunn-scm-1.rockspec
 fi
 
-
-
-
-
+$PREFIX/bin/luarocks install qttorch
+$PREFIX/bin/luarocks install luafilesystem
+$PREFIX/bin/luarocks install penlight
+$PREFIX/bin/luarocks install sys
+$PREFIX/bin/luarocks install xlua
+$PREFIX/bin/luarocks install image
+$PREFIX/bin/luarocks install optim
+$PREFIX/bin/luarocks install lua-cjson
+$PREFIX/bin/luarocks install luafilesystem
