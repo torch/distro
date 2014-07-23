@@ -1,0 +1,30 @@
+[submodule "exe/luajit-rocks"]
+	path = exe/luajit-rocks
+	url = https://github.com/torch/luajit-rocks.git
+[submodule "exe/qtlua"]
+	path = exe/qtlua
+	url = https://github.com/torch/qtlua.git
+[submodule "exe/trepl"]
+	path = exe/trepl
+	url = https://github.com/torch/trepl.git
+[submodule "pkg/dok"]
+	path = pkg/dok
+	url = https://github.com/torch/dok.git
+[submodule "pkg/gnuplot"]
+	path = pkg/gnuplot
+	url = https://github.com/torch/gnuplot.git
+[submodule "pkg/paths"]
+	path = pkg/paths
+	url = https://github.com/torch/paths.git
+[submodule "pkg/cwrap"]
+	path = pkg/cwrap
+	url = https://github.com/torch/cwrap.git
+[submodule "extra/nn"]
+	path = extra/nn
+	url = https://github.com/torch/nn.git
+[submodule "extra/cunn"]
+	path = extra/cunn
+	url = https://github.com/torch/cunn.git
+[submodule "extra/cutorch"]
+	path = extra/cutorch
+	url = https://github.com/torch/cutorch.git
