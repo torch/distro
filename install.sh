@@ -22,13 +22,12 @@ cd ..
 
 # check if we are on mac and fix RPATH for local install
 path_to_install_name_tool=$(which install_name_tool)
-if [ -x "$path_to_install_name_tool" ] 
+if [ -x "$path_to_install_name_tool" ]
 then
    install_name_tool -id ${PREFIX}/lib/libluajit.dylib ${PREFIX}/lib/libluajit.dylib
 fi
 
-$PREFIX/bin/luarocks install sundown
-
+cd ${currdir}/pkg/sundown && $PREFIX/bin/luarocks make rocks/sundown-scm-1.rockspec
 cd ${currdir}/pkg/cwrap && $PREFIX/bin/luarocks make rocks/cwrap-scm-1.rockspec
 cd ${currdir}/pkg/paths && $PREFIX/bin/luarocks make rocks/paths-scm-1.rockspec
 cd ${currdir}/pkg/torch && $PREFIX/bin/luarocks make rocks/torch-scm-1.rockspec
@@ -42,17 +41,17 @@ cd ${currdir}/extra/nn && $PREFIX/bin/luarocks make rocks/nn-scm-1.rockspec
 
 path_to_nvcc=$(which nvcc)
 if [ -x "$path_to_nvcc" ]
-then  
+then
     cd ${currdir}/extra/cutorch && $PREFIX/bin/luarocks make rocks/cutorch-scm-1.rockspec
     cd ${currdir}/extra/cunn && $PREFIX/bin/luarocks make rocks/cunn-scm-1.rockspec
 fi
 
-$PREFIX/bin/luarocks install qttorch
+cd ${currdir}/pkg/qttorch && $PREFIX/bin/luarocks make rocks/qttorch-scm-1.rockspec
+cd ${currdir}/pkg/sys && $PREFIX/bin/luarocks make sys-1.1-0.rockspec
+cd ${currdir}/pkg/xlua && $PREFIX/bin/luarocks make xlua-1.0-0.rockspec
+cd ${currdir}/pkg/image && $PREFIX/bin/luarocks make image-1.1.alpha-0.rockspec
+cd ${currdir}/pkg/optim && $PREFIX/bin/luarocks make optim-1.0.5-0.rockspec
+
 $PREFIX/bin/luarocks install luafilesystem
 $PREFIX/bin/luarocks install penlight
-$PREFIX/bin/luarocks install sys
-$PREFIX/bin/luarocks install xlua
-$PREFIX/bin/luarocks install image
-$PREFIX/bin/luarocks install optim
 $PREFIX/bin/luarocks install lua-cjson
-$PREFIX/bin/luarocks install luafilesystem
