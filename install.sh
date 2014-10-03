@@ -35,7 +35,7 @@ cd ${currdir}/pkg/dok && $PREFIX/bin/luarocks make rocks/dok-scm-1.rockspec
 cd ${currdir}/pkg/gnuplot && $PREFIX/bin/luarocks make rocks/gnuplot-scm-1.rockspec
 
 cd ${currdir}/exe/qtlua && $PREFIX/bin/luarocks make rocks/qtlua-scm-1.rockspec
-cd ${currdir}/exe/trepl && $PREFIX/bin/luarocks make rocks/trepl-scm-1.rockspec
+cd ${currdir}/exe/trepl && $PREFIX/bin/luarocks make
 
 cd ${currdir}/extra/nn && $PREFIX/bin/luarocks make rocks/nn-scm-1.rockspec
 
