@@ -31,3 +31,21 @@
 [submodule "pkg/torch"]
 	path = pkg/torch
 	url = https://github.com/torch/torch7.git
+[submodule "pkg/sundown"]
+	path = pkg/sundown
+	url = https://github.com/torch/sundown-ffi.git
+[submodule "pkg/qttorch"]
+	path = pkg/qttorch
+	url = https://github.com/torch/qttorch.git
+[submodule "pkg/xlua"]
+	path = pkg/xlua
+	url = https://github.com/torch/xlua.git
+[submodule "pkg/sys"]
+	path = pkg/sys
+	url = https://github.com/torch/sys.git
+[submodule "pkg/image"]
+	path = pkg/image
+	url = https://github.com/torch/image.git
+[submodule "pkg/optim"]
+	path = pkg/optim
+	url = https://github.com/torch/optim.git
