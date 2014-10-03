@@ -56,3 +56,6 @@ cd ${currdir}/pkg/optim && $PREFIX/bin/luarocks make optim-1.0.5-0.rockspec
 $PREFIX/bin/luarocks install luafilesystem
 $PREFIX/bin/luarocks install penlight
 $PREFIX/bin/luarocks install lua-cjson
+
+cd ${currdir}/extra/sdl2 && $PREFIX/bin/luarocks make rocks/sdl2-scm-1.rockspec
+cd ${currdir}/extra/threads && $PREFIX/bin/luarocks make rocks/threads-scm-1.rockspec

@@ -49,3 +49,9 @@
 [submodule "pkg/optim"]
 	path = pkg/optim
 	url = https://github.com/torch/optim.git
+[submodule "extra/sdl2"]
+	path = extra/sdl2
+	url = https://github.com/torch/sdl2-ffi.git
+[submodule "extra/threads"]
+	path = extra/threads
+	url = https://github.com/torch/threads-ffi.git
