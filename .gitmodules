@@ -55,3 +55,9 @@
 [submodule "extra/threads"]
 	path = extra/threads
 	url = https://github.com/torch/threads-ffi.git
+[submodule "extra/gfx.js"]
+	path = extra/gfx.js
+	url = https://github.com/soumith/gfx.js.git
+[submodule "extra/graphicsmagick"]
+	path = extra/graphicsmagick
+	url = https://github.com/clementfarabet/graphicsmagick.git
