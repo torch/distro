@@ -40,11 +40,12 @@ cd ${currdir}/exe/trepl && $PREFIX/bin/luarocks make
 
 cd ${currdir}/extra/nn && $PREFIX/bin/luarocks make rocks/nn-scm-1.rockspec
 
-path_to_nvcc=$(which nvcc)
-if [ -x "$path_to_nvcc" ]
+path_to_nvidiasmi=$(which nvidia-smi)
+if [ -x "$path_to_nvidiasmi" ]
 then
     cd ${currdir}/extra/cutorch && $PREFIX/bin/luarocks make rocks/cutorch-scm-1.rockspec
     cd ${currdir}/extra/cunn && $PREFIX/bin/luarocks make rocks/cunn-scm-1.rockspec
+    cd ${currdir}/extra/cudnn && $PREFIX/bin/luarocks make cudnn-scm-1.rockspec
 fi
 
 cd ${currdir}/pkg/qttorch && $PREFIX/bin/luarocks make rocks/qttorch-scm-1.rockspec
@@ -62,3 +63,5 @@ cd ${currdir}/extra/threads && $PREFIX/bin/luarocks make rocks/threads-scm-1.roc
 
 cd ${currdir}/extra/graphicsmagick && $PREFIX/bin/luarocks make graphicsmagick-1.scm-0.rockspec
 cd ${currdir}/extra/gfx.js && $PREFIX/bin/luarocks make gfx.js-scm-0.rockspec
+
+cd ${currdir}/extra/argcheck && $PREFIX/bin/luarocks make rocks/argcheck-scm-1.rockspec

@@ -61,3 +61,9 @@
 [submodule "extra/graphicsmagick"]
 	path = extra/graphicsmagick
 	url = https://github.com/clementfarabet/graphicsmagick.git
+[submodule "extra/argcheck"]
+	path = extra/argcheck
+	url = https://github.com/torch/argcheck.git
+[submodule "extra/cudnn"]
+	path = extra/cudnn
+	url = https://github.com/soumith/cudnn.torch.git
