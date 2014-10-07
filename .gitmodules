@@ -67,3 +67,12 @@
 [submodule "exe/trepl"]
 	path = exe/trepl
 	url = https://github.com/torch/trepl.git
+[submodule "extra/audio"]
+	path = extra/audio
+	url = https://github.com/soumith/lua---audio.git
+[submodule "extra/signal"]
+	path = extra/signal
+	url = https://github.com/soumith/torch-signal.git
+[submodule "extra/fftw3"]
+	path = extra/fftw3
+	url = https://github.com/soumith/fftw3-ffi.git

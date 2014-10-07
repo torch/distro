@@ -65,3 +65,5 @@ cd ${currdir}/extra/graphicsmagick && $PREFIX/bin/luarocks make graphicsmagick-1
 cd ${currdir}/extra/gfx.js && $PREFIX/bin/luarocks make gfx.js-scm-0.rockspec
 
 cd ${currdir}/extra/argcheck && $PREFIX/bin/luarocks make rocks/argcheck-scm-1.rockspec
+
+cd ${currdir}/extra/audio && $PREFIX/bin/luarocks make audio-0.1-0.rockspec
