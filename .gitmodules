@@ -76,3 +76,6 @@
 [submodule "extra/fftw3"]
 	path = extra/fftw3
 	url = https://github.com/soumith/fftw3-ffi.git
+[submodule "extra/nnx"]
+	path = extra/nnx
+	url = https://github.com/clementfarabet/lua---nnx.git

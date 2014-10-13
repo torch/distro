@@ -28,6 +28,10 @@ then
    install_name_tool -id ${PREFIX}/lib/libluajit.dylib ${PREFIX}/lib/libluajit.dylib
 fi
 
+$PREFIX/bin/luarocks install luafilesystem
+$PREFIX/bin/luarocks install penlight
+$PREFIX/bin/luarocks install lua-cjson
+
 cd ${currdir}/pkg/sundown && $PREFIX/bin/luarocks make rocks/sundown-scm-1.rockspec
 cd ${currdir}/pkg/cwrap && $PREFIX/bin/luarocks make rocks/cwrap-scm-1.rockspec
 cd ${currdir}/pkg/paths && $PREFIX/bin/luarocks make rocks/paths-scm-1.rockspec
@@ -54,10 +58,6 @@ cd ${currdir}/pkg/xlua && $PREFIX/bin/luarocks make xlua-1.0-0.rockspec
 cd ${currdir}/pkg/image && $PREFIX/bin/luarocks make image-1.1.alpha-0.rockspec
 cd ${currdir}/pkg/optim && $PREFIX/bin/luarocks make optim-1.0.5-0.rockspec
 
-$PREFIX/bin/luarocks install luafilesystem
-$PREFIX/bin/luarocks install penlight
-$PREFIX/bin/luarocks install lua-cjson
-
 cd ${currdir}/extra/sdl2 && $PREFIX/bin/luarocks make rocks/sdl2-scm-1.rockspec
 cd ${currdir}/extra/threads && $PREFIX/bin/luarocks make rocks/threads-scm-1.rockspec
 
@@ -70,3 +70,5 @@ cd ${currdir}/extra/audio && $PREFIX/bin/luarocks make audio-0.1-0.rockspec
 
 cd ${currdir}/extra/fftw3 && $PREFIX/bin/luarocks make rocks/fftw3-scm-1.rockspec
 cd ${currdir}/extra/signal && $PREFIX/bin/luarocks make rocks/signal-scm-1.rockspec
+
+cd ${currdir}/extra/nnx && $PREFIX/bin/luarocks make nnx-0.1-1.rockspec
