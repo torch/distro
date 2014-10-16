@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 currdir=`dirname $0`
 currdir=$(cd "$currdir" && pwd)
 #######################################
