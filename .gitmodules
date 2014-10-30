@@ -16,9 +16,6 @@
 [submodule "pkg/cwrap"]
 	path = pkg/cwrap
 	url = https://github.com/torch/cwrap.git
-[submodule "extra/nn"]
-	path = extra/nn
-	url = https://github.com/torch/nn.git
 [submodule "extra/cunn"]
 	path = extra/cunn
 	url = https://github.com/torch/cunn.git
