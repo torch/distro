@@ -76,3 +76,6 @@
 [submodule "extra/nnx"]
 	path = extra/nnx
 	url = https://github.com/clementfarabet/lua---nnx.git
+[submodule "extra/nn"]
+	path = extra/nn
+	url = https://github.com/torch/nn.git
