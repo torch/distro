@@ -17,7 +17,7 @@ git submodule foreach git pull origin master
 
 mkdir -p build
 cd build
-cmake .. -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release
+cmake .. -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_LUAJIT21=ON
 make && make install
 cd ..
 
