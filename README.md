@@ -12,6 +12,10 @@ Uses git submodules, so always on the master packages.
 installs torch into the current folder torch-distro/install
 
 If you want to install in another location, change install.sh line 5 
+```
+./run.sh
+```
+runs the locally installed torch.
 
 Tested on Ubuntu 14.04, CentOS/RHEL 6.3 and OSX
 
