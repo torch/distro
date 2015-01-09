@@ -79,3 +79,6 @@
 [submodule "extra/nn"]
 	path = extra/nn
 	url = https://github.com/torch/nn.git
+[submodule "exe/env"]
+	path = exe/env
+	url = https://github.com/torch/env.git
