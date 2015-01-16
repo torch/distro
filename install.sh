@@ -28,6 +28,11 @@ if [[ `uname` == "Darwin" ]]; then
         # This hurts me more than it hurts you
         rm -rf ${currdir}/extra/cunn/cmake
     fi
+
+    # Also, make sure that we build with Clang. CUDA's compiler nvcc
+    # does not play nice with any recent GCC version.
+    export CC=clang
+    export CXX=clang++
 fi
 
 mkdir -p build
