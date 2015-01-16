@@ -1,7 +1,7 @@
 torch-distro
 ============
 
-## TODO
+### Desired improvements
 * [ ] Prereqs (install-deps)
 * [ ] Update nn to use getParamsbyDevice branch
 * [ ] Squash anaconda in PATH
@@ -9,6 +9,11 @@ torch-distro
 * [ ] Update path to opint to torch-distro/install/bin
 * [ ] Install fblualib (currently limited by Folly install)
 * [ ] Install fbcunn
+* [ ] nnx
+* [ ] cunnx
+* [ ] iTorch
+* [ ] cuda-convnet2.torch
+* [ ] cudnn so file
 
 Need these prereqs installed
 ```
