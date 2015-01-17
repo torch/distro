@@ -84,13 +84,13 @@
 	url = git@github.com:soumith/cuda-convnet2.torch.git
 [submodule "extra/cunnx"]
 	path = extra/cunnx
-	url = git@github.com:nicholas-leonard/cunnx.git
+	url = https://github.com/nicholas-leonard/cunnx.git
 [submodule "extra/gfx.js"]
 	path = extra/gfx.js
 	url = git@github.com:clementfarabet/gfx.js.git
 [submodule "extra/iTorch"]
 	path = extra/iTorch
-	url = git@github.com:facebook/iTorch.git
+	url = https://github.com/facebook/iTorch.git
 [submodule "extra/fblualib"]
 	path = extra/fblualib
 	url = git@github.com:facebook/fblualib.git
