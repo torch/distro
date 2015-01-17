@@ -97,8 +97,7 @@ cd ${currdir}/extra/audio && $PREFIX/bin/luarocks make audio-0.1-0.rockspec
 cd ${currdir}/extra/fftw3 && $PREFIX/bin/luarocks make rocks/fftw3-scm-1.rockspec
 cd ${currdir}/extra/signal && $PREFIX/bin/luarocks make rocks/signal-scm-1.rockspec
 cd ${currdir}/extra/nnx && $PREFIX/bin/luarocks make nnx-0.1-1.rockspec
+export PATH=$OLDPATH # Restore anaconda distribution if we took it out.
 cd ${currdir}/extra/iTorch && $PREFIX/bin/luarocks make
 
 
-
-export PATH=$OLDPATH
