@@ -5,6 +5,14 @@ currdir=$(cd "$currdir" && pwd)
 PREFIX="${currdir}/install"
 #######################################
 
+echo "Installing dependencies"
+curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-deps | bash
+
+# TODO:
+# Scrub an anaconda install from the PATH. It has a malformed MKL library (as of 1/17/2015)
+
+
+
 echo "Prefix set to $PREFIX"
 
 if [[ `uname` == 'Linux' ]]; then
@@ -86,3 +94,4 @@ cd ${currdir}/extra/audio && $PREFIX/bin/luarocks make audio-0.1-0.rockspec
 cd ${currdir}/extra/fftw3 && $PREFIX/bin/luarocks make rocks/fftw3-scm-1.rockspec
 cd ${currdir}/extra/signal && $PREFIX/bin/luarocks make rocks/signal-scm-1.rockspec
 cd ${currdir}/extra/nnx && $PREFIX/bin/luarocks make nnx-0.1-1.rockspec
+cd ${currdir}/extra/iTorch && $PREFIX/bin/luarocks make
