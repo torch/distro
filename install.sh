@@ -8,10 +8,12 @@ PREFIX="${currdir}/install"
 echo "Installing dependencies"
 curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-deps | bash
 
-# TODO:
-# Scrub an anaconda install from the PATH. It has a malformed MKL library (as of 1/17/2015)
-
-
+# Scrub an anaconda install, if exists, from the PATH. 
+# It has a malformed MKL library (as of 1/17/2015)
+OLDPATH=$PATH
+if [[ $(echo $PATH | grep anaconda) ]]; then
+    export PATH=$(echo $PATH | tr ':' '\n' | grep -v "anaconda/bin" | grep -v "anaconda/lib" | grep -v "anaconda/include" | uniq | tr '\n' ':')
+fi
 
 echo "Prefix set to $PREFIX"
 
@@ -78,6 +80,7 @@ if [ -x "$path_to_nvcc" ]
 then
     cd ${currdir}/extra/cutorch && $PREFIX/bin/luarocks make rocks/cutorch-scm-1.rockspec
     cd ${currdir}/extra/cunn && $PREFIX/bin/luarocks make rocks/cunn-scm-1.rockspec
+    cd ${currdir}/extra/cunnx && $PREFIX/bin/luarocks make rocks/cunnx-scm-1.rockspec
     cd ${currdir}/extra/cudnn && $PREFIX/bin/luarocks make cudnn-scm-1.rockspec
 fi
 
@@ -95,3 +98,7 @@ cd ${currdir}/extra/fftw3 && $PREFIX/bin/luarocks make rocks/fftw3-scm-1.rockspe
 cd ${currdir}/extra/signal && $PREFIX/bin/luarocks make rocks/signal-scm-1.rockspec
 cd ${currdir}/extra/nnx && $PREFIX/bin/luarocks make nnx-0.1-1.rockspec
 cd ${currdir}/extra/iTorch && $PREFIX/bin/luarocks make
+
+
+
+export PATH=$OLDPATH
