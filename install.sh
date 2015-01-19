@@ -100,8 +100,15 @@ cd ${currdir}/extra/nnx && $PREFIX/bin/luarocks make nnx-0.1-1.rockspec
 export PATH=$OLDPATH # Restore anaconda distribution if we took it out.
 cd ${currdir}/extra/iTorch && $PREFIX/bin/luarocks make
 
+
+echo '\nWriting new paths to shell config\n'
+
 if [[ $(echo $SHELL | grep bash) ]]; then
-    echo "export PATH=~/torch-distro/install/bin:\$PATH; export LD_LIBRARY_PATH=~/torch-distro/install/lib:\$LD_LIBRARY_PATH; " >> $HOME/.bashrc
+    echo "\n" >> $HOME/.bashrc # in case the last line ends in a comment, or is not blank
+    echo "export PATH=$PREFIX/bin:\$PATH  \# Added automatically by torch-dist" >> $HOME/.bashrc
+    echo "export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH  \# Added automatically by torch-dist" >> $HOME/.bashrc
 elif [[ $(echo $SHELL | grep zsh) ]]; then
-    echo "export PATH=~/torch-distro/install/bin:\$PATH; export LD_LIBRARY_PATH=~/torch-distro/install/lib:\$LD_LIBRARY_PATH; " >> $HOME/.zshrc
+    echo "\n" >> $HOME/.zshrc # in case the last line ends in a comment, or is not blank
+    echo "export PATH=$PREFIX/bin:\$PATH  \# Added automatically by torch-dist" >> $HOME/.zshrc
+    echo "export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH  \# Added automatically by torch-dist" >> $HOME/.zshrc
 fi
