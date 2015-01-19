@@ -91,6 +91,3 @@
 [submodule "extra/iTorch"]
 	path = extra/iTorch
 	url = https://github.com/facebook/iTorch.git
-[submodule "extra/fblualib"]
-	path = extra/fblualib
-	url = git@github.com:facebook/fblualib.git
