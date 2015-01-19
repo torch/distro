@@ -24,21 +24,17 @@ git clone https://github.com/soumith/torch-distro.git ~/torch-distro --recursive
 cd torch-distro; ./install.sh
 ```
 
-This is a packaging of torch that installs everything to the same folder (into a subdirectory install/).
-It's useful, and is better than installing torch system-wide.
+Now, everything should be installed. Source your profile, or open a new shell
+```
+source ~/.bashrc  # or ~/.zshrc.
+th -e "print 'hello world!'"
+```
 
-Uses git submodules, so always on the master packages.
-
+Note: If you use a non-standard shell, you'll want to add the following directories to your `PATH`
 ```
-./install.sh
+export PATH=/Users/Alex/Code/torch-distro/install/bin:$PATH
+export LD_LIBRARY_PATH=/Users/Alex/Code/torch-distro/install/lib:$LD_LIBRARY_PATH
 ```
-installs torch into the current folder torch-distro/install
-
-If you want to install in another location, change install.sh line 5 
-```
-./run.sh
-```
-runs the locally installed torch.
 
 Tested on Ubuntu 14.04, CentOS/RHEL 6.3 and OSX
 
