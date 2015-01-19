@@ -5,6 +5,13 @@ currdir=$(cd "$currdir" && pwd)
 PREFIX="${currdir}/install"
 #######################################
 
+# Scrub an anaconda install, if exists, from the PATH. 
+# It has a malformed MKL library (as of 1/17/2015)
+OLDPATH=$PATH
+if [[ $(echo $PATH | grep anaconda) ]]; then
+    export PATH=$(echo $PATH | tr ':' '\n' | grep -v "anaconda/bin" | grep -v "anaconda/lib" | grep -v "anaconda/include" | uniq | tr '\n' ':')
+fi
+
 echo "Prefix set to $PREFIX"
 
 if [[ `uname` == 'Linux' ]]; then
@@ -13,10 +20,7 @@ fi
 
 git submodule init
 git submodule update
-
-# NOTE: This gets most up-to-date packages. Desired behavior?
-# Submodules usually point to specific commits.
-git submodule foreach git pull origin master
+git submodule foreach git pull origin master # NOTE: will ignore submodule commit hashes
 
 # If we're on OS X, use clang
 if [[ `uname` == "Darwin" ]]; then
@@ -62,6 +66,7 @@ if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
     cd ${currdir}/extra/cutorch && $PREFIX/bin/luarocks make rocks/cutorch-scm-1.rockspec
     cd ${currdir}/extra/cunn && $PREFIX/bin/luarocks make rocks/cunn-scm-1.rockspec
+    cd ${currdir}/extra/cunnx && $PREFIX/bin/luarocks make rocks/cunnx-scm-1.rockspec
     cd ${currdir}/extra/cudnn && $PREFIX/bin/luarocks make cudnn-scm-1.rockspec
 fi
 
@@ -78,3 +83,21 @@ cd ${currdir}/extra/audio && $PREFIX/bin/luarocks make audio-0.1-0.rockspec
 cd ${currdir}/extra/fftw3 && $PREFIX/bin/luarocks make rocks/fftw3-scm-1.rockspec
 cd ${currdir}/extra/signal && $PREFIX/bin/luarocks make rocks/signal-scm-1.rockspec
 cd ${currdir}/extra/nnx && $PREFIX/bin/luarocks make nnx-0.1-1.rockspec
+
+export PATH=$OLDPATH # Restore anaconda distribution if we took it out.
+cd ${currdir}/extra/iTorch && $PREFIX/bin/luarocks make
+
+
+echo '\nWriting new paths to shell config\n'
+
+if [[ $(echo $SHELL | grep bash) ]]; then
+    echo "" >> $HOME/.bashrc # in case the last line ends in a comment, or is not blank
+    echo "" >> $HOME/.bashrc
+    echo "export PATH=$PREFIX/bin:\$PATH  # Added automatically by torch-dist" >> $HOME/.bashrc
+    echo "export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH  # Added automatically by torch-dist" >> $HOME/.bashrc
+elif [[ $(echo $SHELL | grep zsh) ]]; then
+    echo "" >> $HOME/.zshrc # in case the last line ends in a comment, or is not blank
+    echo "" >> $HOME/.zshrc
+    echo "export PATH=$PREFIX/bin:\$PATH  # Added automatically by torch-dist" >> $HOME/.zshrc
+    echo "export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH  # Added automatically by torch-dist" >> $HOME/.zshrc
+fi
