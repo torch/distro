@@ -1,11 +1,6 @@
 torch-distro
 ============
 
-### Hard to install, but perhaps would be nice to have?
-* [ ] Install fblualib (currently limited by Folly install)
-* [ ] Install fbcunn
-* [ ] cudnn so file
-
 Install dependencies. Uses `apt-get` on Ubuntu, which might require `sudo`. Uses `brew` on OSX.
 ```
 curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-deps | bash
@@ -31,3 +26,7 @@ export LD_LIBRARY_PATH=/Users/Alex/Code/torch-distro/install/lib:$LD_LIBRARY_PAT
 
 Tested on Ubuntu 14.04, CentOS/RHEL 6.3 and OSX
 
+#### Hard to install, but perhaps would be nice to have?
+* [ ] Install fblualib (currently limited by Folly install)
+* [ ] Install fbcunn
+* [ ] cudnn so file
