@@ -1,21 +1,27 @@
 torch-distro
 ============
 
-This is a packaging of torch that installs everything to the same folder (into a subdirectory install/).
-It's useful, and is better than installing torch system-wide.
+Install dependencies. Uses `apt-get` on Ubuntu, which might require `sudo`. Uses `brew` on OSX.
+```
+curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-deps | bash
+```
 
-Uses git submodules, so always on the master packages.
+Install this repo, which installs the torch distribution, with a lot of nice goodies.
+```
+git clone https://github.com/soumith/torch-distro.git ~/torch-distro --recursive
+cd ~/torch-distro; ./install.sh
+```
 
+Now, everything should be installed. Source your profile, or open a new shell
 ```
-./install.sh
+source ~/.bashrc  # or ~/.zshrc.
+th -e "print 'I just installed Torch! Yesss.'"
 ```
-installs torch into the current folder torch-distro/install
 
-If you want to install in another location, change install.sh line 5 
+Note: If you use a non-standard shell, you'll want to add the following directories to your `PATH`
 ```
-./run.sh
+export PATH=/Users/Alex/Code/torch-distro/install/bin:$PATH
+export LD_LIBRARY_PATH=/Users/Alex/Code/torch-distro/install/lib:$LD_LIBRARY_PATH
 ```
-runs the locally installed torch.
 
 Tested on Ubuntu 14.04, CentOS/RHEL 6.3 and OSX
-
