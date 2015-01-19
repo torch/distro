@@ -20,7 +20,7 @@ cd torch-distro; ./install.sh
 Now, everything should be installed. Source your profile, or open a new shell
 ```
 source ~/.bashrc  # or ~/.zshrc.
-th -e "print 'hello world!'"
+th -e "print 'I just installed Torch! Yesss.'"
 ```
 
 Note: If you use a non-standard shell, you'll want to add the following directories to your `PATH`
