@@ -1,16 +1,9 @@
 torch-distro
 ============
 
-### Desired improvements
-* [x] Prereqs (install-deps)
-* [x] Squash anaconda in PATH
-* [x] Install torch-distro
-* [x] Update path to opint to torch-distro/install/bin
+### Hard to install, but perhaps would be nice to have?
 * [ ] Install fblualib (currently limited by Folly install)
 * [ ] Install fbcunn
-* [x] nnx
-* [x] cunnx
-* [x] iTorch
 * [ ] cudnn so file
 
 Install dependencies. Uses `apt-get` on Ubuntu, which might require `sudo`. Uses `brew` on OSX.
