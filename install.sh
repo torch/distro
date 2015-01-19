@@ -101,11 +101,13 @@ cd ${currdir}/extra/iTorch && $PREFIX/bin/luarocks make
 echo '\nWriting new paths to shell config\n'
 
 if [[ $(echo $SHELL | grep bash) ]]; then
-    echo "\n" >> $HOME/.bashrc # in case the last line ends in a comment, or is not blank
-    echo "export PATH=$PREFIX/bin:\$PATH  \# Added automatically by torch-dist" >> $HOME/.bashrc
-    echo "export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH  \# Added automatically by torch-dist" >> $HOME/.bashrc
+    echo "" >> $HOME/.bashrc # in case the last line ends in a comment, or is not blank
+    echo "" >> $HOME/.bashrc
+    echo "export PATH=$PREFIX/bin:\$PATH  # Added automatically by torch-dist" >> $HOME/.bashrc
+    echo "export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH  # Added automatically by torch-dist" >> $HOME/.bashrc
 elif [[ $(echo $SHELL | grep zsh) ]]; then
-    echo "\n" >> $HOME/.zshrc # in case the last line ends in a comment, or is not blank
-    echo "export PATH=$PREFIX/bin:\$PATH  \# Added automatically by torch-dist" >> $HOME/.zshrc
-    echo "export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH  \# Added automatically by torch-dist" >> $HOME/.zshrc
+    echo "" >> $HOME/.zshrc # in case the last line ends in a comment, or is not blank
+    echo "" >> $HOME/.zshrc
+    echo "export PATH=$PREFIX/bin:\$PATH  # Added automatically by torch-dist" >> $HOME/.zshrc
+    echo "export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH  # Added automatically by torch-dist" >> $HOME/.zshrc
 fi
