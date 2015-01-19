@@ -5,9 +5,6 @@ currdir=$(cd "$currdir" && pwd)
 PREFIX="${currdir}/install"
 #######################################
 
-echo "Installing dependencies"
-curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-deps | bash
-
 # Scrub an anaconda install, if exists, from the PATH. 
 # It has a malformed MKL library (as of 1/17/2015)
 OLDPATH=$PATH
