@@ -18,18 +18,9 @@ git submodule update
 # Submodules usually point to specific commits.
 git submodule foreach git pull origin master
 
-# If we're on OS X, first assert cmake is relatively recent,
-# and then delete the cmake directory for CUDA-dependent packages.
-# If this is not done on Yosemite,
+# If we're on OS X, use clang
 if [[ `uname` == "Darwin" ]]; then
-    # Check the dot version (currently only tested on Yosemite, 10.10)
-    osx_dotversion=$(sw_vers -productVersion | tr '.' "\n" | sed '2!d')
-    if [[ "$osx_dotversion" == "10" ]]; then
-        # This hurts me more than it hurts you
-        rm -rf ${currdir}/extra/cunn/cmake
-    fi
-
-    # Also, make sure that we build with Clang. CUDA's compiler nvcc
+    # make sure that we build with Clang. CUDA's compiler nvcc
     # does not play nice with any recent GCC version.
     export CC=clang
     export CXX=clang++
@@ -43,6 +34,7 @@ cd ..
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
 path_to_nvcc=$(which nvcc)
+path_to_nvidiasmi=$(which nvidia-smi)
 
 # check if we are on mac and fix RPATH for local install
 path_to_install_name_tool=$(which install_name_tool)
@@ -66,7 +58,7 @@ cd ${currdir}/exe/trepl && $PREFIX/bin/luarocks make
 cd ${currdir}/exe/env && $PREFIX/bin/luarocks make
 cd ${currdir}/extra/nn && $PREFIX/bin/luarocks make rocks/nn-scm-1.rockspec
 
-if [ -x "$path_to_nvcc" ]
+if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
     cd ${currdir}/extra/cutorch && $PREFIX/bin/luarocks make rocks/cutorch-scm-1.rockspec
     cd ${currdir}/extra/cunn && $PREFIX/bin/luarocks make rocks/cunn-scm-1.rockspec
