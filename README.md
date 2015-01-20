@@ -1,4 +1,4 @@
-torch-distro
+Self-contained Torch installation
 ============
 
 Install dependencies. Uses `apt-get` on Ubuntu, which might require `sudo`. Uses `brew` on OSX.
