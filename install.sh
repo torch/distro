@@ -18,9 +18,7 @@ if [[ `uname` == 'Linux' ]]; then
     export CMAKE_LIBRARY_PATH=/opt/OpenBLAS/include:/opt/OpenBLAS/lib:$CMAKE_LIBRARY_PATH
 fi
 
-git submodule init
-git submodule update
-git submodule foreach git pull origin master # NOTE: will ignore submodule commit hashes
+git submodule init --update --recursive
 
 # If we're on OS X, use clang
 if [[ `uname` == "Darwin" ]]; then
