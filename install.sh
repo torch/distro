@@ -95,6 +95,8 @@ if [[ $(echo $SHELL | grep bash) ]]; then
     echo "" >> $HOME/.bashrc
     echo "export PATH=$PREFIX/bin:\$PATH  # Added automatically by torch-dist" >> $HOME/.bashrc
     echo "export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH  # Added automatically by torch-dist" >> $HOME/.bashrc
+    echo "export PATH=$PREFIX/bin:\$PATH  # Added automatically by torch-dist" >> $HOME/.profile
+    echo "export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH  # Added automatically by torch-dist" >> $HOME/.profile
 elif [[ $(echo $SHELL | grep zsh) ]]; then
     echo "" >> $HOME/.zshrc # in case the last line ends in a comment, or is not blank
     echo "" >> $HOME/.zshrc
