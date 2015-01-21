@@ -58,6 +58,8 @@ cd ${currdir}/pkg/gnuplot && $PREFIX/bin/luarocks make rocks/gnuplot-scm-1.rocks
 cd ${currdir}/exe/qtlua && $PREFIX/bin/luarocks make rocks/qtlua-scm-1.rockspec
 cd ${currdir}/exe/trepl && $PREFIX/bin/luarocks make
 cd ${currdir}/exe/env && $PREFIX/bin/luarocks make
+cd ${currdir}/pkg/sys && $PREFIX/bin/luarocks make sys-1.1-0.rockspec
+cd ${currdir}/pkg/xlua && $PREFIX/bin/luarocks make xlua-1.0-0.rockspec
 cd ${currdir}/extra/nn && $PREFIX/bin/luarocks make rocks/nn-scm-1.rockspec
 
 if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
@@ -69,8 +71,6 @@ then
 fi
 
 cd ${currdir}/pkg/qttorch && $PREFIX/bin/luarocks make rocks/qttorch-scm-1.rockspec
-cd ${currdir}/pkg/sys && $PREFIX/bin/luarocks make sys-1.1-0.rockspec
-cd ${currdir}/pkg/xlua && $PREFIX/bin/luarocks make xlua-1.0-0.rockspec
 cd ${currdir}/pkg/image && $PREFIX/bin/luarocks make image-1.1.alpha-0.rockspec
 cd ${currdir}/pkg/optim && $PREFIX/bin/luarocks make optim-1.0.5-0.rockspec
 cd ${currdir}/extra/sdl2 && $PREFIX/bin/luarocks make rocks/sdl2-scm-1.rockspec
