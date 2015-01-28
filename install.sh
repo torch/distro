@@ -116,6 +116,7 @@ add the following lines to your shell profile:
 
 export PATH=$PREFIX/bin:\$PATH
 export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH 
+export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH 
 "
 fi
 
@@ -154,10 +155,12 @@ if [[ $WRITE_PATH_TO_PROFILE == 1 ]]; then
 
 export PATH=$PREFIX/bin:\$PATH  # Added automatically by torch-dist
 export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH  # Added automatically by torch-dist" >> $RC_FILE
+export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH  # Added automatically by torch-dist" >> $RC_FILE
     echo "
 
 export PATH=$PREFIX/bin:\$PATH  # Added automatically by torch-dist
 export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH  # Added automatically by torch-dist" >> $HOME/.profile
+export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH  # Added automatically by torch-dist" >> $HOME/.profile
 
 else
     echo "
@@ -168,5 +171,6 @@ add the following lines to your shell profile:
 
 export PATH=$PREFIX/bin:\$PATH
 export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH 
+export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH 
 "
 fi
