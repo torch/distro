@@ -8,8 +8,8 @@ curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-deps |
 
 Install this repo, which installs the torch distribution, with a lot of nice goodies.
 ```
-git clone https://github.com/torch/distro.git ~/torch-distro --recursive
-cd ~/torch-distro; ./install.sh
+git clone https://github.com/torch/distro.git ~/torch --recursive
+cd ~/torch; ./install.sh
 ```
 
 Now, everything should be installed. Source your profile, or open a new shell
