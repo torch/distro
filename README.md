@@ -20,9 +20,9 @@ th -e "print 'I just installed Torch! Yesss.'"
 
 Note: If you use a non-standard shell, you'll want to add the following directories to your `PATH`
 ```
-export PATH=$HOME/torch-distro/install/bin:$PATH
-export LD_LIBRARY_PATH=$HOME/torch-distro/install/lib:$LD_LIBRARY_PATH
-export DYLD_LIBRARY_PATH=$HOME/torch-distro/install/lib:$DYLD_LIBRARY_PATH
+export PATH=$HOME/torch/install/bin:$PATH
+export LD_LIBRARY_PATH=$HOME/torch/install/lib:$LD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH=$HOME/torch/install/lib:$DYLD_LIBRARY_PATH
 ```
 
 Tested on Ubuntu 14.04, CentOS/RHEL 6.3 and OSX
