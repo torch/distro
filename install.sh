@@ -122,27 +122,25 @@ fi
 
 WRITE_PATH_TO_PROFILE=0
 if [[ $BATCH_INSTALL == 0 ]]; then
-    if [ -f $RC_FILE ]; then
-        echo "
+    echo "
 
 Do you want to automatically prepend the Torch install location
 to PATH and LD_LIBRARY_PATH in your $RC_FILE? (yes/no)
 [$DEFAULT] >>> "
-        read input
-        if [[ $input == "" ]]; then
-            input=$DEFAULT
-        fi
+    read input
+    if [[ $input == "" ]]; then
+        input=$DEFAULT
+    fi
 
-        is_yes() {
-            yesses={y,Y,yes,Yes,YES}
-            if [[ $yesses =~ $1 ]]; then
-                echo 1
-            fi
-        }
-
-        if [[ $(is_yes $input) ]]; then
-            WRITE_PATH_TO_PROFILE=1
+    is_yes() {
+        yesses={y,Y,yes,Yes,YES}
+        if [[ $yesses =~ $1 ]]; then
+            echo 1
         fi
+    }
+
+    if [[ $(is_yes $input) ]]; then
+        WRITE_PATH_TO_PROFILE=1
     fi
 else
     if [[ $RC_FILE ]]; then
