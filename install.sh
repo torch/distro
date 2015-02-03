@@ -77,6 +77,7 @@ cd ${THIS_DIR}/exe/env && $PREFIX/bin/luarocks make
 cd ${THIS_DIR}/pkg/sys && $PREFIX/bin/luarocks make sys-1.1-0.rockspec
 cd ${THIS_DIR}/pkg/xlua && $PREFIX/bin/luarocks make xlua-1.0-0.rockspec
 cd ${THIS_DIR}/extra/nn && $PREFIX/bin/luarocks make rocks/nn-scm-1.rockspec
+cd ${THIS_DIR}/extra/nnx && $PREFIX/bin/luarocks make nnx-0.1-1.rockspec
 
 if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
@@ -96,7 +97,6 @@ cd ${THIS_DIR}/extra/argcheck && $PREFIX/bin/luarocks make rocks/argcheck-scm-1.
 cd ${THIS_DIR}/extra/audio && $PREFIX/bin/luarocks make audio-0.1-0.rockspec
 cd ${THIS_DIR}/extra/fftw3 && $PREFIX/bin/luarocks make rocks/fftw3-scm-1.rockspec
 cd ${THIS_DIR}/extra/signal && $PREFIX/bin/luarocks make rocks/signal-scm-1.rockspec
-cd ${THIS_DIR}/extra/nnx && $PREFIX/bin/luarocks make nnx-0.1-1.rockspec
 
 export PATH=$OLDPATH # Restore anaconda distribution if we took it out.
 cd ${THIS_DIR}/extra/iTorch && $PREFIX/bin/luarocks make
