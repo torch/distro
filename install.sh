@@ -159,6 +159,10 @@ else
     fi
 fi
 
+echo "export PATH=$PREFIX/bin:\$PATH">${THIS_DIR}/activate
+echo "export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH" >>${THIS_DIR}/activate
+echo "export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH" >>${THIS_DIR}/activate
+
 if [[ $WRITE_PATH_TO_PROFILE == 1 ]]; then
     echo "
 
@@ -181,5 +185,8 @@ add the following lines to your shell profile:
 export PATH=$PREFIX/bin:\$PATH
 export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH 
 export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH 
+
+or simply:
+source ${THIS_DIR}/activate
 "
 fi
