@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -e
+set -x
+
 THIS_DIR=$(cd $(dirname $0); pwd)
 PREFIX="${THIS_DIR}/install"
 BATCH_INSTALL=0
@@ -51,11 +54,15 @@ make && make install
 cd ..
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
-path_to_nvcc=$(which nvcc)
-path_to_nvidiasmi=$(which nvidia-smi)
+if [[ ! -v NOCUDA ]]; then {
+    path_to_nvcc=$(which nvcc)
+    path_to_nvidiasmi=$(which nvidia-smi)
+} fi
 
 # check if we are on mac and fix RPATH for local install
+set +e
 path_to_install_name_tool=$(which install_name_tool)
+set -e
 if [ -x "$path_to_install_name_tool" ]
 then
    install_name_tool -id ${PREFIX}/lib/libluajit.dylib ${PREFIX}/lib/libluajit.dylib
