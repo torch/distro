@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 
+set -e
+set -x
+
 THIS_DIR=$(cd $(dirname $0); pwd)
 PREFIX="${THIS_DIR}/install"
 BATCH_INSTALL=0
+
+export LUAROCKS_CONFIG=${THIS_DIR}/install/etc/luarocks/config.lua
 
 while getopts 'bh:' x; do
     case "$x" in
@@ -51,11 +56,15 @@ make && make install
 cd ..
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
-path_to_nvcc=$(which nvcc)
-path_to_nvidiasmi=$(which nvidia-smi)
+if [[ ! -v NOCUDA ]]; then {
+    path_to_nvcc=$(which nvcc)
+    path_to_nvidiasmi=$(which nvidia-smi)
+} fi
 
 # check if we are on mac and fix RPATH for local install
+set +e
 path_to_install_name_tool=$(which install_name_tool)
+set -e
 if [ -x "$path_to_install_name_tool" ]
 then
    install_name_tool -id ${PREFIX}/lib/libluajit.dylib ${PREFIX}/lib/libluajit.dylib
@@ -99,7 +108,9 @@ cd ${THIS_DIR}/extra/fftw3 && $PREFIX/bin/luarocks make rocks/fftw3-scm-1.rocksp
 cd ${THIS_DIR}/extra/signal && $PREFIX/bin/luarocks make rocks/signal-scm-1.rockspec
 
 export PATH=$OLDPATH # Restore anaconda distribution if we took it out.
+set +e
 cd ${THIS_DIR}/extra/iTorch && $PREFIX/bin/luarocks make
+set -e
 
 
 RC_FILE=0
@@ -150,6 +161,10 @@ else
     fi
 fi
 
+echo "export PATH=$PREFIX/bin:\$PATH">${THIS_DIR}/activate
+echo "export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH" >>${THIS_DIR}/activate
+echo "export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH" >>${THIS_DIR}/activate
+
 if [[ $WRITE_PATH_TO_PROFILE == 1 ]]; then
     echo "
 
@@ -172,5 +187,8 @@ add the following lines to your shell profile:
 export PATH=$PREFIX/bin:\$PATH
 export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH 
 export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH 
+
+or simply:
+source ${THIS_DIR}/activate
 "
 fi
