@@ -7,6 +7,8 @@ THIS_DIR=$(cd $(dirname $0); pwd)
 PREFIX="${THIS_DIR}/install"
 BATCH_INSTALL=0
 
+export LUAROCKS_CONFIG=${THIS_DIR}/install/etc/luarocks/config.lua
+
 while getopts 'bh:' x; do
     case "$x" in
         h) 
