@@ -106,7 +106,9 @@ cd ${THIS_DIR}/extra/fftw3 && $PREFIX/bin/luarocks make rocks/fftw3-scm-1.rocksp
 cd ${THIS_DIR}/extra/signal && $PREFIX/bin/luarocks make rocks/signal-scm-1.rockspec
 
 export PATH=$OLDPATH # Restore anaconda distribution if we took it out.
+set +e
 cd ${THIS_DIR}/extra/iTorch && $PREFIX/bin/luarocks make
+set -e
 
 
 RC_FILE=0
