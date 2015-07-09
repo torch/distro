@@ -61,6 +61,9 @@ then
    install_name_tool -id ${PREFIX}/lib/libluajit.dylib ${PREFIX}/lib/libluajit.dylib
 fi
 
+setup_lua_env_cmd=$($PREFIX/bin/luarocks path -bin)
+eval "$setup_lua_env_cmd"
+
 $PREFIX/bin/luarocks install luafilesystem
 $PREFIX/bin/luarocks install penlight
 $PREFIX/bin/luarocks install lua-cjson
@@ -114,6 +117,7 @@ else
 Non-standard shell $SHELL detected. You might want to 
 add the following lines to your shell profile:
 
+$setup_lua_env_cmd
 export PATH=$PREFIX/bin:\$PATH
 export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH 
 export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH 
@@ -153,11 +157,13 @@ fi
 if [[ $WRITE_PATH_TO_PROFILE == 1 ]]; then
     echo "
 
+$setup_lua_env_cmd
 export PATH=$PREFIX/bin:\$PATH  # Added automatically by torch-dist
 export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH  # Added automatically by torch-dist
 export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH  # Added automatically by torch-dist" >> $RC_FILE
     echo "
 
+$setup_lua_env_cmd
 export PATH=$PREFIX/bin:\$PATH  # Added automatically by torch-dist
 export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH  # Added automatically by torch-dist
 export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH  # Added automatically by torch-dist" >> $HOME/.profile
@@ -169,6 +175,7 @@ Not updating your shell profile.
 You might want to 
 add the following lines to your shell profile:
 
+$setup_lua_env_cmd
 export PATH=$PREFIX/bin:\$PATH
 export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH 
 export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH 
