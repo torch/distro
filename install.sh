@@ -6,7 +6,7 @@ BATCH_INSTALL=0
 
 while getopts 'bh:' x; do
     case "$x" in
-        h) 
+        h)
             echo "usage: $0
 This script will install Torch and related, useful packages into $PREFIX.
 
@@ -19,9 +19,9 @@ This script will install Torch and related, useful packages into $PREFIX.
             ;;
     esac
 done
-            
 
-# Scrub an anaconda install, if exists, from the PATH. 
+
+# Scrub an anaconda install, if exists, from the PATH.
 # It has a malformed MKL library (as of 1/17/2015)
 OLDPATH=$PATH
 if [[ $(echo $PATH | grep anaconda) ]]; then
@@ -68,31 +68,31 @@ $PREFIX/bin/luarocks install luafilesystem
 $PREFIX/bin/luarocks install penlight
 $PREFIX/bin/luarocks install lua-cjson
 
-cd ${THIS_DIR}/pkg/sundown && $PREFIX/bin/luarocks make rocks/sundown-scm-1.rockspec
-cd ${THIS_DIR}/pkg/cwrap && $PREFIX/bin/luarocks make rocks/cwrap-scm-1.rockspec
-cd ${THIS_DIR}/pkg/paths && $PREFIX/bin/luarocks make rocks/paths-scm-1.rockspec
-cd ${THIS_DIR}/pkg/torch && $PREFIX/bin/luarocks make rocks/torch-scm-1.rockspec
-cd ${THIS_DIR}/pkg/dok && $PREFIX/bin/luarocks make rocks/dok-scm-1.rockspec
+cd ${THIS_DIR}/pkg/sundown && $PREFIX/bin/luarocks make rocks/sundown-scm-1.rockspec || exit 1
+cd ${THIS_DIR}/pkg/cwrap && $PREFIX/bin/luarocks make rocks/cwrap-scm-1.rockspec || exit 1
+cd ${THIS_DIR}/pkg/paths && $PREFIX/bin/luarocks make rocks/paths-scm-1.rockspec || exit 1
+cd ${THIS_DIR}/pkg/torch && $PREFIX/bin/luarocks make rocks/torch-scm-1.rockspec || exit 1
+cd ${THIS_DIR}/pkg/dok && $PREFIX/bin/luarocks make rocks/dok-scm-1.rockspec || exit 1
 cd ${THIS_DIR}/pkg/gnuplot && $PREFIX/bin/luarocks make rocks/gnuplot-scm-1.rockspec
 cd ${THIS_DIR}/exe/qtlua && $PREFIX/bin/luarocks make rocks/qtlua-scm-1.rockspec
-cd ${THIS_DIR}/exe/trepl && $PREFIX/bin/luarocks make
-cd ${THIS_DIR}/exe/env && $PREFIX/bin/luarocks make
-cd ${THIS_DIR}/pkg/sys && $PREFIX/bin/luarocks make sys-1.1-0.rockspec
-cd ${THIS_DIR}/pkg/xlua && $PREFIX/bin/luarocks make xlua-1.0-0.rockspec
-cd ${THIS_DIR}/extra/nn && $PREFIX/bin/luarocks make rocks/nn-scm-1.rockspec
+cd ${THIS_DIR}/exe/trepl && $PREFIX/bin/luarocks make || exit 1
+cd ${THIS_DIR}/exe/env && $PREFIX/bin/luarocks make || exit 1
+cd ${THIS_DIR}/pkg/sys && $PREFIX/bin/luarocks make sys-1.1-0.rockspec || exit 1
+cd ${THIS_DIR}/pkg/xlua && $PREFIX/bin/luarocks make xlua-1.0-0.rockspec || exit 1
+cd ${THIS_DIR}/extra/nn && $PREFIX/bin/luarocks make rocks/nn-scm-1.rockspec || exit 1
 cd ${THIS_DIR}/extra/nnx && $PREFIX/bin/luarocks make nnx-0.1-1.rockspec
 
 if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
-    cd ${THIS_DIR}/extra/cutorch && $PREFIX/bin/luarocks make rocks/cutorch-scm-1.rockspec
-    cd ${THIS_DIR}/extra/cunn && $PREFIX/bin/luarocks make rocks/cunn-scm-1.rockspec
+    cd ${THIS_DIR}/extra/cutorch && $PREFIX/bin/luarocks make rocks/cutorch-scm-1.rockspec || exit 1
+    cd ${THIS_DIR}/extra/cunn && $PREFIX/bin/luarocks make rocks/cunn-scm-1.rockspec || exit 1
     cd ${THIS_DIR}/extra/cunnx && $PREFIX/bin/luarocks make rocks/cunnx-scm-1.rockspec
     cd ${THIS_DIR}/extra/cudnn && $PREFIX/bin/luarocks make cudnn-scm-1.rockspec
 fi
 
 cd ${THIS_DIR}/pkg/qttorch && $PREFIX/bin/luarocks make rocks/qttorch-scm-1.rockspec
-cd ${THIS_DIR}/pkg/image && $PREFIX/bin/luarocks make image-1.1.alpha-0.rockspec
-cd ${THIS_DIR}/pkg/optim && $PREFIX/bin/luarocks make optim-1.0.5-0.rockspec
+cd ${THIS_DIR}/pkg/image && $PREFIX/bin/luarocks make image-1.1.alpha-0.rockspec || exit 1
+cd ${THIS_DIR}/pkg/optim && $PREFIX/bin/luarocks make optim-1.0.5-0.rockspec || exit 1
 cd ${THIS_DIR}/extra/sdl2 && $PREFIX/bin/luarocks make rocks/sdl2-scm-1.rockspec
 cd ${THIS_DIR}/extra/threads && $PREFIX/bin/luarocks make rocks/threads-scm-1.rockspec
 cd ${THIS_DIR}/extra/graphicsmagick && $PREFIX/bin/luarocks make graphicsmagick-1.scm-0.rockspec
@@ -114,13 +114,13 @@ elif [[ $(echo $SHELL | grep zsh) ]]; then
 else
     echo "
 
-Non-standard shell $SHELL detected. You might want to 
+Non-standard shell $SHELL detected. You might want to
 add the following lines to your shell profile:
 
 $setup_lua_env_cmd
 export PATH=$PREFIX/bin:\$PATH
-export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH 
-export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH 
+export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH
 "
 fi
 
@@ -172,12 +172,12 @@ else
     echo "
 
 Not updating your shell profile.
-You might want to 
+You might want to
 add the following lines to your shell profile:
 
 $setup_lua_env_cmd
 export PATH=$PREFIX/bin:\$PATH
-export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH 
-export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH 
+export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH
 "
 fi
