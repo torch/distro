@@ -12,9 +12,9 @@ git clone https://github.com/torch/distro.git ~/torch --recursive
 cd ~/torch; ./install.sh
 ```
 
-Now, everything should be installed. Source your profile, or open a new shell
+Now, everything should be installed. Either open a new shell, or source your profile via
 ```sh
-source ~/.bashrc  # or ~/.zshrc.
+. ~/.bashrc  # or: . ~/.zshrc
 th -e "print 'I just installed Torch! Yesss.'"
 ```
 
