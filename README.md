@@ -3,7 +3,7 @@ Self-contained Torch installation
 
 Install dependencies. Uses `apt-get` on Ubuntu, which might require `sudo`. Uses `brew` on OSX.
 ```sh
-curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-deps | bash
+curl -s https://raw.githubusercontent.com/torch/ezinstall/master/install-deps | bash
 ```
 
 Install this repo, which installs the torch distribution, with a lot of nice goodies.
