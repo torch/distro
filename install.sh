@@ -104,6 +104,13 @@ cd ${THIS_DIR}/extra/signal && $PREFIX/bin/luarocks make rocks/signal-scm-1.rock
 export PATH=$OLDPATH # Restore anaconda distribution if we took it out.
 cd ${THIS_DIR}/extra/iTorch && $PREFIX/bin/luarocks make
 
+cat <<EOF >$PREFIX/bin/torch-activate
+$setup_lua_env_cmd
+export PATH=$PREFIX/bin:\$PATH
+export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH
+EOF
+chmod +x $PREFIX/bin/torch-activate
 
 RC_FILE=0
 DEFAULT=yes
@@ -117,10 +124,7 @@ else
 Non-standard shell $SHELL detected. You might want to
 add the following lines to your shell profile:
 
-$setup_lua_env_cmd
-export PATH=$PREFIX/bin:\$PATH
-export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH
-export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH
+. $PREFIX/bin/torch-activate
 "
 fi
 
@@ -157,16 +161,10 @@ fi
 if [[ $WRITE_PATH_TO_PROFILE == 1 ]]; then
     echo "
 
-$setup_lua_env_cmd
-export PATH=$PREFIX/bin:\$PATH  # Added automatically by torch-dist
-export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH  # Added automatically by torch-dist
-export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH  # Added automatically by torch-dist" >> $RC_FILE
+. $PREFIX/bin/torch-activate" >> $RC_FILE
     echo "
 
-$setup_lua_env_cmd
-export PATH=$PREFIX/bin:\$PATH  # Added automatically by torch-dist
-export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH  # Added automatically by torch-dist
-export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH  # Added automatically by torch-dist" >> $HOME/.profile
+. $PREFIX/bin/torch-activate" >> $HOME/.profile
 
 else
     echo "
@@ -175,9 +173,6 @@ Not updating your shell profile.
 You might want to
 add the following lines to your shell profile:
 
-$setup_lua_env_cmd
-export PATH=$PREFIX/bin:\$PATH
-export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH
-export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH
+. $PREFIX/bin/torch-activate
 "
 fi
