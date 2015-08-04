@@ -81,6 +81,8 @@ cd ${THIS_DIR}/pkg/sys && $PREFIX/bin/luarocks make sys-1.1-0.rockspec || exit 1
 cd ${THIS_DIR}/pkg/xlua && $PREFIX/bin/luarocks make xlua-1.0-0.rockspec || exit 1
 cd ${THIS_DIR}/extra/nn && $PREFIX/bin/luarocks make rocks/nn-scm-1.rockspec || exit 1
 cd ${THIS_DIR}/extra/nnx && $PREFIX/bin/luarocks make nnx-0.1-1.rockspec
+cd ${THIS_DIR}/extra/graph && $PREFIX/bin/luarocks make rocks/graph-scm-1.rockspec || exit 1
+cd ${THIS_DIR}/extra/nngraph && $PREFIX/bin/luarocks make || exit 1
 
 if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
