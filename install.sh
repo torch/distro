@@ -3,6 +3,7 @@
 THIS_DIR=$(cd $(dirname $0); pwd)
 PREFIX="${THIS_DIR}/install"
 BATCH_INSTALL=0
+TORCH_LUA_VERSION=${TORCH_LUA_VERSION:-"LUAJIT21"} # by default install LUAJIT21
 
 while getopts 'bh:' x; do
     case "$x" in
@@ -46,7 +47,8 @@ fi
 
 mkdir -p build
 cd build
-cmake .. -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_LUAJIT21=ON
+cmake .. -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_${TORCH_LUA_VERSION}=ON
+
 make && make install
 cd ..
 
