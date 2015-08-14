@@ -2,4 +2,4 @@
 
 THIS_DIR=$(cd $(dirname $0); pwd)
 find "${THIS_DIR}/" -type d -name build -o -name install \
-    | grep -v '/exe/luajit-rocks/' | xargs -r rm -r -f
+    | grep -v '/exe/luajit-rocks/' | xargs -I {} rm -rf {}
