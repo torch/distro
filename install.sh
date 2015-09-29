@@ -117,7 +117,11 @@ then
 fi
 
 export PATH=$OLDPATH # Restore anaconda distribution if we took it out.
-cd ${THIS_DIR}/extra/iTorch         && $PREFIX/bin/luarocks make
+if [[ `uname` == "Darwin" ]]; then
+    cd ${THIS_DIR}/extra/iTorch         && $PREFIX/bin/luarocks make OPENSSL_DIR=/usr/local/opt/openssl/
+else
+    cd ${THIS_DIR}/extra/iTorch         && $PREFIX/bin/luarocks make
+fi
 
 cat <<EOF >$PREFIX/bin/torch-activate
 $setup_lua_env_cmd
