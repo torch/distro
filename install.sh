@@ -1,22 +1,28 @@
 #!/usr/bin/env bash
 
-THIS_DIR=$(cd $(dirname $0); pwd)
-PREFIX="${THIS_DIR}/install"
+SKIP_RC=0
 BATCH_INSTALL=0
+
+THIS_DIR=$(cd $(dirname $0); pwd)
+PREFIX=${PREFIX:-"${THIS_DIR}/install"}
 TORCH_LUA_VERSION=${TORCH_LUA_VERSION:-"LUAJIT21"} # by default install LUAJIT21
 
-while getopts 'bh:' x; do
+while getopts 'bsh:' x; do
     case "$x" in
         h)
             echo "usage: $0
 This script will install Torch and related, useful packages into $PREFIX.
 
     -b      Run without requesting any user input (will automatically add PATH to shell profile)
+    -s      Skip adding the PATH to shell profile
 "
             exit 2
             ;;
         b)
             BATCH_INSTALL=1
+            ;;
+        s)
+            SKIP_RC=1
             ;;
     esac
 done
@@ -121,6 +127,10 @@ if [[ `uname` == "Darwin" ]]; then
     cd ${THIS_DIR}/extra/iTorch         && $PREFIX/bin/luarocks make OPENSSL_DIR=/usr/local/opt/openssl/
 else
     cd ${THIS_DIR}/extra/iTorch         && $PREFIX/bin/luarocks make
+fi
+
+if [[ $SKIP_RC == 1 ]]; then
+  exit 0
 fi
 
 cat <<EOF >$PREFIX/bin/torch-activate
