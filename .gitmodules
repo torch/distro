@@ -94,3 +94,6 @@
 [submodule "extra/nngraph"]
 	path = extra/nngraph
 	url = https://github.com/torch/nngraph
+[submodule "extra/luaffifb"]
+	path = extra/luaffifb
+	url = https://github.com/facebook/luaffifb
