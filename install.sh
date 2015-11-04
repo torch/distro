@@ -100,6 +100,11 @@ then
     cd ${THIS_DIR}/extra/cunn    && $PREFIX/bin/luarocks make rocks/cunn-scm-1.rockspec    || exit 1
 fi
 
+# if installing vanilla lua, install luaffifb
+if [ ${TORCH_LUA_VERSION} == "LUA51" ] || [ ${TORCH_LUA_VERSION} == "LUA52" ] ; then
+    cd ${THIS_DIR}/extra/luaffifb && $PREFIX/bin/luarocks make
+fi
+
 # Optional packages
 echo "Installing optional Torch packages"
 cd ${THIS_DIR}/pkg/gnuplot          && $PREFIX/bin/luarocks make rocks/gnuplot-scm-1.rockspec
