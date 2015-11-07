@@ -42,6 +42,7 @@ addons:
     - libsox-dev
     - libsox-fmt-all
     - libgraphicsmagick1-dev
+    - graphicsmagick
 before_script: 
 - export ROOT_TRAVIS_DIR=$(pwd)
 - export INSTALL_PREFIX=~/torch/install
