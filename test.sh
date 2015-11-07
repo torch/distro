@@ -43,8 +43,10 @@ then
 fi
 
 # CUDA tests
+set +e 
 path_to_nvcc=$(which nvcc)
 path_to_nvidiasmi=$(which nvidia-smi)
+set -e 
 
 if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
@@ -56,4 +58,6 @@ then
     fi
     th -lcutorch -e "cutorch.test()"
     th -lcunn -e "nn.testcuda()"
+else
+    echo "CUDA not found"
 fi
