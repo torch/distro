@@ -37,6 +37,10 @@ addons:
     - unzip 
     - gnuplot
     - gnuplot-x11 
+    - libfftw3-dev 
+    - sox 
+    - libsox-dev
+    - libsox-fmt-all
 before_script: 
 - export ROOT_TRAVIS_DIR=$(pwd)
 - export INSTALL_PREFIX=~/torch/install
