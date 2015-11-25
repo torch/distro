@@ -51,6 +51,9 @@ if [[ `uname` == "Darwin" ]]; then
     export CXX=clang++
 fi
 
+# sudo apt-get install libcudnn4-dev
+# sudo apt-get install libhdf5-serial-dev
+# sudo apt-get install liblmdb-dev
 echo "Installing Lua version: ${TORCH_LUA_VERSION}"
 mkdir -p install
 mkdir -p build
@@ -104,6 +107,13 @@ fi
 if [ ${TORCH_LUA_VERSION} == "LUA51" ] || [ ${TORCH_LUA_VERSION} == "LUA52" ] ; then
     cd ${THIS_DIR}/extra/luaffifb && $PREFIX/bin/luarocks make
 fi
+
+#Support for Protobuf
+${LUAROCKS} install "https://raw.github.com/Sravan2j/lua-pb/master/lua-pb-scm-0.rockspec"
+# Lua Wrapper for LMDB (lightningmdb)
+${LUAROCKS} install lightningmdb LMDB_INCDIR=/usr/include LMDB_LIBDIR=/usr/lib/x86_64-linux-gnu
+
+${LUAROCKS} install "https://raw.github.com/deepmind/torch-hdf5/master/hdf5-0-0.rockspec"
 
 # Optional packages
 echo "Installing optional Torch packages"
