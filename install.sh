@@ -70,7 +70,7 @@ then
    install_name_tool -id ${PREFIX}/lib/libluajit.dylib ${PREFIX}/lib/libluajit.dylib
 fi
 
-setup_lua_env_cmd=$($PREFIX/bin/luarocks path --bin)
+setup_lua_env_cmd=$($PREFIX/bin/luarocks path)
 eval "$setup_lua_env_cmd"
 
 echo "Installing common Lua packages"
