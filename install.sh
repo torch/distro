@@ -100,10 +100,8 @@ then
     cd ${THIS_DIR}/extra/cunn    && $PREFIX/bin/luarocks make rocks/cunn-scm-1.rockspec    || exit 1
 fi
 
-# if installing vanilla lua, install luaffifb
-if [ ${TORCH_LUA_VERSION} == "LUA51" ] || [ ${TORCH_LUA_VERSION} == "LUA52" ] ; then
-    cd ${THIS_DIR}/extra/luaffifb && $PREFIX/bin/luarocks make
-fi
+# install luaffifb
+cd ${THIS_DIR}/extra/luaffifb && $PREFIX/bin/luarocks make
 
 # Optional packages
 echo "Installing optional Torch packages"
