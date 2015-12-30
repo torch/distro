@@ -136,11 +136,20 @@ if [[ $SKIP_RC == 1 ]]; then
   exit 0
 fi
 
+
+# Add C libs to LUA_CPATH
+if [[ `uname` == "Darwin" ]]; then
+    CLIB_LUA_CPATH=$PREFIX/lib/?.dylib
+else
+    CLIB_LUA_CPATH=$PREFIX/lib/?.so
+fi
+
 cat <<EOF >$PREFIX/bin/torch-activate
 $setup_lua_env_cmd
 export PATH=$PREFIX/bin:\$PATH
 export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH
 export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH
+export LUA_CPATH='$CLIB_LUA_CPATH;'\$LUA_CPATH
 EOF
 chmod +x $PREFIX/bin/torch-activate
 
