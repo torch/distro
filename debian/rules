@@ -4,25 +4,24 @@
 # test.sh fails for non-idential multi-GPU
 # fix pending : https://github.com/torch/cutorch/issues/239
 export CUDA_VISIBLE_DEVICES=0
-export LUAROCKS_ROOT=${CURDIR}/debian/tmp
-ROCKFLAGS="--tree=${LUAROCKS_ROOT}"
-export BUILD_DIR="${CURDIR}/build"
-export NATIVE_LUAROCKS="1"
+
+export BUILD_DIR=build
+# export NATIVE_LUAROCKS="1"
 export VERBOSE=1
-export BIN_DIR=${CURDIR}/debian/tmp/
+export BIN_DIR=debian/tmp/usr
+export LUAROCKS_ROOT=${CURDIR}/${BIN_DIR}
 
 %:
 	dh  $@ --with lua --build-system=cmake --parallel
 
 #	NATIVE_LUAROCKS="1"  dh  $@ --with lua --build-system=cmake --parallel
 
-# override_dh_auto_configure:
-
+override_dh_auto_configure:
 override_dh_auto_build:
 override_dh_auto_test:
 	echo Skipping : $@
 
 override_dh_auto_install:
 	mkdir -p ${BIN_DIR}
-#	PREFIX=${LUAROCKS_ROOT} ROCKFLAGS="--tree=${LUAROCKS_ROOT}" $(CURDIR)/install.sh -v -n -s -b
-	PREFIX=/usr $(CURDIR)/install.sh -v -s -b
+	PREFIX=${LUAROCKS_ROOT} ROCKFLAGS="--tree=${LUAROCKS_ROOT}" $(CURDIR)/install.sh -v -s -b
+#	PREFIX=/usr $(CURDIR)/install.sh -v -s -b

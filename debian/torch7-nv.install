@@ -9,7 +9,6 @@ usr/bin/th
 usr/bin/qlua
 usr/bin/lua2json
 usr/bin/json2lua
-usr/bin/torch-activate
 usr/bin/itorch
 usr/bin/luarocks-admin
 usr/bin/luajit

@@ -48,7 +48,7 @@ if [[ `uname` == 'Linux' ]]; then
     export CMAKE_LIBRARY_PATH=/opt/OpenBLAS/include:/opt/OpenBLAS/lib:$CMAKE_LIBRARY_PATH
 fi
 
-git submodule update --init --recursive
+# git submodule update --init --recursive
 
 # If we're on OS X, use clang
 if [[ `uname` == "Darwin" ]]; then
@@ -58,9 +58,9 @@ if [[ `uname` == "Darwin" ]]; then
     export CXX=clang++
 fi
 
-sudo apt-get install libcudnn4-dev
-sudo apt-get install libhdf5-serial-dev
-sudo apt-get install liblmdb-dev
+# sudo apt-get install libcudnn4-dev
+# sudo apt-get install libhdf5-serial-dev
+# sudo apt-get install liblmdb-dev
 
 echo "Installing Lua version: ${TORCH_LUA_VERSION}"
 
@@ -74,17 +74,18 @@ LUAROCKS="luarocks --tree=$PREFIX $VERBOSE"
 export LUA_INCDIR=/usr/include/luajit-2.0
 export SCRIPTS_DIR="${PREFIX}/bin"
 else
-cd build
+export LUA_INCDIR=${PREFIX}/include/luajit-2.0
+cd ${BUILD_DIR}
 echo "Installing Lua version: ${TORCH_LUA_VERSION}"
-cmake .. -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_${TORCH_LUA_VERSION}=ON 2>&1 >>$PREFIX/install.log || exit 1
-(make 2>&1 >>$PREFIX/install.log  || exit 1) && (make install 2>&1 >>$PREFIX/install.log || exit 1)
+# (cmake ${THIS_DIR} -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_${TORCH_LUA_VERSION}=ON  || exit 1)
+(cmake ${THIS_DIR} -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_${TORCH_LUA_VERSION}=ON  || exit 1)
+(make 2>&1  || exit 1) && (make install 2>&1  || exit 1)
 cd ..
 echo "Installing common Lua packages"
-$LUAROCKS install luafilesystem 2>&1 >> $PREFIX/install.log && echo "Installed luafilesystem"
-$LUAROCKS install penlight      2>&1 >> $PREFIX/install.log && echo "Installed penlight"
-$LUAROCKS install lua-cjson     2>&1 >> $PREFIX/install.log && echo "Installed lua-cjson"
-
-LUAROCKS="$PREFIX/bin/luarocks $VERBOSE"
+LUAROCKS="${PREFIX}/bin/luarocks $VERBOSE"
+$LUAROCKS install luafilesystem 2>&1 && echo "Installed luafilesystem"
+$LUAROCKS install penlight      2>&1  && echo "Installed penlight"
+$LUAROCKS install lua-cjson     2>&1  && echo "Installed lua-cjson"
 fi
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
