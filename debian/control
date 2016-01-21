@@ -14,10 +14,6 @@ Build-depends: debhelper(>=9), gfortran, dh-lua,
                libcudnn4-dev,libhdf5-serial-dev,liblmdb-dev,
 	       software-properties-common
 Standards-Version: 3.9.5
-Description: Scientific computing framework for machine learning algorithms.
- Scientific computing framework with wide support for machine learning
- algorithms. It uses Lua as a scripting interface and provides GPU acceleration
- for underlying computations.
 
 Package: torch7-nv
 Section: universe/tools
@@ -31,7 +27,7 @@ Depends: ${misc:Depends}, ${shlibs:Depends},
                nodejs, npm, ipython,
                libzmq3, libfftw3,
                cuda-curand-7-0, cuda-cublas-7-0, cuda-cudart-7-0, cuda-ld-conf-7-0,
-               libcudnn4,libhdf5-serial-dev,liblmdb-dev,
+               libcudnn4 (>=4.0.5), libhdf5-serial-dev,liblmdb-dev,
 	       software-properties-common
 Conflicts:libluajit-5.1-dev, luarocks, luajit, torch7, torch
 Description: NVidia Torch Bundle (with CUDA). Made for DIGITS.
