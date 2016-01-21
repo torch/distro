@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 SKIP_RC=0
-BATCH_INSTALL=0
+ATCH_INSTALL=0
 
 THIS_DIR=$(cd $(dirname $0); pwd)
 PREFIX=${PREFIX:-"${THIS_DIR}/install"}
@@ -74,7 +74,7 @@ LUAROCKS="luarocks --tree=$PREFIX $VERBOSE"
 export LUA_INCDIR=/usr/include/luajit-2.0
 export SCRIPTS_DIR="${PREFIX}/bin"
 else
-export LUA_INCDIR=${PREFIX}/include/luajit-2.0
+# export LUA_INCDIR=${PREFIX}/include/luajit-2.0
 cd ${BUILD_DIR}
 echo "Installing Lua version: ${TORCH_LUA_VERSION}"
 # (cmake ${THIS_DIR} -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_${TORCH_LUA_VERSION}=ON  || exit 1)
@@ -86,6 +86,7 @@ LUAROCKS="${PREFIX}/bin/luarocks $VERBOSE"
 $LUAROCKS install luafilesystem 2>&1 && echo "Installed luafilesystem"
 $LUAROCKS install penlight      2>&1  && echo "Installed penlight"
 $LUAROCKS install lua-cjson     2>&1  && echo "Installed lua-cjson"
+$LUAROCKS install lua-ffi     2>&1  && echo "Installed lua-cjson"
 fi
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
