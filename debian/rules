@@ -11,8 +11,8 @@ export BUILD_DIR=build
 export BIN_DIR=debian/tmp/usr
 export LUAROCKS_ROOT=${CURDIR}/${BIN_DIR}
 export LUADIR=${LUAROCKS_ROOT}/share/lua/5.1
-export LUAPATH="./?.lua;${CMAKE_CURRENT_SOURCE_DIR}/?.lua;${LUADIR}/?.lua;${LUA_PATH};"
-export LUACPATH="./?.so;${CMAKE_CURRENT_SOURCE_DIR}/?.so;${LUADIR}/?.so;${LUA_CPATH};"
+export LUAPATH="./?.lua;${LUADIR}/?.lua;${LUADIR}/?/init.lua;${LUA_PATH};"
+export LUACPATH="./?.so;${LUAROCKS_DIR}/lib/?.so;${LUA_CPATH};"
 
 %:
 	dh  $@ --with lua --build-system=cmake --parallel
