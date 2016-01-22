@@ -8,6 +8,7 @@ fix_path() {
 }
 
 mv $PREFIX/bin/luajit ./luajit.bak
+mv $PREFIX/bin/qlua ./qlua.bak
 
 for subdir in bin lib/luarocks share/lua share/cmake etc/luarocks ; do
  fix_path "$PREFIX/$subdir" "$PREFIX" "$INSTALLDIR"
@@ -15,3 +16,4 @@ for subdir in bin lib/luarocks share/lua share/cmake etc/luarocks ; do
 done
 
 mv  ./luajit.bak $PREFIX/bin/luajit
+mv  ./qlua.bak $PREFIX/bin/qlua
