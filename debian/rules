@@ -29,7 +29,7 @@ override_dh_auto_test:
 
 override_dh_auto_install:
 	mkdir -p ${BIN_DIR}
-	PREFIX=${LUAROCKS_ROOT} LUA_BINDIR=${LUA_BINDIR} LUA=${LUA} CMAKE_PREFIX_PATH=${LUAROCKS_ROOT} ROCKFLAGS="--tree=${LUAROCKS_ROOT}" LUA_PATH=${LUAPATH} LUA_CPATH=${LUACPATH} $(CURDIR)/install.sh -v -s -b -n
+	PREFIX=${LUAROCKS_ROOT} LUA_BINDIR=${LUABINDIR} LUA=luarocks CMAKE_PREFIX_PATH=${LUAROCKS_ROOT} ROCKFLAGS="--tree=${LUAROCKS_ROOT}" LUA_PATH=${LUAPATH} LUA_CPATH=${LUACPATH} $(CURDIR)/install.sh -v -s -b -n
 
 #   non-native luarocks (builing them)
 #	PREFIX=${LUAROCKS_ROOT} ROCKFLAGS="--tree=${LUAROCKS_ROOT}" $(CURDIR)/install.sh -v -s -b
