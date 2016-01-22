@@ -13,6 +13,7 @@ export LUAROCKS_ROOT=${CURDIR}/${BIN_DIR}
 export LUADIR=${LUAROCKS_ROOT}/share/lua/5.1
 export LUAPATH="./?.lua;${LUADIR}/?.lua;${LUADIR}/?/init.lua;${LUA_PATH};"
 export LUACPATH="./?.so;${LUAROCKS_DIR}/lib/?.so;${LUA_CPATH};"
+export CMAKE_MODULE_PATH="${LUAROCKS_ROOT}/share/cmake/torch ${CMAKE_MODULE_PATH}"
 
 %:
 	dh  $@ --with lua --build-system=cmake --parallel
