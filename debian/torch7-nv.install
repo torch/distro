@@ -6,6 +6,7 @@ usr/lib/libTHC.so                        /usr/lib/x86_64-linux-gnu
 usr/lib/libqlua.so                       /usr/lib/x86_64-linux-gnu
 usr/lib/libluaT.so                       /usr/lib/x86_64-linux-gnu
 usr/lib/libluajit.so                     /usr/lib/x86_64-linux-gnu
+usr/lib/libthreadsmain.so                /usr/lib/x86_64-linux-gnu
 usr/lib/libTH.so                         /usr/lib/x86_64-linux-gnu
 usr/lib/libqtlua.so                      /usr/lib/x86_64-linux-gnu
 usr/lib/luarocks
