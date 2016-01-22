@@ -86,7 +86,6 @@ LUAROCKS="${PREFIX}/bin/luarocks $VERBOSE"
 $LUAROCKS install luafilesystem 2>&1 && echo "Installed luafilesystem"
 $LUAROCKS install penlight      2>&1  && echo "Installed penlight"
 $LUAROCKS install lua-cjson     2>&1  && echo "Installed lua-cjson"
-$LUAROCKS install lua-ffi     2>&1  && echo "Installed lua-cjson"
 fi
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
@@ -113,6 +112,7 @@ cd ${THIS_DIR}/pkg/dok       && $LUAROCKS make rocks/dok-scm-1.rockspec     || e
 cd ${THIS_DIR}/exe/trepl     && $LUAROCKS make                              || exit 1
 cd ${THIS_DIR}/pkg/sys       && $LUAROCKS make sys-1.1-0.rockspec           || exit 1
 cd ${THIS_DIR}/pkg/xlua      && $LUAROCKS make xlua-1.0-0.rockspec          || exit 1
+cd ${THIS_DIR}/extra/luaffifb && $LUAROCKS make luaffi-scm-1.rockspec       || exit 1
 cd ${THIS_DIR}/extra/nn      && $LUAROCKS make rocks/nn-scm-1.rockspec      || exit 1
 cd ${THIS_DIR}/extra/graph   && $LUAROCKS make rocks/graph-scm-1.rockspec   || exit 1
 cd ${THIS_DIR}/extra/nngraph && $LUAROCKS make                              || exit 1
@@ -127,12 +127,10 @@ then
     cd ${THIS_DIR}/extra/cunn    && $LUAROCKS make rocks/cunn-scm-1.rockspec    || exit 1
 fi
 
-# if installing vanilla lua, install luaffifb
-if [ ${TORCH_LUA_VERSION} == "LUA51" ] || [ ${TORCH_LUA_VERSION} == "LUA52" ] ; then
-    cd ${THIS_DIR}/extra/luaffifb && $LUAROCKS make
-fi
+
 
 #Support for Protobuf
+https://github.com/Neopallium/lua-pb/blob/master/lua-pb-scm-0.rockspec
 ${LUAROCKS} install "https://raw.github.com/Sravan2j/lua-pb/master/lua-pb-scm-0.rockspec"
 # Lua Wrapper for LMDB (lightningmdb)
 ${LUAROCKS} install lightningmdb LMDB_INCDIR=/usr/include LMDB_LIBDIR=/usr/lib/x86_64-linux-gnu
