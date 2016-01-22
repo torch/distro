@@ -31,7 +31,7 @@ override_dh_auto_test:
 override_dh_auto_install:
 	echo "My environment"
 	env
-	sudo PREFIX=${LUAROCKS_ROOT} LUA_BINDIR=${LUABINDIR} LUA=luarocks CMAKE_PREFIX_PATH=${LUAROCKS_ROOT} $(CURDIR)/install.sh -v -s -b -n
+	PREFIX=${LUAROCKS_ROOT} LUA_BINDIR=${LUABINDIR} LUA=luarocks CMAKE_PREFIX_PATH=${LUAROCKS_ROOT} $(CURDIR)/install.sh -v -s -b -n
 	rm -fr ${CURDIR}/${BIN_DIR}
 	ln -s /usr ${CURDIR}/${BIN_DIR}
 #	PREFIX=${LUAROCKS_ROOT} LUA_BINDIR=${LUABINDIR} LUA=luarocks CMAKE_PREFIX_PATH=${LUAROCKS_ROOT} ROCKFLAGS="--tree=${LUAROCKS_ROOT}" LUA_PATH=${LUAPATH} LUA_CPATH=${LUACPATH} $(CURDIR)/install.sh -v -s -b -n
