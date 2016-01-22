@@ -9,7 +9,8 @@ export BUILD_DIR=build
 # export NATIVE_LUAROCKS="1"
 # export VERBOSE=1
 export BIN_DIR=debian/tmp/usr
-export LUAROCKS_ROOT=${CURDIR}/${BIN_DIR}
+#export LUAROCKS_ROOT=${CURDIR}/${BIN_DIR}
+export LUAROCKS_ROOT=/usr
 export LUADIR=${LUAROCKS_ROOT}/share/lua/5.1
 export LUAPATH="./?.lua;${LUADIR}/?.lua;${LUADIR}/?/init.lua;${LUA_PATH};"
 export LUACPATH="./?.so;${LUAROCKS_DIR}/lib/?.so;${LUA_CPATH};"
@@ -28,8 +29,11 @@ override_dh_auto_test:
 	echo Skipping : $@
 
 override_dh_auto_install:
-	mkdir -p ${BIN_DIR}
-	PREFIX=${LUAROCKS_ROOT} LUA_BINDIR=${LUABINDIR} LUA=luarocks CMAKE_PREFIX_PATH=${LUAROCKS_ROOT} ROCKFLAGS="--tree=${LUAROCKS_ROOT}" LUA_PATH=${LUAPATH} LUA_CPATH=${LUACPATH} $(CURDIR)/install.sh -v -s -b -n
+	echo "My environment"
+	env
+	PREFIX=${LUAROCKS_ROOT} LUA_BINDIR=${LUABINDIR} LUA=luarocks CMAKE_PREFIX_PATH=${LUAROCKS_ROOT} $(CURDIR)/install.sh -v -s -b -n
+
+#	PREFIX=${LUAROCKS_ROOT} LUA_BINDIR=${LUABINDIR} LUA=luarocks CMAKE_PREFIX_PATH=${LUAROCKS_ROOT} ROCKFLAGS="--tree=${LUAROCKS_ROOT}" LUA_PATH=${LUAPATH} LUA_CPATH=${LUACPATH} $(CURDIR)/install.sh -v -s -b -n
 
 #   non-native luarocks (builing them)
 #	PREFIX=${LUAROCKS_ROOT} ROCKFLAGS="--tree=${LUAROCKS_ROOT}" $(CURDIR)/install.sh -v -s -b
