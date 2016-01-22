@@ -15,6 +15,7 @@ export LUAPATH="./?.lua;${LUADIR}/?.lua;${LUADIR}/?/init.lua;${LUA_PATH};"
 export LUACPATH="./?.so;${LUAROCKS_DIR}/lib/?.so;${LUA_CPATH};"
 export CMPATH="${LUAROCKS_ROOT}/share/cmake/torch ${CMAKE_MODULE_PATH}"
 export SCRIPTS_DIR=${LUAROCKS_ROOT}/bin
+export LUA_BINDIR=${LUAROCKS_ROOT}/bin
 
 %:
 	dh  $@ --with lua --build-system=cmake --parallel
