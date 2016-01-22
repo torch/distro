@@ -7,7 +7,7 @@ export CUDA_VISIBLE_DEVICES=0
 
 export BUILD_DIR=build
 # export NATIVE_LUAROCKS="1"
-export VERBOSE=1
+# export VERBOSE=1
 export BIN_DIR=debian/tmp/usr
 export LUAROCKS_ROOT=${CURDIR}/${BIN_DIR}
 
