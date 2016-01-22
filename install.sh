@@ -72,6 +72,7 @@ LUAROCKS="luarocks --tree=$PREFIX $VERBOSE"
 # temporaruily, until all the rocks are fixed
 # we are exporting variables needed for correct location of includes here
 export LUA_INCDIR=/usr/include/luajit-2.0
+export LUA=luajit
 export SCRIPTS_DIR="${PREFIX}/bin"
 else
 # export LUA_INCDIR=${PREFIX}/include/luajit-2.0
@@ -81,12 +82,14 @@ echo "Installing Lua version: ${TORCH_LUA_VERSION}"
 (cmake ${THIS_DIR} -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_${TORCH_LUA_VERSION}=ON  || exit 1)
 (make 2>&1  || exit 1) && (make install 2>&1  || exit 1)
 cd ..
-echo "Installing common Lua packages"
 LUAROCKS="${PREFIX}/bin/luarocks $VERBOSE"
+fi
+
+echo "Installing common Lua packages"
+echo "Using luarocks: ${LUAROCKS}"
 $LUAROCKS install luafilesystem 2>&1 && echo "Installed luafilesystem"
 $LUAROCKS install penlight      2>&1  && echo "Installed penlight"
 $LUAROCKS install lua-cjson     2>&1  && echo "Installed lua-cjson"
-fi
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
 path_to_nvcc=$(which nvcc)
@@ -106,8 +109,7 @@ eval "$setup_lua_env_cmd"
 echo "Installing core Torch packages"
 cd ${THIS_DIR}/pkg/sundown   && $LUAROCKS make rocks/sundown-scm-1.rockspec || exit 1
 cd ${THIS_DIR}/pkg/cwrap     && $LUAROCKS make rocks/cwrap-scm-1.rockspec   || exit 1
-$LUAROCKS install paths     2>&1  && echo "Installed paths"
-# cd ${THIS_DIR}/pkg/paths     && $LUAROCKS make rocks/paths-scm-1.rockspec   || exit 1
+cd ${THIS_DIR}/pkg/paths     && $LUAROCKS make rocks/paths-scm-1.rockspec   || exit 1
 cd ${THIS_DIR}/pkg/torch     && $LUAROCKS make rocks/torch-scm-1.rockspec   || exit 1
 cd ${THIS_DIR}/pkg/dok       && $LUAROCKS make rocks/dok-scm-1.rockspec     || exit 1
 cd ${THIS_DIR}/exe/trepl     && $LUAROCKS make                              || exit 1
