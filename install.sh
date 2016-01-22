@@ -114,7 +114,8 @@ cd ${THIS_DIR}/pkg/paths     && $LUAROCKS make rocks/paths-scm-1.rockspec   || e
 cd ${THIS_DIR}/pkg/torch     && $LUAROCKS make rocks/torch-scm-1.rockspec   || exit 1
 cd ${THIS_DIR}/pkg/dok       && $LUAROCKS make rocks/dok-scm-1.rockspec     || exit 1
 cd ${THIS_DIR}/exe/trepl     && $LUAROCKS make                              || exit 1
-cd ${THIS_DIR}/pkg/sys       && $LUAROCKS make sys-1.1-0.rockspec           || exit 1
+# cd ${THIS_DIR}/pkg/sys       && $LUAROCKS make sys-1.1-0.rockspec           || exit 1
+cd ${THIS_DIR}/pkg/sys       && cmake install          || exit 1
 cd ${THIS_DIR}/pkg/xlua      && $LUAROCKS make xlua-1.0-0.rockspec          || exit 1
 cd ${THIS_DIR}/extra/luaffifb && $LUAROCKS make luaffi-scm-1.rockspec       || exit 1
 cd ${THIS_DIR}/extra/nn      && $LUAROCKS make rocks/nn-scm-1.rockspec      || exit 1
