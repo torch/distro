@@ -24,4 +24,4 @@ override_dh_auto_test:
 override_dh_auto_install:
 	mkdir -p ${BIN_DIR}
 	PREFIX=${LUAROCKS_ROOT} ROCKFLAGS="--tree=${LUAROCKS_ROOT}" $(CURDIR)/install.sh -v -s -b
-#	PREFIX=/usr $(CURDIR)/install.sh -v -s -b
+	$(CURDIR)/scripts/post-install.sh ${LUAROCKS_ROOT} /usr
