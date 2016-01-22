@@ -10,6 +10,9 @@ export BUILD_DIR=build
 # export VERBOSE=1
 export BIN_DIR=debian/tmp/usr
 export LUAROCKS_ROOT=${CURDIR}/${BIN_DIR}
+export LUADIR=${LUAROCKS_ROOT}/share/lua/5.1
+export LUA_PATH="./?.lua;${CMAKE_CURRENT_SOURCE_DIR}/?.lua;${LUADIR}/?.lua;${LUA_PATH};")
+export LUA_CPATH="./?.so;${CMAKE_CURRENT_SOURCE_DIR}/?.so;${LUADIR}/?.so;${LUA_CPATH};")
 
 %:
 	dh  $@ --with lua --build-system=cmake --parallel
@@ -23,6 +26,9 @@ override_dh_auto_test:
 
 override_dh_auto_install:
 	mkdir -p ${BIN_DIR}
-	PREFIX=${LUAROCKS_ROOT} ROCKFLAGS="--tree=${LUAROCKS_ROOT}" $(CURDIR)/install.sh -v -s -b -n
+	PREFIX=${LUAROCKS_ROOT} ROCKFLAGS="--tree=${LUAROCKS_ROOT}" LUA_PATH=${LUA_PATH} LUA_PATH=${LUA_CPATH} $(CURDIR)/install.sh -v -s -b -n
+
+#   non-native luarocks (builing them)
+#	PREFIX=${LUAROCKS_ROOT} ROCKFLAGS="--tree=${LUAROCKS_ROOT}" $(CURDIR)/install.sh -v -s -b
 
 # $(CURDIR)/scripts/post-install.sh ${LUAROCKS_ROOT} /usr
