@@ -23,7 +23,7 @@ This script will install Torch and related, useful packages into $PREFIX.
             BATCH_INSTALL=1
             ;;
         v)
-            VERBOSE="--verbose"
+            export VERBOSE="--verbose"
             ;;
         n)
             TORCH_LUA_VERSION="NATIVE"
@@ -69,13 +69,14 @@ mkdir -p ${BUILD_DIR}
 
 if [[ "$TORCH_LUA_VERSION" == "NATIVE" ]]; then
 echo "Using NATIVE Lua version:"
-`which luarocks`
+
 export LUAROCKS="luarocks --tree=$PREFIX $VERBOSE"
 # temporaruily, until all the rocks are fixed
 # we are exporting variables needed for correct location of includes here
 export LUAJIT_INCDIR=/usr/include/luajit-2.0
 export LUA_INCDIR=/usr/include/lua5.1
 
+export CMAKE_C_FLAGS="-I${LUA_INCDIR} -I${LUAJIT_INCDIR} ${CMAKE_C_FLAGS}"
 export CFLAGS="-I${LUA_INCDIR} -I${LUAJIT_INCDIR} ${CFLAGS}"
 export LUA=luajit
 export SCRIPTS_DIR="${PREFIX}/bin"
@@ -91,11 +92,14 @@ cd ..
 LUAROCKS="${PREFIX}/bin/luarocks $VERBOSE"
 fi
 
+setup_lua_env_cmd=$($LUAROCKS path -bin)
+eval "$setup_lua_env_cmd"
+
 echo "Installing common Lua packages"
 echo "Using luarocks: ${LUAROCKS}"
-# $LUAROCKS install luafilesystem 2>&1 && echo "Installed luafilesystem"
-# $LUAROCKS install penlight      2>&1  && echo "Installed penlight"
-# $LUAROCKS install lua-cjson     2>&1  && echo "Installed lua-cjson"
+$LUAROCKS install luafilesystem 2>&1 && echo "Installed luafilesystem"
+$LUAROCKS install penlight      2>&1  && echo "Installed penlight"
+$LUAROCKS install lua-cjson     2>&1  && echo "Installed lua-cjson"
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
 path_to_nvcc=$(which nvcc)
@@ -107,9 +111,6 @@ if [ -x "$path_to_install_name_tool" ]
 then
    install_name_tool -id ${PREFIX}/lib/libluajit.dylib ${PREFIX}/lib/libluajit.dylib
 fi
-
-setup_lua_env_cmd=$($LUAROCKS path -bin)
-eval "$setup_lua_env_cmd"
 
 echo "Installing core Torch packages"
 cd ${THIS_DIR}/pkg/sundown   && $LUAROCKS make rocks/sundown-scm-1.rockspec || exit 1
@@ -134,7 +135,6 @@ then
     cd ${THIS_DIR}/extra/cutorch && $LUAROCKS make rocks/cutorch-scm-1.rockspec || exit 1
     cd ${THIS_DIR}/extra/cunn    && $LUAROCKS make rocks/cunn-scm-1.rockspec    || exit 1
 fi
-
 
 
 #Support for Protobuf
