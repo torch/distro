@@ -92,9 +92,9 @@ fi
 
 echo "Installing common Lua packages"
 echo "Using luarocks: ${LUAROCKS}"
-$LUAROCKS install luafilesystem 2>&1 && echo "Installed luafilesystem"
-$LUAROCKS install penlight      2>&1  && echo "Installed penlight"
-$LUAROCKS install lua-cjson     2>&1  && echo "Installed lua-cjson"
+# $LUAROCKS install luafilesystem 2>&1 && echo "Installed luafilesystem"
+# $LUAROCKS install penlight      2>&1  && echo "Installed penlight"
+# $LUAROCKS install lua-cjson     2>&1  && echo "Installed lua-cjson"
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
 path_to_nvcc=$(which nvcc)
@@ -107,8 +107,8 @@ then
    install_name_tool -id ${PREFIX}/lib/libluajit.dylib ${PREFIX}/lib/libluajit.dylib
 fi
 
-# setup_lua_env_cmd=$($LUAROCKS path -bin)
-# eval "$setup_lua_env_cmd"
+setup_lua_env_cmd=$($LUAROCKS path -bin)
+eval "$setup_lua_env_cmd"
 
 
 echo "Installing core Torch packages"
