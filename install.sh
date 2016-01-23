@@ -68,17 +68,18 @@ mkdir -p ${PREFIX}
 mkdir -p ${BUILD_DIR}
 
 if [[ "$TORCH_LUA_VERSION" == "NATIVE" ]]; then
-# export LUAROCKS="luarocks --tree=$PREFIX $VERBOSE"
-export LUAROCKS="luarocks $VERBOSE"
+echo "Using NATIVE Lua version:"
+`which luarocks`
+export LUAROCKS="luarocks --tree=$PREFIX $VERBOSE"
 # temporaruily, until all the rocks are fixed
 # we are exporting variables needed for correct location of includes here
-#export LUA_INCDIR=/usr/include/luajit-2.0
+export LUAJIT_INCDIR=/usr/include/luajit-2.0
 export LUA_INCDIR=/usr/include/lua5.1
-export INCLUDE=/usr/include/lua5.1
-export CFLAGS="-I${LUA_INCDIR}"
 
+export CFLAGS="-I${LUA_INCDIR} -I${LUAJIT_INCDIR}"
 export LUA=luajit
 export SCRIPTS_DIR="${PREFIX}/bin"
+
 else
 # export LUA_INCDIR=${PREFIX}/include/luajit-2.0
 cd ${BUILD_DIR}
@@ -109,7 +110,6 @@ fi
 
 setup_lua_env_cmd=$($LUAROCKS path -bin)
 eval "$setup_lua_env_cmd"
-
 
 echo "Installing core Torch packages"
 cd ${THIS_DIR}/pkg/sundown   && $LUAROCKS make rocks/sundown-scm-1.rockspec || exit 1

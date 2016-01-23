@@ -9,11 +9,10 @@ export BUILD_DIR=build
 
 export VERBOSE=1
 
-export DEBINSTROOT=debian/tmp/usr
-export INSTROOT=/usr/local
+export DEBINSTROOT=debian/tmp
+export INSTROOT=/usr
 
 export LUAROOT=${INSTROOT}
-
 
 export LUADIR=${LUAROOT}/share/lua/5.1
 export LUAPATH="./?.lua;${LUADIR}/?.lua;${LUADIR}/?/init.lua;${LUA_PATH};"
