@@ -106,8 +106,8 @@ then
    install_name_tool -id ${PREFIX}/lib/libluajit.dylib ${PREFIX}/lib/libluajit.dylib
 fi
 
-setup_lua_env_cmd=$($LUAROCKS path -bin)
-eval "$setup_lua_env_cmd"
+# setup_lua_env_cmd=$($LUAROCKS path -bin)
+# eval "$setup_lua_env_cmd"
 
 
 echo "Installing core Torch packages"
