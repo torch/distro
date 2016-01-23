@@ -36,7 +36,7 @@ override_dh_auto_install:
 	echo "My environment"
 	env
 	rm -fr ${DEBINSTROOT}
-	mkdir  ${DEBINSTROOT}
+	mkdir -p  ${DEBINSTROOT}
 	ln -s  ${LUAROOT} ${DEBINSTROOT}
 
 	PREFIX=${LUAROOT} LUA_BINDIR=${LUABINDIR} LUA=luajit CMAKE_PREFIX_PATH=${LUAROOT} \
