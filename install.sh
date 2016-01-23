@@ -76,7 +76,7 @@ export LUAROCKS="luarocks --tree=$PREFIX $VERBOSE"
 export LUAJIT_INCDIR=/usr/include/luajit-2.0
 export LUA_INCDIR=/usr/include/lua5.1
 
-export CFLAGS="-I${LUA_INCDIR} -I${LUAJIT_INCDIR}"
+export CFLAGS="-I${LUA_INCDIR} -I${LUAJIT_INCDIR} ${CFLAGS}"
 export LUA=luajit
 export SCRIPTS_DIR="${PREFIX}/bin"
 
