@@ -68,7 +68,7 @@ mkdir -p ${PREFIX}
 mkdir -p ${BUILD_DIR}
 
 if [[ "$TORCH_LUA_VERSION" == "NATIVE" ]]; then
-export LUAROCKS="luarocks --tree=$PREFIX $VERBOSE"
+# export LUAROCKS="luarocks --tree=$PREFIX $VERBOSE"
 # temporaruily, until all the rocks are fixed
 # we are exporting variables needed for correct location of includes here
 #export LUA_INCDIR=/usr/include/luajit-2.0
