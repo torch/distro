@@ -1,6 +1,13 @@
+torch7 (0.9.8) trusty; urgency=medium
+  * Syncing package with submodule heads
+
+ -- Boris Fomitchev <bfomitchev@nvidia.com>  Thu, 21 Jan 2016 15:18:00 -0800
+
 torch7 (0.9.7) trusty; urgency=medium
   * Syncing package with submodule heads
   * Picking up CuDNN 4.0.5 changes and dependency
+  * Moving to /usr
+
  -- Boris Fomitchev <bfomitchev@nvidia.com>  Thu, 21 Jan 2016 15:18:00 -0800
 
 torch7 (0.9.5) trusty; urgency=medium

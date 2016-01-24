@@ -22,7 +22,7 @@ export SCRIPTS_DIR=${LUAROOT}/bin
 export LUABINDIR=${LUAROOT}/bin
 
 %:
-	dh  $@ --with lua --build-system=cmake --parallel
+	dh  $@ --build-system=cmake --parallel
 
 #	NATIVE_LUAROCKS="1"  dh  $@ --with lua --build-system=cmake --parallel
 
@@ -38,8 +38,11 @@ override_dh_auto_install:
 	mkdir -p  ${DEBINSTROOT}
 	ln -s  ${LUAROOT} ${DEBINSTROOT}
 
-	PREFIX=${LUAROOT} LUA_BINDIR=${LUABINDIR} LUA=luajit SCRIPTS_DIR=${SCRIPTS_DIR} ROCKFLAGS="--tree=${LUAROOT}" CMAKE_PREFIX_PATH=${LUAROOT} \
-           LUA_PATH=${LUAPATH} LUA_CPATH=${LUACPATH} $(CURDIR)/install.sh -v -s -b -n
+#	PREFIX=${LUAROOT} LUA_BINDIR=${LUABINDIR} LUA=luajit SCRIPTS_DIR=${SCRIPTS_DIR} ROCKFLAGS="--tree=${LUAROOT}" CMAKE_PREFIX_PATH=${LUAROOT} \
+#          LUA_PATH=${LUAPATH} LUA_CPATH=${LUACPATH} $(CURDIR)/install.sh -v -s -b -n
+
+	PREFIX=${LUAROOT} LUA_BINDIR=${LUABINDIR} LUA=luajit SCRIPTS_DIR=${SCRIPTS_DIR}                               CMAKE_PREFIX_PATH=${LUAROOT} \
+           LUA_PATH=${LUAPATH} LUA_CPATH=${LUACPATH} $(CURDIR)/install.sh -v -s -b
 
 
 #	PREFIX=${LUAROCKS_ROOT} LUA_BINDIR=${LUABINDIR} LUA=luarocks CMAKE_PREFIX_PATH=${LUAROCKS_ROOT} ROCKFLAGS="--tree=${LUAROCKS_ROOT}" LUA_PATH=${LUAPATH} LUA_CPATH=${LUACPATH} $(CURDIR)/install.sh -v -s -b -n

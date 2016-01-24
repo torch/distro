@@ -2,7 +2,7 @@ Source: torch7
 Section: universe/science
 Maintainer: Soumith Chintala <soumith@fb.com>
 Priority: optional
-Build-depends: debhelper(>=9), gfortran, dh-lua,
+Build-depends: debhelper(>=9), gfortran,
                liblapack-dev, libopenblas-dev,
                libqt4-core, libqt4-dev, libqt4-gui,
 	       libreadline6, libreadline-dev, libncurses5,
@@ -22,9 +22,10 @@ Depends: ${misc:Depends}, ${shlibs:Depends},
                liblapack-dev, libopenblas-dev,
                libqt4-core, libqt4-gui,
 	       libreadline6, libncurses5,
-               libjpeg8, libpng12-0,
+               libjpeg8, libpng12-0, 
+               libgraphicsmagick1-dev, graphicsmagick,
                sox, libsox-dev, libsox-fmt-all,
-               nodejs, npm, ipython,
+               nodejs, npm, ipython, 
                libzmq3,
                cuda-curand-7-0, cuda-cublas-7-0, cuda-cudart-7-0, cuda-ld-conf-7-0,
                libcudnn4 (>=4.0.5), libhdf5-serial-dev,liblmdb-dev,

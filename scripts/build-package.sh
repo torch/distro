@@ -2,7 +2,8 @@
 
 # The envirinment set by create-ubuntu-environmens sscript is trusty, so we should match it.
 # Look at debian/gbp.conf for default optiuons sent to gbp.
-rm -r debian/tmp debian/*.log
+rm -rf ./install debian/tmp debian/*.log
+find . -not -samefile exe/luajit-rocks/luarocks/src/luarocks/build -name build | xargs rm -fr
 git commit -a -m 'Preparing for pbuild' && git push
 git clean -f
 
@@ -11,7 +12,7 @@ git clean -f
 #eval "$setup_lua_env_cmd"
 
 
-gbp buildpackage -nc --git-pbuilder --git-dist=nvidia $1 $2 $3 $4 $5 > ../torch-buildpackage.log 2>&1 &
+gbp buildpackage --git-pbuilder --git-dist=nvidia $1 $2 $3 $4 $5 > ../torch-buildpackage.log 2>&1 &
 
 tail -f ../torch-buildpackage.log
 
