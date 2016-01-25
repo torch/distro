@@ -64,12 +64,19 @@ cd ..
 cd build
 wget http://luarocks.org/releases/luarocks-2.3.0.tar.gz
 tar -xvzf luarocks-2.3.0.tar.gz
-if [[ $TORCH_LUA_VERSION == "LUAJIT21" ]]; then
-  ./configure --with-lua="{PREFIX}" --prefix="{PREFIX}" --lua-suffix="jit" --with-lua-include="{PREFIX}/include/luajit-2.1" --force-config
+cd luarocks-2.3.0
+#git clone https://github.com/keplerproject/luarocks.git
+#cd luarocks
+if [[ $TORCH_LUA_VERSION == "LUAJIT21" ]] || [[ $TORCH_LUA_VERSION == "SYSTEM_LUAJIT" ]]; then
+  ./configure --with-lua="${PREFIX}" --prefix="${PREFIX}" --lua-suffix="jit" --with-lua-include="${PREFIX}/include"
+  make build
+  make install
 else
-  echo "This script only working with LUAJIT21"
-  exit 0
-fi 
+  ./configure --with-lua="${PREFIX}" --prefix="${PREFIX}" --with-lua-include="${PREFIX}/include"
+  make build
+  make install
+fi
+cd ../.. 
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
 path_to_nvcc=$(which nvcc)
@@ -89,6 +96,9 @@ echo "Installing common Lua packages"
 $PREFIX/bin/luarocks install luafilesystem 2>&1 >> $PREFIX/install.log && echo "Installed luafilesystem"
 $PREFIX/bin/luarocks install penlight      2>&1 >> $PREFIX/install.log && echo "Installed penlight"
 $PREFIX/bin/luarocks install lua-cjson     2>&1 >> $PREFIX/install.log && echo "Installed lua-cjson"
+
+# install luaffifb
+cd ${THIS_DIR}/extra/luaffifb && $PREFIX/bin/luarocks make
 
 echo "Installing core Torch packages"
 cd ${THIS_DIR}/pkg/sundown   && $PREFIX/bin/luarocks make rocks/sundown-scm-1.rockspec || exit 1
@@ -111,9 +121,6 @@ then
     cd ${THIS_DIR}/extra/cutorch && $PREFIX/bin/luarocks make rocks/cutorch-scm-1.rockspec || exit 1
     cd ${THIS_DIR}/extra/cunn    && $PREFIX/bin/luarocks make rocks/cunn-scm-1.rockspec    || exit 1
 fi
-
-# install luaffifb
-cd ${THIS_DIR}/extra/luaffifb && $PREFIX/bin/luarocks make
 
 # Optional packages
 echo "Installing optional Torch packages"
