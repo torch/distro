@@ -51,6 +51,7 @@ if [[ `uname` == "Darwin" ]]; then
     export CXX=clang++
 fi
 
+# Install Lua/LuaJIT (w/o luarocks)
 echo "Installing Lua version: ${TORCH_LUA_VERSION}"
 mkdir -p install
 mkdir -p build
@@ -58,6 +59,17 @@ cd build
 cmake .. -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_${TORCH_LUA_VERSION}=ON 2>&1 >>$PREFIX/install.log || exit 1
 (make 2>&1 >>$PREFIX/install.log  || exit 1) && (make install 2>&1 >>$PREFIX/install.log || exit 1)
 cd ..
+
+# Install luarocks
+cd build
+wget http://luarocks.org/releases/luarocks-2.3.0.tar.gz
+tar -xvzf luarocks-2.3.0.tar.gz
+if [[ $TORCH_LUA_VERSION == "LUAJIT21" ]]; then
+  ./configure --with-lua="{PREFIX}" --prefix="{PREFIX}" --lua-suffix="jit" --with-lua-include="{PREFIX}/include/luajit-2.1" --force-config
+else
+  echo 'This script only working with LUAJIT21'
+  exit 0
+fi 
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
 path_to_nvcc=$(which nvcc)
