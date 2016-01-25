@@ -67,7 +67,7 @@ tar -xvzf luarocks-2.3.0.tar.gz
 if [[ $TORCH_LUA_VERSION == "LUAJIT21" ]]; then
   ./configure --with-lua="{PREFIX}" --prefix="{PREFIX}" --lua-suffix="jit" --with-lua-include="{PREFIX}/include/luajit-2.1" --force-config
 else
-  echo 'This script only working with LUAJIT21'
+  echo "This script only working with LUAJIT21"
   exit 0
 fi 
 
