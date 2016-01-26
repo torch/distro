@@ -98,9 +98,9 @@ eval "$setup_lua_env_cmd"
 
 echo "Installing common Lua packages"
 echo "Using luarocks: ${LUAROCKS}"
-$LUAROCKS install luafilesystem 2>&1 && echo "Installed luafilesystem"
-$LUAROCKS install penlight      2>&1  && echo "Installed penlight"
-$LUAROCKS install lua-cjson     2>&1  && echo "Installed lua-cjson"
+$LUAROCKS install luafilesystem 2>&1 && echo "Installed luafilesystem"   || exit 1
+$LUAROCKS install penlight      2>&1  && echo "Installed penlight"       || exit 1
+$LUAROCKS install lua-cjson     2>&1  && echo "Installed lua-cjson"      || exit 1
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
 path_to_nvcc=$(which nvcc)
@@ -112,6 +112,17 @@ if [ -x "$path_to_install_name_tool" ]
 then
    install_name_tool -id ${PREFIX}/lib/libluajit.dylib ${PREFIX}/lib/libluajit.dylib
 fi
+
+
+#Support for Protobuf
+https://github.com/Neopallium/lua-pb/blob/master/lua-pb-scm-0.rockspec
+${LUAROCKS} install "https://raw.github.com/Sravan2j/lua-pb/master/lua-pb-scm-0.rockspec" || exit 1
+
+# Lua Wrapper for LMDB, latest from github (lightningmdb)
+${LUAROCKS} install https://raw.githubusercontent.com/shmul/lightningmdb/master/lightningmdb-scm-1.rockspec LMDB_INCDIR=/usr/include LMDB_LIBDIR=/usr/lib/x86_64-linux-gnu
+
+${LUAROCKS} install "https://raw.github.com/deepmind/torch-hdf5/master/hdf5-0-0.rockspec" || exit 1
+
 
 echo "Installing core Torch packages"
 
@@ -138,35 +149,26 @@ then
     cd ${THIS_DIR}/extra/cunn    && $LUAROCKS make rocks/cunn-scm-1.rockspec    || exit 1
 fi
 
-
-#Support for Protobuf
-https://github.com/Neopallium/lua-pb/blob/master/lua-pb-scm-0.rockspec
-${LUAROCKS} install "https://raw.github.com/Sravan2j/lua-pb/master/lua-pb-scm-0.rockspec"
-# Lua Wrapper for LMDB (lightningmdb)
-${LUAROCKS} install lightningmdb LMDB_INCDIR=/usr/include LMDB_LIBDIR=/usr/lib/x86_64-linux-gnu
-
-${LUAROCKS} install "https://raw.github.com/deepmind/torch-hdf5/master/hdf5-0-0.rockspec"
-
 # Optional packages
 echo "Installing optional Torch packages"
-cd ${THIS_DIR}/pkg/gnuplot          && $LUAROCKS make rocks/gnuplot-scm-1.rockspec
-cd ${THIS_DIR}/exe/env              && $LUAROCKS make
-cd ${THIS_DIR}/extra/nnx            && $LUAROCKS make nnx-0.1-1.rockspec
-cd ${THIS_DIR}/exe/qtlua            && $LUAROCKS make rocks/qtlua-scm-1.rockspec
-cd ${THIS_DIR}/pkg/qttorch          && $LUAROCKS make rocks/qttorch-scm-1.rockspec
-cd ${THIS_DIR}/extra/threads        && $LUAROCKS make rocks/threads-scm-1.rockspec
-cd ${THIS_DIR}/extra/graphicsmagick && $LUAROCKS make graphicsmagick-1.scm-0.rockspec
-cd ${THIS_DIR}/extra/argcheck       && $LUAROCKS make rocks/argcheck-scm-1.rockspec
-cd ${THIS_DIR}/extra/audio          && $LUAROCKS make audio-0.1-0.rockspec
-cd ${THIS_DIR}/extra/fftw3          && $LUAROCKS make rocks/fftw3-scm-1.rockspec
-cd ${THIS_DIR}/extra/signal         && $LUAROCKS make rocks/signal-scm-1.rockspec
+cd ${THIS_DIR}/pkg/gnuplot          && $LUAROCKS make rocks/gnuplot-scm-1.rockspec || exit 1
+cd ${THIS_DIR}/exe/env              && $LUAROCKS make || exit 1
+cd ${THIS_DIR}/extra/nnx            && $LUAROCKS make nnx-0.1-1.rockspec || exit 1
+cd ${THIS_DIR}/exe/qtlua            && $LUAROCKS make rocks/qtlua-scm-1.rockspec || exit 1
+cd ${THIS_DIR}/pkg/qttorch          && $LUAROCKS make rocks/qttorch-scm-1.rockspec || exit 1
+cd ${THIS_DIR}/extra/threads        && $LUAROCKS make rocks/threads-scm-1.rockspec || exit 1
+cd ${THIS_DIR}/extra/graphicsmagick && $LUAROCKS make graphicsmagick-1.scm-0.rockspec || exit 1
+cd ${THIS_DIR}/extra/argcheck       && $LUAROCKS make rocks/argcheck-scm-1.rockspec || exit 1
+cd ${THIS_DIR}/extra/audio          && $LUAROCKS make audio-0.1-0.rockspec || exit 1
+cd ${THIS_DIR}/extra/fftw3          && $LUAROCKS make rocks/fftw3-scm-1.rockspec || exit 1
+cd ${THIS_DIR}/extra/signal         && $LUAROCKS make rocks/signal-scm-1.rockspec || exit 1
 
 # Optional CUDA packages
 if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
     echo "Found CUDA on your machine. Installing optional CUDA packages"
-    cd ${THIS_DIR}/extra/cudnn   && $LUAROCKS make cudnn-scm-1.rockspec
-    cd ${THIS_DIR}/extra/cunnx   && $LUAROCKS make rocks/cunnx-scm-1.rockspec
+    cd ${THIS_DIR}/extra/cudnn   && $LUAROCKS make cudnn-scm-1.rockspec || exit 1
+    cd ${THIS_DIR}/extra/cunnx   && $LUAROCKS make rocks/cunnx-scm-1.rockspec || exit 1
 fi
 
 export PATH=$OLDPATH # Restore anaconda distribution if we took it out.
