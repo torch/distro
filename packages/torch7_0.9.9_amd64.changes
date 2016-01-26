@@ -1,0 +1,29 @@
+Format: 1.8
+Date: Tue, 26 Jan 2016 15:18:00 -0800
+Source: torch7
+Binary: torch7-nv
+Architecture: source amd64
+Version: 0.9.9
+Distribution: trusty
+Urgency: medium
+Maintainer: Soumith Chintala <soumith@fb.com>
+Changed-By: Boris Fomitchev <bfomitchev@nvidia.com>
+Description: 
+ torch7-nv  - NVidia Torch Bundle (with CUDA). Made for DIGITS.
+Changes: 
+ torch7 (0.9.9) trusty; urgency=medium
+ .
+   * Syncing package with submodule heads
+   * Fetching git head of lightingmdb
+Checksums-Sha1: 
+ ea7a2e4b45f61c25b5df8adbe559fc6cef1daaaa 939 torch7_0.9.9.dsc
+ 57e15e69a260dd4b6cd811907f49f5889a5f8913 18930196 torch7_0.9.9.tar.gz
+ bcd71f8a272bf2f20ec3abe15d4d071bd0c42e11 16566238 torch7-nv_0.9.9_amd64.deb
+Checksums-Sha256: 
+ cc1d20d97c938d967827fdaf4474acd793a1fa61a5b1d5d819d34193bae43ee0 939 torch7_0.9.9.dsc
+ f739012924b2090e758c1dcd9fd247c4f9239af747e1dae77a30b14235562d72 18930196 torch7_0.9.9.tar.gz
+ 7c750226a3da2f1da71ab26e9a16b729229257f63e8acc82a56b6c3803b61edd 16566238 torch7-nv_0.9.9_amd64.deb
+Files: 
+ 578d3a53d2162b3a7d5ef0c7f8b6417b 939 universe/science optional torch7_0.9.9.dsc
+ 2fecb29c0cab0b21d7f44cfea6b6c68a 18930196 universe/science optional torch7_0.9.9.tar.gz
+ b4a3f8392504abd30abf15e6c6c1e206 16566238 universe/tools optional torch7-nv_0.9.9_amd64.deb

@@ -71,7 +71,7 @@ if [[ "$TORCH_LUA_VERSION" == "NATIVE" ]]; then
 echo "Using NATIVE Lua version:"
 
 # export LUAROCKS="luarocks --tree=$PREFIX $VERBOSE"
-export LUAROCKS="luarocks --tree=$PREFIX $VERBOSE"
+export LUAROCKS="luarocks $VERBOSE"
 # temporaruily, until all the rocks are fixed
 # we are exporting variables needed for correct location of includes here
 export LUAJIT_INCDIR=/usr/include/luajit-2.0
@@ -121,8 +121,11 @@ ${LUAROCKS} install "https://raw.github.com/Sravan2j/lua-pb/master/lua-pb-scm-0.
 # Lua Wrapper for LMDB, latest from github (lightningmdb)
 ${LUAROCKS} install https://raw.githubusercontent.com/shmul/lightningmdb/master/lightningmdb-scm-1.rockspec LMDB_INCDIR=/usr/include LMDB_LIBDIR=/usr/lib/x86_64-linux-gnu
 
+#HDF5 filesystem support
 ${LUAROCKS} install "https://raw.github.com/deepmind/torch-hdf5/master/hdf5-0-0.rockspec" || exit 1
 
+#NCCL (experimantal) support
+${LUAROCKS} install "https://raw.githubusercontent.com/ngimel/nccl.torch/master/nccl-scm-1.rockspec" || exit 1
 
 echo "Installing core Torch packages"
 

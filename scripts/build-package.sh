@@ -2,7 +2,7 @@
 
 # The envirinment set by create-ubuntu-environmens sscript is trusty, so we should match it.
 # Look at debian/gbp.conf for default optiuons sent to gbp.
-rm -rf ./install debian/tmp debian/*.log
+rm -rf ./install debian/tmp debian/*.log extra/threads/build.luarocks
 find . -not -samefile exe/luajit-rocks/luarocks/src/luarocks/build -name build | xargs rm -fr
 git commit -a -m 'Preparing for pbuild' && git push
 git clean -f

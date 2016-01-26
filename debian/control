@@ -12,6 +12,7 @@ Build-depends: debhelper(>=9), gfortran,
                libzmq3-dev,
                cuda-curand-dev-7-0, cuda-cublas-dev-7-0, cuda-cudart-dev-7-0, cuda-ld-conf-7-0,
                libcudnn4-dev,libhdf5-serial-dev,liblmdb-dev,
+               
 	       software-properties-common
 Standards-Version: 3.9.5
 
@@ -29,8 +30,8 @@ Depends: ${misc:Depends}, ${shlibs:Depends},
                libzmq3,
                cuda-curand-7-0, cuda-cublas-7-0, cuda-cudart-7-0, cuda-ld-conf-7-0,
                libcudnn4 (>=4.0.5), libhdf5-serial-dev,liblmdb-dev,
-	       software-properties-common
-Conflicts:libluajit-5.1-dev, luarocks, luajit, torch7, torch
+	       software-properties-common, libluajit-5.1-dev,  luarocks, luajit
+Conflicts: torch7, torch, lua-cjson, lua-penlight, lua-filesystem
 Description: NVidia Torch Bundle (with CUDA). Made for DIGITS.
  Scientific computing framework with wide support for machine learning
  algorithms. It uses Lua as a scripting interface and provides GPU acceleration
