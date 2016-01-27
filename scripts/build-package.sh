@@ -12,7 +12,7 @@ git clean -f
 #eval "$setup_lua_env_cmd"
 
 
-gbp buildpackage --git-pbuilder --git-dist=nvidia $1 $2 $3 $4 $5 > ../torch-buildpackage.log 2>&1 &
+gbp buildpackage --git-pbuilder --git-dist=nvidia --git-no-create-orig $1 $2 $3 $4 $5 > ../torch-buildpackage.log 2>&1 &
 
 tail -f ../torch-buildpackage.log
 

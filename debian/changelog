@@ -1,5 +1,12 @@
+torch7 (0.9.92) trusty; urgency=medium
+  * Fixing cunn module
+
+ -- Boris Fomitchev <bfomitchev@nvidia.com>  Thu, 29 Jan 2016 15:18:00 -0800
+
 torch7 (0.9.91) trusty; urgency=medium
-  * Trying to use official packages
+  * Updating pb module
+  * Properly listing lua- package conflicts.
+  * Inculding Cuda 5.2 architecture.
 
  -- Boris Fomitchev <bfomitchev@nvidia.com>  Tue, 27 Jan 2016 15:18:00 -0800
 

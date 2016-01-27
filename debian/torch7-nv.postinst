@@ -1,10 +1,11 @@
 #!/bin/sh                                                                                                                                                                          
 set -e
 
-if [ ! -e /usr/local/lib/luarocks/rocks/manifest ]; then
+if [ ! -e /usr/local/lib/luarocks/rocks ]; then
         mkdir -p /usr/local/lib/luarocks/rocks/
-        luarocks-admin make_manifest
 fi
+
+luarocks-admin make_manifest
 
 #DEBHELPER#                                                                                                                                                                       
 ldconfig
