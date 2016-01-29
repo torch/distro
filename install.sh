@@ -73,9 +73,9 @@ setup_lua_env_cmd=$($PREFIX/bin/luarocks path)
 eval "$setup_lua_env_cmd"
 
 echo "Installing common Lua packages"
-$PREFIX/bin/luarocks install luafilesystem 2>&1 >> $PREFIX/install.log && echo "Installed luafilesystem"
-$PREFIX/bin/luarocks install penlight      2>&1 >> $PREFIX/install.log && echo "Installed penlight"
-$PREFIX/bin/luarocks install lua-cjson     2>&1 >> $PREFIX/install.log && echo "Installed lua-cjson"
+cd ${THIS_DIR}/extra/luafilesystem && $PREFIX/bin/luarocks make rockspecs/luafilesystem-1.6.3-1.rockspec || exit 1
+cd ${THIS_DIR}/extra/penlight && $PREFIX/bin/luarocks make || exit 1
+cd ${THIS_DIR}/extra/lua-cjson && $PREFIX/bin/luarocks make || exit 1
 
 echo "Installing core Torch packages"
 cd ${THIS_DIR}/pkg/sundown   && $PREFIX/bin/luarocks make rocks/sundown-scm-1.rockspec || exit 1
