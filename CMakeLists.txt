@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 ADD_SUBDIRECTORY(exe)
 
-# If this variable is defined, a pure cmake build is done end-to-end with no luarocks needed
-IF (DEFINED TORCH_DISTRO_CMAKE_BUILD)
+# If this variable is defined, a pure cmake build is done end-to-end with no luarocks
+IF (WITH_LUAROCKS STREQUAL OFF)
 
   # LUA_INCDIR - place where lua headers exist
   # LUA_LIBDIR - place where lua libraries exist
@@ -31,15 +31,24 @@ IF (DEFINED TORCH_DISTRO_CMAKE_BUILD)
      MESSAGE(STATUS "LIBDIR: ${LIBDIR}")
   ENDIF(NOT DEFINED ${LIBDIR})
 
-  ADD_SUBDIRECTORY(pkg)
-
   # add torch defs
-  SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_INSTALL_PREFIX}/share/cmake/torch)
+  # this is done to fake compliance with FIND_PACKAGE(Torch)
+  SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake"
+                        "${CMAKE_CURRENT_BINARY_DIR}/cmake" "${CMAKE_MODULE_PATH}")
+
+  # These are needed variables for all the ADD_TORCH_PACKAGE macros
+  INCLUDE_DIRECTORIES(${LUA_INCDIR})
   INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/pkg/torch/lib/TH")
   INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}/pkg/torch/lib/TH")
   INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/pkg/torch/lib/luaT")
   INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}/pkg/torch/lib/luaT")
+  SET(Torch_INSTALL_LUA_PATH_SUBDIR ${LUADIR})
+  SET(Torch_INSTALL_LUA_CPATH_SUBDIR ${LIBDIR})
+  SET(Torch_INSTALL_LIB ${LUA_LIBDIR})
+  SET(Torch_INSTALL_LIB_SUBDIR ${LUA_LIBDIR})
 
+  # Finally add the two directories
+  ADD_SUBDIRECTORY(pkg)
   ADD_SUBDIRECTORY(extra)
 
-ENDIF (DEFINED TORCH_DISTRO_CMAKE_BUILD)
+ENDIF (WITH_LUAROCKS STREQUAL OFF)
