@@ -10,3 +10,5 @@ rm -rf extra/threads/CMakeCache.txt
 rm -rf extra/threads/Makefile
 rm -rf extra/threads/cmake_install.cmake
 rm -rf extra/threads/install_manifest.txt
+
+rm -rf extra/luafilesystem/lfs.so
