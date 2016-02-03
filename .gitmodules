@@ -24,7 +24,7 @@
         branch = master
 [submodule "extra/cunn"]
 	path = extra/cunn
-	url = https://github.com/borisfom/cunn.git
+	url = https://github.com/torch/cunn.git
         branch = master
 [submodule "extra/cutorch"]
 	path = extra/cutorch
@@ -32,7 +32,7 @@
         branch = master
 [submodule "pkg/torch"]
 	path = pkg/torch
-	url = https://github.com/borisfom/torch7.git
+	url = https://github.com/torch/torch7.git
         branch = master
 [submodule "pkg/sundown"]
 	path = pkg/sundown
