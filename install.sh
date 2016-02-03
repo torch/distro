@@ -66,7 +66,11 @@ path_to_nvcc=$(which nvcc)
 path_to_install_name_tool=$(which install_name_tool 2>/dev/null)
 if [ -x "$path_to_install_name_tool" ]
 then
-   install_name_tool -id ${PREFIX}/lib/libluajit.dylib ${PREFIX}/lib/libluajit.dylib
+   if [ ${TORCH_LUA_VERSION} == "LUAJIT21" ] || [ ${TORCH_LUA_VERSION} == "LUAJIT20" ] ; then
+       install_name_tool -id ${PREFIX}/lib/libluajit.dylib ${PREFIX}/lib/libluajit.dylib
+   else
+       install_name_tool -id ${PREFIX}/lib/liblua.dylib ${PREFIX}/lib/liblua.dylib
+   fi
 fi
 
 setup_lua_env_cmd=$($PREFIX/bin/luarocks path)
