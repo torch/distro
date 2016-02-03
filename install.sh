@@ -81,7 +81,6 @@ export CMAKE_C_FLAGS="-I${LUA_INCDIR} -I${LUAJIT_INCDIR} ${CMAKE_C_FLAGS}"
 export CFLAGS="-I${LUA_INCDIR} -I${LUAJIT_INCDIR} ${CFLAGS}"
 export LUA=luajit
 export SCRIPTS_DIR="${PREFIX}/bin"
-
 else
 # export LUA_INCDIR=${PREFIX}/include/luajit-2.0
 cd ${BUILD_DIR}
@@ -156,7 +155,9 @@ cd ${THIS_DIR}/extra/signal         && $LUAROCKS make rocks/signal-scm-1.rockspe
 ${LUAROCKS} install "https://raw.githubusercontent.com/Neopallium/lua-pb/master/lua-pb-scm-0.rockspec" || exit 1
 
 # Lua Wrapper for LMDB, latest from github (lightningmdb)
-${LUAROCKS} install https://raw.githubusercontent.com/shmul/lightningmdb/master/lightningmdb-scm-1.rockspec LMDB_INCDIR=/usr/include LMDB_LIBDIR=/usr/lib/x86_64-linux-gnu
+# ${LUAROCKS} install https://raw.githubusercontent.com/shmul/lightningmdb/master/lightningmdb-scm-1.rockspec LMDB_INCDIR=/usr/include LMDB_LIBDIR=/usr/lib/x86_64-linux-gnu
+
+${LUAROCKS} install lightningmdb
 
 #HDF5 filesystem support
 ${LUAROCKS} install "https://raw.github.com/deepmind/torch-hdf5/master/hdf5-0-0.rockspec" || exit 1
