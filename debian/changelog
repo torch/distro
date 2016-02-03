@@ -1,4 +1,9 @@
 torch7 (0.9.92) trusty; urgency=medium
+  * Using standard luajit/luarocks
+
+ -- Boris Fomitchev <bfomitchev@nvidia.com>  Thu, 4 Feb 2016 15:18:00 -0800
+
+torch7 (0.9.92) trusty; urgency=medium
   * Fixing cunn module
 
  -- Boris Fomitchev <bfomitchev@nvidia.com>  Thu, 29 Jan 2016 15:18:00 -0800
