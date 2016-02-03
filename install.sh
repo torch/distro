@@ -78,6 +78,7 @@ cd ${THIS_DIR}/extra/penlight && $PREFIX/bin/luarocks make || exit 1
 cd ${THIS_DIR}/extra/lua-cjson && $PREFIX/bin/luarocks make || exit 1
 
 echo "Installing core Torch packages"
+cd ${THIS_DIR}/extra/luaffifb && $PREFIX/bin/luarocks make                             || exit 1
 cd ${THIS_DIR}/pkg/sundown   && $PREFIX/bin/luarocks make rocks/sundown-scm-1.rockspec || exit 1
 cd ${THIS_DIR}/pkg/cwrap     && $PREFIX/bin/luarocks make rocks/cwrap-scm-1.rockspec   || exit 1
 cd ${THIS_DIR}/pkg/paths     && $PREFIX/bin/luarocks make rocks/paths-scm-1.rockspec   || exit 1
@@ -86,7 +87,6 @@ cd ${THIS_DIR}/pkg/dok       && $PREFIX/bin/luarocks make rocks/dok-scm-1.rocksp
 cd ${THIS_DIR}/exe/trepl     && $PREFIX/bin/luarocks make                              || exit 1
 cd ${THIS_DIR}/pkg/sys       && $PREFIX/bin/luarocks make sys-1.1-0.rockspec           || exit 1
 cd ${THIS_DIR}/pkg/xlua      && $PREFIX/bin/luarocks make xlua-1.0-0.rockspec          || exit 1
-cd ${THIS_DIR}/extra/luaffifb && $PREFIX/bin/luarocks make                             || exit 1
 cd ${THIS_DIR}/extra/nn      && $PREFIX/bin/luarocks make rocks/nn-scm-1.rockspec      || exit 1
 cd ${THIS_DIR}/extra/graph   && $PREFIX/bin/luarocks make rocks/graph-scm-1.rockspec   || exit 1
 cd ${THIS_DIR}/extra/nngraph && $PREFIX/bin/luarocks make                              || exit 1
