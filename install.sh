@@ -117,6 +117,7 @@ echo "Installing core Torch packages"
 cd ${THIS_DIR}/pkg/sundown   && $LUAROCKS make rocks/sundown-scm-1.rockspec || exit 1
 cd ${THIS_DIR}/pkg/cwrap     && $LUAROCKS make rocks/cwrap-scm-1.rockspec   || exit 1
 cd ${THIS_DIR}/pkg/paths     && $LUAROCKS make rocks/paths-scm-1.rockspec   || exit 1
+echo "Luarocks is $LUAROCKS"
 cd ${THIS_DIR}/pkg/torch     && $LUAROCKS make rocks/torch-scm-1.rockspec   || exit 1
 cd ${THIS_DIR}/pkg/dok       && $LUAROCKS make rocks/dok-scm-1.rockspec     || exit 1
 cd ${THIS_DIR}/exe/trepl     && $LUAROCKS make                              || exit 1
