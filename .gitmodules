@@ -130,3 +130,12 @@
 	path = extra/luaffifb
 	url = https://github.com/facebook/luaffifb
         branch = master
+[submodule "extra/luafilesystem"]
+	path = extra/luafilesystem
+	url = https://github.com/keplerproject/luafilesystem.git
+[submodule "extra/penlight"]
+	path = extra/penlight
+	url = https://github.com/stevedonovan/Penlight.git
+[submodule "extra/lua-cjson"]
+	path = extra/lua-cjson
+	url = https://github.com/mpx/lua-cjson

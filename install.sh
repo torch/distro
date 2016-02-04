@@ -61,7 +61,6 @@ fi
 # sudo apt-get install libcudnn4-dev
 # sudo apt-get install libhdf5-serial-dev
 # sudo apt-get install liblmdb-dev
-
 echo "Installing Lua version: ${TORCH_LUA_VERSION}"
 
 mkdir -p ${PREFIX}
@@ -84,6 +83,7 @@ export SCRIPTS_DIR="${PREFIX}/bin"
 else
 # export LUA_INCDIR=${PREFIX}/include/luajit-2.0
 cd ${BUILD_DIR}
+
 echo "Installing Lua version: ${TORCH_LUA_VERSION}"
 # (cmake ${THIS_DIR} -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_${TORCH_LUA_VERSION}=ON  || exit 1)
 (cmake ${THIS_DIR} -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_${TORCH_LUA_VERSION}=ON  || exit 1)
@@ -103,13 +103,16 @@ $LUAROCKS install lua-cjson     2>&1  && echo "Installed lua-cjson"      || exit
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
 path_to_nvcc=$(which nvcc)
-path_to_nvidiasmi=$(which nvidia-smi)
 
 # check if we are on mac and fix RPATH for local install
 path_to_install_name_tool=$(which install_name_tool 2>/dev/null)
 if [ -x "$path_to_install_name_tool" ]
 then
-   install_name_tool -id ${PREFIX}/lib/libluajit.dylib ${PREFIX}/lib/libluajit.dylib
+   if [ ${TORCH_LUA_VERSION} == "LUAJIT21" ] || [ ${TORCH_LUA_VERSION} == "LUAJIT20" ] ; then
+       install_name_tool -id ${PREFIX}/lib/libluajit.dylib ${PREFIX}/lib/libluajit.dylib
+   else
+       install_name_tool -id ${PREFIX}/lib/liblua.dylib ${PREFIX}/lib/liblua.dylib
+   fi
 fi
 
 echo "Installing core Torch packages"
@@ -130,7 +133,7 @@ cd ${THIS_DIR}/extra/nngraph && $LUAROCKS make                              || e
 cd ${THIS_DIR}/pkg/image     && $LUAROCKS make image-1.1.alpha-0.rockspec   || exit 1
 cd ${THIS_DIR}/pkg/optim     && $LUAROCKS make optim-1.0.5-0.rockspec       || exit 1
 
-if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
+if [ -x "$path_to_nvcc" ]
 then
     echo "Found CUDA on your machine. Installing CUDA packages"
     export CUDA_ARCH_NAME=All
@@ -167,7 +170,7 @@ ${LUAROCKS} install "https://raw.github.com/deepmind/torch-hdf5/master/hdf5-0-0.
 # ${LUAROCKS} install "https://raw.githubusercontent.com/ngimel/nccl.torch/master/nccl-scm-1.rockspec" || exit 1
 
 # Optional CUDA packages
-if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
+if [ -x "$path_to_nvcc" ]
 then
     echo "Found CUDA on your machine. Installing optional CUDA packages"
     cd ${THIS_DIR}/extra/cudnn   && $LUAROCKS make cudnn-scm-1.rockspec || exit 1
