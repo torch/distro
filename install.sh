@@ -1,4 +1,4 @@
-!/usr/bin/env bash
+#!/usr/bin/env bash
 
 SKIP_RC=0
 BATCH_INSTALL=0
@@ -61,6 +61,7 @@ fi
 # sudo apt-get install libcudnn4-dev
 # sudo apt-get install libhdf5-serial-dev
 # sudo apt-get install liblmdb-dev
+
 echo "Installing Lua version: ${TORCH_LUA_VERSION}"
 
 mkdir -p ${PREFIX}
@@ -80,6 +81,7 @@ export CMAKE_C_FLAGS="-I${LUA_INCDIR} -I${LUAJIT_INCDIR} ${CMAKE_C_FLAGS}"
 export CFLAGS="-I${LUA_INCDIR} -I${LUAJIT_INCDIR} ${CFLAGS}"
 export LUA=luajit
 export SCRIPTS_DIR="${PREFIX}/bin"
+
 else
 # export LUA_INCDIR=${PREFIX}/include/luajit-2.0
 cd ${BUILD_DIR}
@@ -104,6 +106,7 @@ cd ${THIS_DIR}/extra/lua-cjson && $LUAROCKS make || exit 1
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
 path_to_nvcc=$(which nvcc)
+path_to_nvidiasmi=$(which nvidia-smi)
 
 # check if we are on mac and fix RPATH for local install
 path_to_install_name_tool=$(which install_name_tool 2>/dev/null)
@@ -134,7 +137,7 @@ cd ${THIS_DIR}/extra/nngraph && $LUAROCKS make                              || e
 cd ${THIS_DIR}/pkg/image     && $LUAROCKS make image-1.1.alpha-0.rockspec   || exit 1
 cd ${THIS_DIR}/pkg/optim     && $LUAROCKS make optim-1.0.5-0.rockspec       || exit 1
 
-if [ -x "$path_to_nvcc" ]
+if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
     echo "Found CUDA on your machine. Installing CUDA packages"
     export CUDA_ARCH_NAME=All
