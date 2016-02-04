@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+!/usr/bin/env bash
 
 SKIP_RC=0
 BATCH_INSTALL=0
@@ -97,9 +97,10 @@ eval "$setup_lua_env_cmd"
 
 echo "Installing common Lua packages"
 echo "Using luarocks: ${LUAROCKS}"
-$LUAROCKS install luafilesystem 2>&1 && echo "Installed luafilesystem"   || exit 1
-$LUAROCKS install penlight      2>&1  && echo "Installed penlight"       || exit 1
-$LUAROCKS install lua-cjson     2>&1  && echo "Installed lua-cjson"      || exit 1
+echo "Installing common Lua packages"
+cd ${THIS_DIR}/extra/luafilesystem && $LUAROCKS make rockspecs/luafilesystem-1.6.3-1.rockspec || exit 1
+cd ${THIS_DIR}/extra/penlight && $LUAROCKS make || exit 1
+cd ${THIS_DIR}/extra/lua-cjson && $LUAROCKS make || exit 1
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
 path_to_nvcc=$(which nvcc)

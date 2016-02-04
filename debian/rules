@@ -9,7 +9,7 @@ export BUILD_DIR=build
 
 export VERBOSE=1
 
-export DEBINSTROOT=debian/tmp
+export DEBINSTROOT=${CURDIR}/debian/tmp
 export INSTROOT=${DEBINSTROOT}
 
 export LUAROOT=${INSTROOT}
