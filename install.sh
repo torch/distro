@@ -141,7 +141,7 @@ if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
     echo "Found CUDA on your machine. Installing CUDA packages"
     export CUDA_ARCH_NAME=All
-    cd ${THIS_DIR}/extra/cutorch && $LUAROCKS make rocks/cutorch-scm-1.rockspec || exit 1
+    cd ${THIS_DIR}/extra/cutorch && $LUAROCKS make "CUTORCH_INCREMENTAL_BUILDS=1" rocks/cutorch-scm-1.rockspec || exit 1
     cd ${THIS_DIR}/extra/cunn    && $LUAROCKS make rocks/cunn-scm-1.rockspec    || exit 1
 fi
 

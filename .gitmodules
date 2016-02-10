@@ -32,7 +32,7 @@
         branch = master
 [submodule "pkg/torch"]
 	path = pkg/torch
-	url = https://github.com/torch/torch7.git
+	url = https://github.com/borisfom/torch7.git
         branch = master
 [submodule "pkg/sundown"]
 	path = pkg/sundown
@@ -139,3 +139,6 @@
 [submodule "extra/lua-cjson"]
 	path = extra/lua-cjson
 	url = https://github.com/mpx/lua-cjson
+[submodule "extra/FindCUDA"]
+	path = extra/FindCUDA
+	url = https://github.com/hughperkins/FindCUDA.git
