@@ -5,7 +5,8 @@ BATCH_INSTALL=0
 
 THIS_DIR=$(cd $(dirname $0); pwd)
 PREFIX=${PREFIX:-"${THIS_DIR}/install"}
-TORCH_LUA_VERSION=${TORCH_LUA_VERSION:-"LUAJIT21"} # by default install LUAJIT21
+TH_INSTALL_PREFIX=${PREFIX}
+TORCH_LUA_VERSION=${TORCH_LUA_VERION:-"LUAJIT21"} # by default install LUAJIT21
 
 while getopts 'bsvnh:' x; do
     case "$x" in
@@ -85,9 +86,9 @@ echo "LUALIB_NAME= ${LUALIB_NAME}"
 if [[ "$TORCH_LUA_VERSION" == "NATIVE" ]]; then
 echo "Using NATIVE Lua version:"
 
-# export LUAROCKS="luarocks --tree=$PREFIX $VERBOSE"
+export LUAROCKS="luarocks --tree=$PREFIX $VERBOSE"
 
-export LUAROCKS="luarocks $VERBOSE"
+# export LUAROCKS="luarocks $VERBOSE"
 # temporaruily, until all the rocks are fixed
 # we are exporting variables needed for correct location of includes here
 # export LUAJIT_INCDIR=/usr/include/luajit-2.0
