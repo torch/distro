@@ -1,4 +1,4 @@
-torch7 (0.9.92) trusty; urgency=medium
+torch7 (0.9.93) trusty; urgency=medium
   * Using standard luajit/luarocks
 
  -- Boris Fomitchev <bfomitchev@nvidia.com>  Thu, 4 Feb 2016 15:18:00 -0800
