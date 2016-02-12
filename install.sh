@@ -67,6 +67,7 @@ echo "Installing Lua version: ${TORCH_LUA_VERSION}"
 mkdir -p ${PREFIX}
 mkdir -p ${BUILD_DIR}
 
+
 if [[ "$TORCH_LUA_VERSION" == "NATIVE" ]]; then
  export LUALIB_NAME=lua5.1
 else
@@ -84,15 +85,17 @@ echo "LUALIB_NAME= ${LUALIB_NAME}"
 if [[ "$TORCH_LUA_VERSION" == "NATIVE" ]]; then
 echo "Using NATIVE Lua version:"
 
-export LUAROCKS="luarocks --tree=$PREFIX $VERBOSE"
-# export LUAROCKS="luarocks $VERBOSE"
+# export LUAROCKS="luarocks --tree=$PREFIX $VERBOSE"
+
+export LUAROCKS="luarocks $VERBOSE"
 # temporaruily, until all the rocks are fixed
 # we are exporting variables needed for correct location of includes here
 # export LUAJIT_INCDIR=/usr/include/luajit-2.0
 # export LUA_INCDIR=/usr/include/lua5.1
 
-#export CMAKE_C_FLAGS="-I${LUA_INCDIR} -I${LUAJIT_INCDIR} ${CMAKE_C_FLAGS}"
-export CFLAGS="-I${LUA_INCDIR} -I${LUAJIT_INCDIR} ${CFLAGS}"
+# export CMAKE_C_FLAGS="-I${LUA_INCDIR} -I${LUAJIT_INCDIR} ${CMAKE_C_FLAGS}"
+# export CFLAGS="-I${LUA_INCDIR} -I${LUAJIT_INCDIR} ${CFLAGS}"
+
 export LUA=luajit
 export SCRIPTS_DIR="${PREFIX}/bin"
 
