@@ -68,21 +68,36 @@ mkdir -p ${PREFIX}
 mkdir -p ${BUILD_DIR}
 
 if [[ "$TORCH_LUA_VERSION" == "NATIVE" ]]; then
+ export LUALIB_NAME=lua5.1
+else
+if [[ "$TORCH_LUA_VERSION" == "LUA51" ]]; then
+ export LUALIB_NAME=lua5.1
+else
+if [[ "$TORCH_LUA_VERSION" == "LUA52" ]]; then
+ export LUALIB_NAME=lua5.2
+fi
+fi
+fi
+
+echo "LUALIB_NAME= ${LUALIB_NAME}"
+
+if [[ "$TORCH_LUA_VERSION" == "NATIVE" ]]; then
 echo "Using NATIVE Lua version:"
 
 export LUAROCKS="luarocks --tree=$PREFIX $VERBOSE"
 # export LUAROCKS="luarocks $VERBOSE"
 # temporaruily, until all the rocks are fixed
 # we are exporting variables needed for correct location of includes here
-export LUAJIT_INCDIR=/usr/include/luajit-2.0
-export LUA_INCDIR=/usr/include/lua5.1
+# export LUAJIT_INCDIR=/usr/include/luajit-2.0
+# export LUA_INCDIR=/usr/include/lua5.1
 
-export CMAKE_C_FLAGS="-I${LUA_INCDIR} -I${LUAJIT_INCDIR} ${CMAKE_C_FLAGS}"
+#export CMAKE_C_FLAGS="-I${LUA_INCDIR} -I${LUAJIT_INCDIR} ${CMAKE_C_FLAGS}"
 export CFLAGS="-I${LUA_INCDIR} -I${LUAJIT_INCDIR} ${CFLAGS}"
 export LUA=luajit
 export SCRIPTS_DIR="${PREFIX}/bin"
 
 else
+
 # export LUA_INCDIR=${PREFIX}/include/luajit-2.0
 cd ${BUILD_DIR}
 
@@ -94,10 +109,25 @@ cd ..
 LUAROCKS="${PREFIX}/bin/luarocks --tree="${PREFIX}" $VERBOSE"
 fi
 
-setup_lua_env_cmd=$($LUAROCKS path -bin)
+
+#
+# lua/luajit do not accept --tree option, set environment
+#
+
+fix_path() {
+  $LUAROCKS path -bin | sed "s@$1@$2@ig"
+}
+
+setup_lua_env_cmd=`fix_path "${HOME}/.luarocks" "$PREFIX"`
+
 eval "$setup_lua_env_cmd"
 
-echo "Installing common Lua packages"
+echo "LUA_PATH: ${LUA_PATH}"
+
+export CMAKE_PREFIX_PATH=${PREFIX}
+
+# end environment setup
+
 echo "Using luarocks: ${LUAROCKS}"
 echo "Installing common Lua packages"
 cd ${THIS_DIR}/extra/luafilesystem && $LUAROCKS make rockspecs/luafilesystem-1.6.3-1.rockspec || exit 1
@@ -124,7 +154,6 @@ echo "Installing core Torch packages"
 cd ${THIS_DIR}/pkg/sundown   && $LUAROCKS make rocks/sundown-scm-1.rockspec || exit 1
 cd ${THIS_DIR}/pkg/cwrap     && $LUAROCKS make rocks/cwrap-scm-1.rockspec   || exit 1
 cd ${THIS_DIR}/pkg/paths     && $LUAROCKS make rocks/paths-scm-1.rockspec   || exit 1
-echo "Luarocks is $LUAROCKS"
 cd ${THIS_DIR}/pkg/torch     && $LUAROCKS make rocks/torch-scm-1.rockspec   || exit 1
 cd ${THIS_DIR}/pkg/dok       && $LUAROCKS make rocks/dok-scm-1.rockspec     || exit 1
 cd ${THIS_DIR}/exe/trepl     && $LUAROCKS make                              || exit 1
@@ -141,8 +170,9 @@ if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
     echo "Found CUDA on your machine. Installing CUDA packages"
     export CUDA_ARCH_NAME=All
-    cd ${THIS_DIR}/extra/cutorch && $LUAROCKS make "CUTORCH_INCREMENTAL_BUILDS=1" rocks/cutorch-scm-1.rockspec || exit 1
-    cd ${THIS_DIR}/extra/cunn    && $LUAROCKS make rocks/cunn-scm-1.rockspec    || exit 1
+    cd ${THIS_DIR}/extra/FindCUDA && $LUAROCKS make rocks/findcuda-scm-1.rockspec
+    cd ${THIS_DIR}/extra/cutorch  && $LUAROCKS  make "CUTORCH_INCREMENTAL_BUILDS=1" rocks/cutorch-scm-1.rockspec || exit 1
+    cd ${THIS_DIR}/extra/cunn     && $LUAROCKS  make rocks/cunn-scm-1.rockspec    || exit 1
 fi
 
 # Optional packages

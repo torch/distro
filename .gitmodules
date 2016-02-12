@@ -32,28 +32,24 @@
         branch = master
 [submodule "pkg/torch"]
 	path = pkg/torch
-	url = https://github.com/borisfom/torch7.git
-        branch = master
+	url = https://github.com/torch/torch7.git
 [submodule "pkg/sundown"]
 	path = pkg/sundown
 	url = https://github.com/torch/sundown-ffi.git
-        branch = master
 [submodule "pkg/qttorch"]
 	path = pkg/qttorch
 	url = https://github.com/torch/qttorch.git
-        branch = master
 [submodule "pkg/xlua"]
 	path = pkg/xlua
 	url = https://github.com/torch/xlua.git
         branch = master
 [submodule "pkg/sys"]
 	path = pkg/sys
-	url = https://github.com/torch/sys.git
+	url = https://github.com/borisfom/sys.git
         branch = master
 [submodule "pkg/image"]
 	path = pkg/image
 	url = https://github.com/torch/image.git
-        branch = master
 [submodule "pkg/optim"]
 	path = pkg/optim
 	url = https://github.com/torch/optim.git
@@ -76,8 +72,8 @@
         branch = master
 [submodule "extra/cudnn"]
 	path = extra/cudnn
-	url = https://github.com/borisfom/cudnn.torch.git
-        branch = R4
+	url = https://github.com/soumith/cudnn.torch.git
+        branch = master
 [submodule "exe/trepl"]
 	path = exe/trepl
 	url = https://github.com/torch/trepl.git
@@ -141,4 +137,4 @@
 	url = https://github.com/mpx/lua-cjson
 [submodule "extra/FindCUDA"]
 	path = extra/FindCUDA
-	url = https://github.com/hughperkins/FindCUDA.git
+	url = https://github.com/borisfom/FindCUDA.git
