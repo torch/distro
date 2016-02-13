@@ -6,6 +6,7 @@ BATCH_INSTALL=0
 THIS_DIR=$(cd $(dirname $0); pwd)
 PREFIX=${PREFIX:-"${THIS_DIR}/install"}
 TH_INSTALL_PREFIX=${PREFIX}
+
 TORCH_LUA_VERSION=${TORCH_LUA_VERION:-"LUAJIT21"} # by default install LUAJIT21
 
 while getopts 'bsvnh:' x; do
@@ -84,11 +85,11 @@ fi
 echo "LUALIB_NAME= ${LUALIB_NAME}"
 
 if [[ "$TORCH_LUA_VERSION" == "NATIVE" ]]; then
-echo "Using NATIVE Lua version:"
+# echo "Using NATIVE Lua version:"
 
-# export LUAROCKS="luarocks --tree=$PREFIX $VERBOSE"
+export LUAROCKS="luarocks --tree="$PREFIX/" $VERBOSE"
 
-export LUAROCKS="luarocks $VERBOSE"
+# export LUAROCKS="luarocks $VERBOSE"
 
 # temporaruily, until all the rocks are fixed
 # we are exporting variables needed for correct location of includes here
@@ -130,11 +131,12 @@ eval "$setup_lua_env_cmd"
 echo "LUA_PATH: ${LUA_PATH}"
 
 export CMAKE_PREFIX_PATH=${PREFIX}
+export CMAKE_INSTALL_PREFIX=${PREFIX}
 
 # end environment setup
 
 echo "Using luarocks: ${LUAROCKS}"
-echo "Installing common Lua packages"
+echo "Installing common Lua packages into ${TH_INSTALL_PREFIX}"
 cd ${THIS_DIR}/extra/luafilesystem && $LUAROCKS make rockspecs/luafilesystem-1.6.3-1.rockspec || exit 1
 cd ${THIS_DIR}/extra/penlight && $LUAROCKS make || exit 1
 cd ${THIS_DIR}/extra/lua-cjson && $LUAROCKS make || exit 1
@@ -185,8 +187,8 @@ echo "Installing optional Torch packages"
 cd ${THIS_DIR}/pkg/gnuplot          && $LUAROCKS make rocks/gnuplot-scm-1.rockspec || exit 1
 cd ${THIS_DIR}/exe/env              && $LUAROCKS make || exit 1
 cd ${THIS_DIR}/extra/nnx            && $LUAROCKS make nnx-0.1-1.rockspec || exit 1
-cd ${THIS_DIR}/exe/qtlua            && $LUAROCKS make rocks/qtlua-scm-1.rockspec || exit 1
-cd ${THIS_DIR}/pkg/qttorch          && $LUAROCKS make rocks/qttorch-scm-1.rockspec || exit 1
+#cd ${THIS_DIR}/exe/qtlua            && $LUAROCKS make rocks/qtlua-scm-1.rockspec || exit 1
+#cd ${THIS_DIR}/pkg/qttorch          && $LUAROCKS make rocks/qttorch-scm-1.rockspec || exit 1
 cd ${THIS_DIR}/extra/threads        && $LUAROCKS make rocks/threads-scm-1.rockspec || exit 1
 cd ${THIS_DIR}/extra/graphicsmagick && $LUAROCKS make graphicsmagick-1.scm-0.rockspec || exit 1
 cd ${THIS_DIR}/extra/argcheck       && $LUAROCKS make rocks/argcheck-scm-1.rockspec || exit 1
@@ -198,15 +200,15 @@ cd ${THIS_DIR}/extra/signal         && $LUAROCKS make rocks/signal-scm-1.rockspe
 ${LUAROCKS} install "https://raw.githubusercontent.com/Neopallium/lua-pb/master/lua-pb-scm-0.rockspec" || exit 1
 
 # Lua Wrapper for LMDB, latest from github (lightningmdb)
-# ${LUAROCKS} install https://raw.githubusercontent.com/shmul/lightningmdb/master/lightningmdb-scm-1.rockspec LMDB_INCDIR=/usr/include LMDB_LIBDIR=/usr/lib/x86_64-linux-gnu
+${LUAROCKS} install https://raw.githubusercontent.com/shmul/lightningmdb/master/lightningmdb-scm-1.rockspec LMDB_INCDIR=/usr/include LMDB_LIBDIR=/usr/lib/x86_64-linux-gnu
 
-${LUAROCKS} install lightningmdb
+# ${LUAROCKS} install lightningmdb
 
 #HDF5 filesystem support
 ${LUAROCKS} install "https://raw.github.com/deepmind/torch-hdf5/master/hdf5-0-0.rockspec" || exit 1
 
-#NCCL (experimantal) support
-# ${LUAROCKS} install "https://raw.githubusercontent.com/ngimel/nccl.torch/master/nccl-scm-1.rockspec" || exit 1
+#NCCL (experimental) support
+${LUAROCKS} install "https://raw.githubusercontent.com/ngimel/nccl.torch/master/nccl-scm-1.rockspec" || exit 1
 
 # Optional CUDA packages
 if [ -x "$path_to_nvcc" ]
