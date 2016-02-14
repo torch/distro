@@ -187,8 +187,8 @@ echo "Installing optional Torch packages"
 cd ${THIS_DIR}/pkg/gnuplot          && $LUAROCKS make rocks/gnuplot-scm-1.rockspec || exit 1
 cd ${THIS_DIR}/exe/env              && $LUAROCKS make || exit 1
 cd ${THIS_DIR}/extra/nnx            && $LUAROCKS make nnx-0.1-1.rockspec || exit 1
-#cd ${THIS_DIR}/exe/qtlua            && $LUAROCKS make rocks/qtlua-scm-1.rockspec || exit 1
-#cd ${THIS_DIR}/pkg/qttorch          && $LUAROCKS make rocks/qttorch-scm-1.rockspec || exit 1
+cd ${THIS_DIR}/exe/qtlua            && $LUAROCKS make rocks/qtlua-scm-1.rockspec || exit 1
+cd ${THIS_DIR}/pkg/qttorch          && $LUAROCKS make rocks/qttorch-scm-1.rockspec || exit 1
 cd ${THIS_DIR}/extra/threads        && $LUAROCKS make rocks/threads-scm-1.rockspec || exit 1
 cd ${THIS_DIR}/extra/graphicsmagick && $LUAROCKS make graphicsmagick-1.scm-0.rockspec || exit 1
 cd ${THIS_DIR}/extra/argcheck       && $LUAROCKS make rocks/argcheck-scm-1.rockspec || exit 1
