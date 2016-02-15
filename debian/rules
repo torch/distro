@@ -12,6 +12,7 @@ export VERBOSE=1
 export DEBINSTROOT=${CURDIR}/debian/tmp
 
 export INSTROOT=/usr
+# export INSTROOT=${DEBINSTROOT}
 export LUAROOT=${INSTROOT}
 
 #export LUADIR=${LUAROOT}/share/lua/5.1
@@ -35,9 +36,9 @@ override_dh_auto_test:
 override_dh_auto_install:
 	echo "My environment"
 	env
-	rm -fr ${DEBINSTROOT}
-	mkdir -p  ${DEBINSTROOT}
-	ln -s  ${LUAROOT} ${DEBINSTROOT}
+#	rm -fr ${DEBINSTROOT}
+#	mkdir -p  ${DEBINSTROOT}
+#	ln -s  ${LUAROOT} ${DEBINSTROOT}
 
 	PREFIX="${INSTROOT}" $(CURDIR)/install.sh -v -s -b -n
 
