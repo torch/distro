@@ -1,6 +1,6 @@
 /usr/share/cmake
 /usr/share/cmake/torch
-/usr/share/lua                              /usr/local/share/lua
+/usr/share/lua                              /usr/local/share
 /usr/bin
 /usr/bin/th
 /usr/bin/totem-run
@@ -18,5 +18,5 @@
 /usr/lib/libTH.so
 /usr/lib/libTHC.so
 /usr/lib/libluaT.so
-/usr/lib/luarocks                           /usr/local/lib/luarocks
-/usr/lib/lua                                /usr/local/lib/lua
+/usr/lib/luarocks                           /usr/local/lib
+/usr/lib/lua                                /usr/local/lib
