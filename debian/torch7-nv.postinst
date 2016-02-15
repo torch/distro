@@ -1,11 +1,14 @@
-#!/bin/sh                                                                                                                                                                          
+#!/bin/sh
 set -e
 
 if [ ! -e /usr/local/lib/luarocks/rocks ]; then
         mkdir -p /usr/local/lib/luarocks/rocks/
 fi
 
+# Replace Luarocs servers with Torch repo and mirror
+cp ${CURDIR}/debian/config.lua /etc/luarocks/config.lua
+
 luarocks-admin make_manifest
 
-#DEBHELPER#                                                                                                                                                                       
+#DEBHELPER#
 ldconfig

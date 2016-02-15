@@ -6,6 +6,7 @@ BATCH_INSTALL=0
 THIS_DIR=$(cd $(dirname $0); pwd)
 PREFIX=${PREFIX:-"${THIS_DIR}/install"}
 TH_INSTALL_PREFIX=${PREFIX}
+BUILD_DIR=${THIS_DIR}/build
 
 TORCH_LUA_VERSION=${TORCH_LUA_VERION:-"LUAJIT21"} # by default install LUAJIT21
 
@@ -84,6 +85,11 @@ fi
 
 echo "LUALIB_NAME= ${LUALIB_NAME}"
 
+cd ${BUILD_DIR}
+
+echo "Configuring Lua version: ${TORCH_LUA_VERSION}"
+(cmake ${THIS_DIR} -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_${TORCH_LUA_VERSION}=ON  || exit 1)
+
 if [[ "$TORCH_LUA_VERSION" == "NATIVE" ]]; then
 # echo "Using NATIVE Lua version:"
 
@@ -104,12 +110,8 @@ export SCRIPTS_DIR="${PREFIX}/bin"
 
 else
 
-# export LUA_INCDIR=${PREFIX}/include/luajit-2.0
-cd ${BUILD_DIR}
-
 echo "Installing Lua version: ${TORCH_LUA_VERSION}"
 # (cmake ${THIS_DIR} -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_${TORCH_LUA_VERSION}=ON  || exit 1)
-(cmake ${THIS_DIR} -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_${TORCH_LUA_VERSION}=ON  || exit 1)
 (make 2>&1  || exit 1) && (make install 2>&1  || exit 1)
 cd ..
 LUAROCKS="${PREFIX}/bin/luarocks --tree="${PREFIX}" $VERBOSE"
