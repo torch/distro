@@ -10,9 +10,8 @@ export BUILD_DIR=build
 export VERBOSE=1
 
 export DEBINSTROOT=${CURDIR}/debian/tmp
-
-export INSTROOT=/usr
-# export INSTROOT=${DEBINSTROOT}
+# export INSTROOT=/usr
+export INSTROOT=${DEBINSTROOT}
 export LUAROOT=${INSTROOT}
 
 #export LUADIR=${LUAROOT}/share/lua/5.1
