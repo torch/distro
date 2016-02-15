@@ -40,6 +40,8 @@ override_dh_auto_install:
 #	ln -s  ${LUAROOT} ${DEBINSTROOT}
 
 	PREFIX="${INSTROOT}" $(CURDIR)/install.sh -v -s -b -n
+	find "${INSTROOT}"
+
 
 #	PREFIX=${LUAROOT} LUA_BINDIR=${LUABINDIR} LUA=luajit SCRIPTS_DIR=${SCRIPTS_DIR}  ROCKFLAGS="--tree=${LUAROOT}"  CMAKE_PREFIX_PATH="${LUAROOT}" LUA_PATH=${LUAPATH} LUA_CPATH=${LUACPATH} $(CURDIR)/install.sh -v -s -b -n
 
