@@ -1,6 +1,5 @@
 /usr/share/cmake
-/usr/share/cmake/torch
-/usr/share/lua                              /usr/local/share
+/usr/share/lua
 /usr/bin
 /usr/bin/th
 /usr/bin/totem-run
@@ -9,14 +8,5 @@
 /usr/bin/mdcat
 /usr/bin/json2lua
 /usr/include
-/usr/include/TH
-/usr/include/THC
-/usr/include/THC/generic
-/usr/include/luaT.h
 /usr/lib
-/usr/lib/libthreadsmain.so
-/usr/lib/libTH.so
-/usr/lib/libTHC.so
-/usr/lib/libluaT.so
-/usr/lib/luarocks                           /usr/local/lib
-/usr/lib/lua                                /usr/local/lib
+/usr/local
