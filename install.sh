@@ -87,7 +87,21 @@ echo "Installing Lua version: ${TORCH_LUA_VERSION}"
 cd ..
 LUAROCKS="${PREFIX}/bin/luarocks --tree="${PREFIX}" $VERBOSE"
 fi
+# Done installing LuaRocks
 
+export CMAKE_PREFIX_PATH=${PREFIX}
+export CMAKE_INSTALL_PREFIX=${PREFIX}
+
+# Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
+path_to_nvcc=$(which nvcc)
+path_to_nvidiasmi=$(which nvidia-smi)
+
+if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
+then
+    echo "Found CUDA on your machine. Installing FindCUDA module to work around .cu bug in CMake 2.8/3.5"
+    export CUDA_ARCH_NAME=All
+    cd ${THIS_DIR}/extra/FindCUDA && $LUAROCKS make rocks/findcuda-scm-1.rockspec
+fi
 
 #
 # lua/luajit do not accept --tree option, set environment
@@ -103,8 +117,6 @@ eval "$setup_lua_env_cmd"
 
 echo "LUA_PATH: ${LUA_PATH}"
 
-export CMAKE_PREFIX_PATH=${PREFIX}
-export CMAKE_INSTALL_PREFIX=${PREFIX}
 
 # end environment setup
 
@@ -114,9 +126,6 @@ cd ${THIS_DIR}/extra/luafilesystem && $LUAROCKS make rockspecs/luafilesystem-1.6
 cd ${THIS_DIR}/extra/penlight && $LUAROCKS make || exit 1
 cd ${THIS_DIR}/extra/lua-cjson && $LUAROCKS make || exit 1
 
-# Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
-path_to_nvcc=$(which nvcc)
-path_to_nvidiasmi=$(which nvidia-smi)
 
 # check if we are on mac and fix RPATH for local install
 path_to_install_name_tool=$(which install_name_tool 2>/dev/null)
@@ -149,8 +158,6 @@ cd ${THIS_DIR}/pkg/optim     && $LUAROCKS make optim-1.0.5-0.rockspec       || e
 if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
     echo "Found CUDA on your machine. Installing CUDA packages"
-    export CUDA_ARCH_NAME=All
-    cd ${THIS_DIR}/extra/FindCUDA && $LUAROCKS make rocks/findcuda-scm-1.rockspec
     cd ${THIS_DIR}/extra/cutorch  && $LUAROCKS  make rocks/cutorch-scm-1.rockspec || exit 1
     cd ${THIS_DIR}/extra/cunn     && $LUAROCKS  make rocks/cunn-scm-1.rockspec    || exit 1
 fi
