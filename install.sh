@@ -61,29 +61,10 @@ if [[ `uname` == "Darwin" ]]; then
     export CXX=clang++
 fi
 
-# sudo apt-get install libcudnn4-dev
-# sudo apt-get install libhdf5-serial-dev
-# sudo apt-get install liblmdb-dev
-
 echo "Installing Lua version: ${TORCH_LUA_VERSION}"
 
 mkdir -p ${PREFIX}
 mkdir -p ${BUILD_DIR}
-
-
-if [[ "$TORCH_LUA_VERSION" == "NATIVE" ]]; then
- export LUALIB_NAME=lua5.1
-else
-if [[ "$TORCH_LUA_VERSION" == "LUA51" ]]; then
- export LUALIB_NAME=lua5.1
-else
-if [[ "$TORCH_LUA_VERSION" == "LUA52" ]]; then
- export LUALIB_NAME=lua5.2
-fi
-fi
-fi
-
-echo "LUALIB_NAME= ${LUALIB_NAME}"
 
 cd ${BUILD_DIR}
 
@@ -94,16 +75,6 @@ if [[ "$TORCH_LUA_VERSION" == "NATIVE" ]]; then
 # echo "Using NATIVE Lua version:"
 
 export LUAROCKS="luarocks --tree="$PREFIX/" $VERBOSE"
-
-# export LUAROCKS="luarocks $VERBOSE"
-
-# temporaruily, until all the rocks are fixed
-# we are exporting variables needed for correct location of includes here
-# export LUAJIT_INCDIR=/usr/include/luajit-2.0
-# export LUA_INCDIR=/usr/include/lua5.1
-
-# export CMAKE_C_FLAGS="-I${LUA_INCDIR} -I${LUAJIT_INCDIR} ${CMAKE_C_FLAGS}"
-# export CFLAGS="-I${LUA_INCDIR} -I${LUAJIT_INCDIR} ${CFLAGS}"
 
 export LUA=luajit
 export SCRIPTS_DIR="${PREFIX}/bin"
@@ -237,8 +208,9 @@ fi
 cat <<EOF >$PREFIX/bin/torch-activate
 $setup_lua_env_cmd
 export PATH=$PREFIX/bin:\$PATH
-export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH
-export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$PREFIX/lib:$PREFIX/local/lib:\$LD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH=$PREFIX/lib:$PREFIX/local/lib:\$DYLD_LIBRARY_PATH
+export LUA_CPATH="$PREFIX/local/lib/?.so;${LUA_CPATH}"
 EOF
 chmod +x $PREFIX/bin/torch-activate
 
