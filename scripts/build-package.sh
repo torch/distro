@@ -6,6 +6,7 @@ rm -rf ./install debian/tmp debian/*.log extra/threads/build.luarocks
 find . -not -samefile exe/luajit-rocks/luarocks/src/luarocks/build -name build | xargs rm -fr
 git commit -a -m 'Preparing for pbuild' && git push
 git clean -f
+./clean.sh
 
 #setup_lua_env_cmd=$(luarocks path -bin)
 #echo "Running: $setup_lua_env_cmd"
