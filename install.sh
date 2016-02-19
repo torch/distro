@@ -91,6 +91,7 @@ fi
 
 export CMAKE_PREFIX_PATH=${PREFIX}
 export CMAKE_INSTALL_PREFIX=${PREFIX}
+export CMAKE_INSTALL_SUBDIR="share/cmake/torch"
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
 path_to_nvcc=$(which nvcc)
