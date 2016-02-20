@@ -26,7 +26,7 @@ This script will install Torch and related, useful packages into $PREFIX.
             BATCH_INSTALL=1
             ;;
         v)
-            export VERBOSE="--verbose"
+            export IVERBOSE="--verbose"
             ;;
         n)
             TORCH_LUA_VERSION="NATIVE"
@@ -74,10 +74,9 @@ echo "Configuring Lua version: ${TORCH_LUA_VERSION}"
 if [[ "$TORCH_LUA_VERSION" == "NATIVE" ]]; then
 # echo "Using NATIVE Lua version:"
 
-export LUAROCKS="luarocks --tree="$PREFIX/" $VERBOSE"
+export LUAROCKS="luarocks --tree="$PREFIX/" $IVERBOSE"
 
 export LUA=luajit
-export SCRIPTS_DIR="${PREFIX}/bin"
 
 else
 
@@ -85,9 +84,12 @@ echo "Installing Lua version: ${TORCH_LUA_VERSION}"
 # (cmake ${THIS_DIR} -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_${TORCH_LUA_VERSION}=ON  || exit 1)
 (make 2>&1  || exit 1) && (make install 2>&1  || exit 1)
 cd ..
-LUAROCKS="${PREFIX}/bin/luarocks --tree="${PREFIX}" $VERBOSE"
+export LUAROCKS="${PREFIX}/bin/luarocks --tree="${PREFIX}" $IVERBOSE"
 fi
 # Done installing LuaRocks
+
+echo "Using luarocks: ${LUAROCKS}"
+echo "LUA_PATH: ${LUA_PATH}"
 
 export CMAKE_PREFIX_PATH=${PREFIX}
 export CMAKE_INSTALL_PREFIX=${PREFIX}
@@ -101,7 +103,7 @@ if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
     echo "Found CUDA on your machine. Installing FindCUDA module to work around .cu bug in CMake 2.8/3.5"
     export CUDA_ARCH_NAME=All
-    cd ${THIS_DIR}/extra/FindCUDA && $LUAROCKS make rocks/findcuda-scm-1.rockspec
+    cd ${THIS_DIR}/extra/FindCUDA && $LUAROCKS make rocks/findcuda-scm-1.rockspec && echo "FindCuda installed" || exit 1
 fi
 
 #
@@ -116,12 +118,11 @@ setup_lua_env_cmd=`fix_path "${HOME}/.luarocks" "$PREFIX"`
 
 eval "$setup_lua_env_cmd"
 
-echo "LUA_PATH: ${LUA_PATH}"
 
 
 # end environment setup
 
-echo "Using luarocks: ${LUAROCKS}"
+
 echo "Installing common Lua packages into ${TH_INSTALL_PREFIX}"
 cd ${THIS_DIR}/extra/luafilesystem && $LUAROCKS make rockspecs/luafilesystem-1.6.3-1.rockspec || exit 1
 cd ${THIS_DIR}/extra/penlight && $LUAROCKS make || exit 1
