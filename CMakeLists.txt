@@ -3,7 +3,6 @@ ADD_SUBDIRECTORY(exe)
 
 # If this variable is defined, a pure cmake build is done end-to-end with no luarocks
 IF (WITH_LUAROCKS STREQUAL OFF)
-
   # LUA_INCDIR - place where lua headers exist
   # LUA_LIBDIR - place where lua libraries exist
   # LUADIR - LUA_PATH
@@ -50,8 +49,10 @@ IF (WITH_LUAROCKS STREQUAL OFF)
   INCLUDE_DIRECTORIES(${LUA_INCDIR})
   IF (WITH_LUAJIT21 OR WITH_LUAJIT20)
     INCLUDE_DIRECTORIES(${LuaJIT_SOURCE_DIR}/src ${LuaJIT_BINARY_DIR})
+    SET (LUA, "luajit")
   ELSE (WITH_LUAJIT21 OR WITH_LUAJIT20)
     INCLUDE_DIRECTORIES(${Lua_SOURCE_DIR}/src ${Lua_BINARY_DIR})
+    SET(LUA, "lua")
   ENDIF (WITH_LUAJIT21 OR WITH_LUAJIT20)
 
   # Finally add the two directories
