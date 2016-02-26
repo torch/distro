@@ -45,7 +45,7 @@
         branch = master
 [submodule "pkg/sys"]
 	path = pkg/sys
-	url = https://github.com/borisfom/sys.git
+	url = https://github.com/torch/sys.git
         branch = master
 [submodule "pkg/image"]
 	path = pkg/image

@@ -3,6 +3,7 @@ ADD_SUBDIRECTORY(exe)
 
 # If this variable is defined, a pure cmake build is done end-to-end with no luarocks
 IF (WITH_LUAROCKS STREQUAL OFF)
+
   # LUA_INCDIR - place where lua headers exist
   # LUA_LIBDIR - place where lua libraries exist
   # LUADIR - LUA_PATH
