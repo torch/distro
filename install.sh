@@ -178,21 +178,28 @@ cd ${THIS_DIR}/extra/audio          && $LUAROCKS make audio-0.1-0.rockspec || ex
 cd ${THIS_DIR}/extra/fftw3          && $LUAROCKS make rocks/fftw3-scm-1.rockspec || exit 1
 cd ${THIS_DIR}/extra/signal         && $LUAROCKS make rocks/signal-scm-1.rockspec || exit 1
 
+cd ${THIS_DIR}/extra/lua-pb         && $LUAROCKS make lua-pb-scm-0.rockspec || exit 1
+cd ${THIS_DIR}/extra/lmdb           && $LUAROCKS make LMDB_INCDIR=/usr/include LMDB_LIBDIR=/usr/lib/x86_64-linux-gnu lightningmdb-scm-1.rockspec || exit 1
+cd ${THIS_DIR}/extra/totem          && $LUAROCKS make rocks/totem-0-0.rockspec || exit 1
+cd ${THIS_DIR}/extra/hdf5           && $LUAROCKS make hdf5-0-0.rockspec || exit 1
+cd ${THIS_DIR}/extra/nccl         && $LUAROCKS make nccl-scm-1.rockspec || exit 1
+cd ${THIS_DIR}/extra/         && $LUAROCKS make rocks/ || exit 1
+
 #Support for Protobuf
-${LUAROCKS} install "https://raw.githubusercontent.com/Neopallium/lua-pb/master/lua-pb-scm-0.rockspec" || exit 1
+# ${LUAROCKS} install "https://raw.githubusercontent.com/Neopallium/lua-pb/master/lua-pb-scm-0.rockspec" || exit 1
 
 # Lua Wrapper for LMDB, latest from github (lightningmdb)
-${LUAROCKS} install https://raw.githubusercontent.com/shmul/lightningmdb/master/lightningmdb-scm-1.rockspec LMDB_INCDIR=/usr/include LMDB_LIBDIR=/usr/lib/x86_64-linux-gnu
+# ${LUAROCKS} install https://raw.githubusercontent.com/shmul/lightningmdb/master/lightningmdb-scm-1.rockspec LMDB_INCDIR=/usr/include LMDB_LIBDIR=/usr/lib/x86_64-linux-gnu
 
 # ${LUAROCKS} install lightningmdb
 
 #HDF5 filesystem support
-https://github.com/torch/qtlua.git
-${LUAROCKS} install "https://raw.github.com/deepmind/torch-totem/master/rocks/totem-0-0.rockspec" || exit 1
-${LUAROCKS} install "https://raw.github.com/deepmind/torch-hdf5/master/hdf5-0-0.rockspec"  || exit 1
+
+# ${LUAROCKS} install "https://raw.github.com/deepmind/torch-totem/master/rocks/totem-0-0.rockspec" || exit 1
+# ${LUAROCKS} install "https://raw.github.com/deepmind/torch-hdf5/master/hdf5-0-0.rockspec"  || exit 1
 
 #NCCL (experimental) support
-${LUAROCKS} install "https://raw.githubusercontent.com/ngimel/nccl.torch/master/nccl-scm-1.rockspec" || exit 1
+# ${LUAROCKS} install "https://raw.githubusercontent.com/ngimel/nccl.torch/master/nccl-scm-1.rockspec" || exit 1
 
 # Optional CUDA packages
 if [ -x "$path_to_nvcc" ]
