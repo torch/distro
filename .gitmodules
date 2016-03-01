@@ -138,3 +138,18 @@
 [submodule "extra/FindCUDA"]
 	path = extra/FindCUDA
 	url = https://github.com/borisfom/FindCUDA.git
+[submodule "extra/lmdb"]
+	path = extra/lmdb
+	url = https://github.com/shmul/lightningmdb.git
+[submodule "extra/lua-pb"]
+	path = extra/lua-pb
+	url = https://github.com/Neopallium/lua-pb.git
+[submodule "extra/totem"]
+	path = extra/totem
+	url = https://github.com/deepmind/torch-totem.git
+[submodule "extra/hdf5"]
+	path = extra/hdf5
+	url = https://github.com/deepmind/torch-hdf5.git
+[submodule "extra/nccl"]
+	path = extra/nccl
+	url = https://github.com/ngimel/nccl.torch.git
