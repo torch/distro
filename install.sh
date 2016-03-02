@@ -10,8 +10,11 @@ BUILD_DIR=${THIS_DIR}/build
 
 TORCH_LUA_VERSION=${TORCH_LUA_VERION:-"LUAJIT21"} # by default install LUAJIT21
 
-while getopts 'bsvnh:' x; do
+while getopts 'absvnh:' x; do
     case "$x" in
+        a)
+            export CUDA_ARCH_NAME=All
+            ;;
         h)
             echo "usage: $0
 This script will install Torch and related, useful packages into $PREFIX.
@@ -102,7 +105,6 @@ path_to_nvidiasmi=$(which nvidia-smi)
 if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
     echo "Found CUDA on your machine. Installing FindCUDA module to work around .cu bug in CMake 2.8/3.5"
-    export CUDA_ARCH_NAME=All
     cd ${THIS_DIR}/extra/FindCUDA && $LUAROCKS make rocks/findcuda-scm-1.rockspec && echo "FindCuda installed" || exit 1
 fi
 

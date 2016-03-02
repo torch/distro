@@ -39,8 +39,8 @@ override_dh_auto_install:
 	mkdir -p  ${DEBINSTROOT}
 	ln -s  ${INSTROOT} ${DEBINSTROOT}
 
-	PREFIX="${INSTROOT}" $(CURDIR)/install.sh -v -s -b -n
-	PREFIX="${INSTROOT}" $(CURDIR)/install.sh -v -s -b
+#	PREFIX="${INSTROOT}" $(CURDIR)/install.sh -v -s -b -n
+	PREFIX="${INSTROOT}" $(CURDIR)/install.sh -v -s -b -a
 	find "${INSTROOT}"
 
 override_dh_usrlocal:
