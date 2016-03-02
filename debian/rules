@@ -10,16 +10,16 @@ export BUILD_DIR=build
 export VERBOSE=1
 
 export DEBINSTROOT=${CURDIR}/debian/tmp/usr
-# export INSTROOT=/usr
-export INSTROOT=${DEBINSTROOT}
+export INSTROOT=/usr
+# export INSTROOT=${DEBINSTROOT}
 export LUAROOT=${INSTROOT}
 
 #export LUADIR=${LUAROOT}/share/lua/5.1
 #export LUAPATH="./?.lua;${LUADIR}/?.lua;${LUADIR}/?/init.lua;${LUA_PATH};"
 #export LUACPATH="./?.so;${LUAROOT}/lib/?.so;${LUA_CPATH};"
-export CMPATH="${LUAROOT}/share/cmake/torch ${CMAKE_MODULE_PATH}"
+export CMPATH="${INSTROOT}/share/cmake/torch ${CMAKE_MODULE_PATH}"
 
-export SCRIPTS_DIR=${LUAROOT}/bin
+export SCRIPTS_DIR=${INSTROOT}/bin
 export LUABINDIR=${LUAROOT}/bin
 
 %:
@@ -35,11 +35,12 @@ override_dh_auto_test:
 override_dh_auto_install:
 	echo "My environment"
 	env
-#	rm -fr ${DEBINSTROOT}
-#	mkdir -p  ${DEBINSTROOT}
-#	ln -s  ${LUAROOT} ${DEBINSTROOT}
+	rm -fr ${DEBINSTROOT}
+	mkdir -p  ${DEBINSTROOT}
+	ln -s  ${INSTROOT} ${DEBINSTROOT}
 
-	PREFIX="${INSTROOT}" $(CURDIR)/install.sh -v -s -b -n
+#	PREFIX="${INSTROOT}" $(CURDIR)/install.sh -v -s -b -n
+	PREFIX="${INSTROOT}" $(CURDIR)/install.sh -v -s -b -a
 	find "${INSTROOT}"
 
 override_dh_usrlocal:

@@ -10,8 +10,11 @@ BUILD_DIR=${THIS_DIR}/build
 
 TORCH_LUA_VERSION=${TORCH_LUA_VERION:-"LUAJIT21"} # by default install LUAJIT21
 
-while getopts 'bsvnh:' x; do
+while getopts 'absvnh:' x; do
     case "$x" in
+        a)
+            export CUDA_ARCH_NAME=All
+            ;;
         h)
             echo "usage: $0
 This script will install Torch and related, useful packages into $PREFIX.
@@ -102,7 +105,6 @@ path_to_nvidiasmi=$(which nvidia-smi)
 if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
     echo "Found CUDA on your machine. Installing FindCUDA module to work around .cu bug in CMake 2.8/3.5"
-    export CUDA_ARCH_NAME=All
     cd ${THIS_DIR}/extra/FindCUDA && $LUAROCKS make rocks/findcuda-scm-1.rockspec && echo "FindCuda installed" || exit 1
 fi
 
@@ -179,20 +181,14 @@ cd ${THIS_DIR}/extra/fftw3          && $LUAROCKS make rocks/fftw3-scm-1.rockspec
 cd ${THIS_DIR}/extra/signal         && $LUAROCKS make rocks/signal-scm-1.rockspec || exit 1
 
 #Support for Protobuf
-${LUAROCKS} install "https://raw.githubusercontent.com/Neopallium/lua-pb/master/lua-pb-scm-0.rockspec" || exit 1
-
+cd ${THIS_DIR}/extra/lua-pb         && $LUAROCKS make lua-pb-scm-0.rockspec || exit 1
 # Lua Wrapper for LMDB, latest from github (lightningmdb)
-${LUAROCKS} install https://raw.githubusercontent.com/shmul/lightningmdb/master/lightningmdb-scm-1.rockspec LMDB_INCDIR=/usr/include LMDB_LIBDIR=/usr/lib/x86_64-linux-gnu
-
-# ${LUAROCKS} install lightningmdb
-
+cd ${THIS_DIR}/extra/lmdb           && $LUAROCKS make LMDB_INCDIR=/usr/include LMDB_LIBDIR=/usr/lib/x86_64-linux-gnu lightningmdb-scm-1.rockspec || exit 1
+cd ${THIS_DIR}/extra/totem          && $LUAROCKS make rocks/totem-0-0.rockspec || exit 1
 #HDF5 filesystem support
-https://github.com/torch/qtlua.git
-${LUAROCKS} install "https://raw.github.com/deepmind/torch-totem/master/rocks/totem-0-0.rockspec" || exit 1
-${LUAROCKS} install "https://raw.github.com/deepmind/torch-hdf5/master/hdf5-0-0.rockspec"  || exit 1
-
+cd ${THIS_DIR}/extra/hdf5           && $LUAROCKS make hdf5-0-0.rockspec || exit 1
 #NCCL (experimental) support
-${LUAROCKS} install "https://raw.githubusercontent.com/ngimel/nccl.torch/master/nccl-scm-1.rockspec" || exit 1
+cd ${THIS_DIR}/extra/nccl         && $LUAROCKS make nccl-scm-1.rockspec || exit 1
 
 # Optional CUDA packages
 if [ -x "$path_to_nvcc" ]
@@ -219,7 +215,7 @@ $setup_lua_env_cmd
 export PATH=$PREFIX/bin:\$PATH
 export LD_LIBRARY_PATH=$PREFIX/lib:$PREFIX/local/lib:\$LD_LIBRARY_PATH
 export DYLD_LIBRARY_PATH=$PREFIX/lib:$PREFIX/local/lib:\$DYLD_LIBRARY_PATH
-export LUA_CPATH="$PREFIX/local/lib/?.so;${LUA_CPATH}"
+export LUA_CPATH="$PREFIX/lib/?.so;$PREFIX/local/lib/?.so;${LUA_CPATH}"
 EOF
 chmod +x $PREFIX/bin/torch-activate
 
