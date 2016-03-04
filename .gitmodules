@@ -106,3 +106,6 @@
 [submodule "extra/lua-cjson"]
 	path = extra/lua-cjson
 	url = https://github.com/mpx/lua-cjson
+[submodule "extra/findcuda"]
+	path = extra/findcuda
+	url = https://github.com/hughperkins/FindCUDA.git
