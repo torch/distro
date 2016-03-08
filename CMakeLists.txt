@@ -1,16 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 ADD_SUBDIRECTORY(exe)
 
-SET(CMAKE_SHARE_DEST "share/cmake/torch")
-SET(CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/${CMAKE_SHARE_DEST}" ${CMAKE_MODULE_PATH})
-SET(FINDCUDA_DEST "${CMAKE_SHARE_DEST}/FindCUDA")
-file(DOWNLOAD https://raw.githubusercontent.com/borisfom/CMake/cuda_arch/Modules/FindCUDA.cmake ${FINDCUDA_DEST}.cmake)
-file(DOWNLOAD https://raw.githubusercontent.com/borisfom/CMake/cuda_arch/Modules/FindCUDA/run_nvcc.cmake ${FINDCUDA_DEST}/run_nvcc.cmake)
-file(DOWNLOAD https://raw.githubusercontent.com/borisfom/CMake/cuda_arch/Modules/FindCUDA/parse_cubin.cmake ${FINDCUDA_DEST}/parse_cubin.cmake)
-file(DOWNLOAD https://raw.githubusercontent.com/borisfom/CMake/cuda_arch/Modules/FindCUDA/make2cmake.cmake ${FINDCUDA_DEST}/make2cmake.cmake)
-file(DOWNLOAD https://raw.githubusercontent.com/borisfom/CMake/cuda_arch/Modules/FindCUDA/select_compute_arch.cmake ${FINDCUDA_DEST}/select_compute_arch.cmake)
-file(COPY "${CMAKE_SOURCE_DIR}/cmake/FindCudaArch.cmake" DESTINATION "${CMAKE_BINARY_DIR}/${CMAKE_SHARE_DEST}")
-
 # If this variable is defined, a pure cmake build is done end-to-end with no luarocks
 IF (WITH_LUAROCKS STREQUAL OFF)
 
