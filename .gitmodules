@@ -108,7 +108,7 @@
         branch = master
 [submodule "extra/cunnx"]
 	path = extra/cunnx
-	url = https://github.com/nicholas-leonard/cunnx.git
+	url = https://github.com/borisfom/cunnx.git
         branch = master
 [submodule "extra/iTorch"]
 	path = extra/iTorch
