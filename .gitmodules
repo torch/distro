@@ -1,27 +1,35 @@
 [submodule "exe/luajit-rocks"]
 	path = exe/luajit-rocks
 	url = https://github.com/torch/luajit-rocks.git
+        branch = master
 [submodule "exe/qtlua"]
 	path = exe/qtlua
-	url = https://github.com/torch/qtlua.git
+	url = https://github.com/borisfom/qtlua.git
+        branch = master
 [submodule "pkg/dok"]
 	path = pkg/dok
 	url = https://github.com/torch/dok.git
+        branch = master
 [submodule "pkg/gnuplot"]
 	path = pkg/gnuplot
 	url = https://github.com/torch/gnuplot.git
+        branch = master
 [submodule "pkg/paths"]
 	path = pkg/paths
 	url = https://github.com/torch/paths.git
+        branch = master
 [submodule "pkg/cwrap"]
 	path = pkg/cwrap
 	url = https://github.com/torch/cwrap.git
+        branch = master
 [submodule "extra/cunn"]
 	path = extra/cunn
-	url = https://github.com/torch/cunn.git
+	url = https://github.com/borisfom/cunn.git
+        branch = master
 [submodule "extra/cutorch"]
 	path = extra/cutorch
-	url = https://github.com/torch/cutorch.git
+	url = https://github.com/borisfom/cutorch.git
+        branch = master
 [submodule "pkg/torch"]
 	path = pkg/torch
 	url = https://github.com/torch/torch7.git
@@ -34,69 +42,90 @@
 [submodule "pkg/xlua"]
 	path = pkg/xlua
 	url = https://github.com/torch/xlua.git
+        branch = master
 [submodule "pkg/sys"]
 	path = pkg/sys
 	url = https://github.com/torch/sys.git
+        branch = master
 [submodule "pkg/image"]
 	path = pkg/image
 	url = https://github.com/torch/image.git
 [submodule "pkg/optim"]
 	path = pkg/optim
 	url = https://github.com/torch/optim.git
+        branch = master
 [submodule "extra/sdl2"]
 	path = extra/sdl2
 	url = https://github.com/torch/sdl2-ffi.git
+        branch = master
 [submodule "extra/threads"]
 	path = extra/threads
 	url = https://github.com/torch/threads-ffi.git
+        branch = master
 [submodule "extra/graphicsmagick"]
 	path = extra/graphicsmagick
 	url = https://github.com/clementfarabet/graphicsmagick.git
+        branch = master
 [submodule "extra/argcheck"]
 	path = extra/argcheck
 	url = https://github.com/torch/argcheck.git
+        branch = master
 [submodule "extra/cudnn"]
 	path = extra/cudnn
 	url = https://github.com/soumith/cudnn.torch.git
+        branch = R5
 [submodule "exe/trepl"]
 	path = exe/trepl
 	url = https://github.com/torch/trepl.git
+        branch = master
 [submodule "extra/audio"]
 	path = extra/audio
 	url = https://github.com/soumith/lua---audio.git
+        branch = master
 [submodule "extra/signal"]
 	path = extra/signal
 	url = https://github.com/soumith/torch-signal.git
+        branch = master
 [submodule "extra/fftw3"]
 	path = extra/fftw3
 	url = https://github.com/soumith/fftw3-ffi.git
+        branch = master
 [submodule "extra/nnx"]
 	path = extra/nnx
 	url = https://github.com/clementfarabet/lua---nnx.git
+        branch = master
 [submodule "extra/nn"]
 	path = extra/nn
 	url = https://github.com/torch/nn.git
+        branch = master
 [submodule "exe/env"]
 	path = exe/env
 	url = https://github.com/torch/env.git
+        branch = master
 [submodule "extra/cuda-convnet2.torch"]
 	path = extra/cuda-convnet2.torch
-	url = git@github.com:soumith/cuda-convnet2.torch.git
+	url = https://github.com/soumith/cuda-convnet2.torch.git
+        branch = master
 [submodule "extra/cunnx"]
 	path = extra/cunnx
-	url = https://github.com/nicholas-leonard/cunnx.git
+	url = https://github.com/borisfom/cunnx.git
+        branch = master
 [submodule "extra/iTorch"]
 	path = extra/iTorch
 	url = https://github.com/facebook/iTorch.git
+        branch = master
 [submodule "extra/graph"]
 	path = extra/graph
 	url = https://github.com/torch/graph
+        branch = master
 [submodule "extra/nngraph"]
 	path = extra/nngraph
 	url = https://github.com/torch/nngraph
+        branch = master
 [submodule "extra/luaffifb"]
 	path = extra/luaffifb
 	url = https://github.com/facebook/luaffifb
+        branch = master
 [submodule "extra/luafilesystem"]
 	path = extra/luafilesystem
 	url = https://github.com/keplerproject/luafilesystem.git
@@ -106,3 +135,21 @@
 [submodule "extra/lua-cjson"]
 	path = extra/lua-cjson
 	url = https://github.com/mpx/lua-cjson
+[submodule "extra/FindCUDA"]
+	path = extra/FindCUDA
+	url = https://github.com/borisfom/FindCUDA.git
+[submodule "extra/lmdb"]
+	path = extra/lmdb
+	url = https://github.com/shmul/lightningmdb.git
+[submodule "extra/lua-pb"]
+	path = extra/lua-pb
+	url = https://github.com/Neopallium/lua-pb.git
+[submodule "extra/totem"]
+	path = extra/totem
+	url = https://github.com/deepmind/torch-totem.git
+[submodule "extra/hdf5"]
+	path = extra/hdf5
+	url = https://github.com/deepmind/torch-hdf5.git
+[submodule "extra/nccl"]
+	path = extra/nccl
+	url = https://github.com/ngimel/nccl.torch.git

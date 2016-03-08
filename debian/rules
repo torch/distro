@@ -1,0 +1,54 @@
+#!/usr/bin/make -f
+
+# Enabling a single GPU for tests only
+# test.sh fails for non-idential multi-GPU
+# fix pending : https://github.com/torch/cutorch/issues/239
+export CUDA_VISIBLE_DEVICES=0
+
+export BUILD_DIR=build
+
+export VERBOSE=1
+
+export DEBINSTROOT=${CURDIR}/debian/tmp/usr
+export INSTROOT=/usr
+# export INSTROOT=${DEBINSTROOT}
+export LUAROOT=${INSTROOT}
+
+#export LUADIR=${LUAROOT}/share/lua/5.1
+#export LUAPATH="./?.lua;${LUADIR}/?.lua;${LUADIR}/?/init.lua;${LUA_PATH};"
+#export LUACPATH="./?.so;${LUAROOT}/lib/?.so;${LUA_CPATH};"
+export CMPATH="${INSTROOT}/share/cmake/torch ${CMAKE_MODULE_PATH}"
+
+export SCRIPTS_DIR=${INSTROOT}/bin
+export LUABINDIR=${LUAROOT}/bin
+
+%:
+	dh  $@ --build-system=cmake --parallel
+
+#	NATIVE_LUAROCKS="1"  dh  $@ --with lua --build-system=cmake --parallel
+
+override_dh_auto_configure:
+override_dh_auto_build:
+override_dh_auto_test:
+	echo Skipping : $@
+
+override_dh_auto_install:
+	echo "My environment"
+	env
+	rm -fr ${DEBINSTROOT}
+	mkdir -p  ${DEBINSTROOT}
+	ln -s  ${INSTROOT} ${DEBINSTROOT}
+
+#	PREFIX="${INSTROOT}" $(CURDIR)/install.sh -v -s -b -n
+	PREFIX="${INSTROOT}" $(CURDIR)/install.sh -v -s -b -a
+	find "${INSTROOT}"
+
+override_dh_usrlocal:
+	true
+
+#	PREFIX=${LUAROOT} LUA_BINDIR=${LUABINDIR} LUA=luajit SCRIPTS_DIR=${SCRIPTS_DIR}  ROCKFLAGS="--tree=${LUAROOT}"  CMAKE_PREFIX_PATH="${LUAROOT}" LUA_PATH=${LUAPATH} LUA_CPATH=${LUACPATH} $(CURDIR)/install.sh -v -s -b -n
+
+#   non-native luarocks (builing them)
+#	PREFIX=${LUAROCKS_ROOT} ROCKFLAGS="--tree=${LUAROCKS_ROOT}" $(CURDIR)/install.sh -v -s -b
+
+# $(CURDIR)/scripts/post-install.sh ${LUAROCKS_ROOT} /usr

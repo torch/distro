@@ -61,6 +61,16 @@ cd ..
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
 path_to_nvcc=$(which nvcc)
+path_to_nvidiasmi=$(which nvidia-smi)
+
+if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
+then
+    echo "Found CUDA on your machine. Installing FindCUDA module to work around .cu bug in CMake 2.8/3.5"
+    cd ${THIS_DIR}/extra/FindCUDA && \
+(cmake -E make_directory build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_INSTALL_SUBDIR="share/cmake/torch" && make install) \
+    && echo "FindCuda installed" || exit 1
+fi
+
 
 # check if we are on mac and fix RPATH for local install
 path_to_install_name_tool=$(which install_name_tool 2>/dev/null)
@@ -117,6 +127,8 @@ cd ${THIS_DIR}/extra/argcheck       && $PREFIX/bin/luarocks make rocks/argcheck-
 cd ${THIS_DIR}/extra/audio          && $PREFIX/bin/luarocks make audio-0.1-0.rockspec
 cd ${THIS_DIR}/extra/fftw3          && $PREFIX/bin/luarocks make rocks/fftw3-scm-1.rockspec
 cd ${THIS_DIR}/extra/signal         && $PREFIX/bin/luarocks make rocks/signal-scm-1.rockspec
+#NCCL (experimental) support
+cd ${THIS_DIR}/extra/nccl         && $LUAROCKS make nccl-scm-1.rockspec || exit 1
 
 # Optional CUDA packages
 if [ -x "$path_to_nvcc" ]

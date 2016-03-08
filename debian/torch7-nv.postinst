@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+# Replace Luarocs servers with Torch repo and mirror
+# cp ${CURDIR}/debian/config.lua /etc/luarocks/config.lua
+
+luarocks-admin make_manifest
+
+#DEBHELPER#
+ldconfig

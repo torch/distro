@@ -1,0 +1,37 @@
+Source: torch7
+Section: universe/science
+Maintainer: Soumith Chintala <soumith@fb.com>
+Priority: optional
+Build-depends: debhelper(>=9), gfortran,
+               liblapack-dev, libopenblas-dev,
+               libqt4-core, libqt4-dev, libqt4-gui,
+	       libreadline6, libreadline-dev, libncurses5,
+               libjpeg8, libpng12-0, libjpeg-dev, libpng-dev,
+               libsox2, libsox-dev, libzmq3-dev,
+               nodejs, npm, cmake, git, sudo, unzip, ipython,
+               cuda-cudart-dev-7-5, cuda-ld-conf-7-5, cuda-license-7-5,
+               libhdf5-serial-dev,liblmdb-dev,
+	       software-properties-common
+Standards-Version: 3.9.5
+
+Package: torch7-nv
+Section: universe/tools
+Architecture: amd64
+Depends: ${misc:Depends}, ${shlibs:Depends},
+               liblapack-dev, libopenblas-dev,
+               libqt4-core, libqt4-gui,
+	       libreadline6, libncurses5,
+               libjpeg8, libpng12-0,
+               libgraphicsmagick1-dev, graphicsmagick,
+               sox, libsox2, libsox-fmt-all,
+               nodejs, npm, ipython,
+               libzmq3,
+               cuda-cudart-7-5, cuda-ld-conf-7-5, cuda-license-7-5,
+               libcudnn5 (>=5.0.1),
+               libhdf5-serial-dev,liblmdb-dev,libnccl1,
+	       software-properties-common
+Conflicts: torch7, torch, lua-cjson, lua-penlight, lua-filesystem
+Description: NVidia Torch Bundle (with CUDA). Made for DIGITS.
+ Scientific computing framework with wide support for machine learning
+ algorithms. It uses Lua as a scripting interface and provides GPU acceleration
+ for underlying computations.

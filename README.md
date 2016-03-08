@@ -10,8 +10,10 @@ curl -s https://raw.githubusercontent.com/torch/distro/master/install-deps | bas
 
 Install this repo, which installs the torch distribution, with a lot of nice goodies.
 ```sh
-git clone https://github.com/torch/distro.git ~/torch --recursive
-cd ~/torch; ./install.sh
+git clone https://github.com/borisfom/distro.git ~/torch --recursive
+cd ~/torch; git submodule update --init --recursive
+
+ ./install.sh
 ```
 
 By default Torch will install LuaJIT 2.1. If you want other options, you can use the command:
