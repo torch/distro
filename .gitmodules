@@ -32,7 +32,7 @@
         branch = master
 [submodule "pkg/torch"]
 	path = pkg/torch
-	url = https://github.com/borisfom/torch7.git
+	url = https://github.com/torch/torch7.git
 [submodule "pkg/sundown"]
 	path = pkg/sundown
 	url = https://github.com/torch/sundown-ffi.git
