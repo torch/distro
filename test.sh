@@ -43,21 +43,21 @@ then
 fi
 
 # CUDA tests
-set +e 
+set +e
 path_to_nvcc=$(which nvcc)
 path_to_nvidiasmi=$(which nvidia-smi)
-set -e 
+set -e
 
 if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
     $LUA -lcutorch -e "print('cutorch loaded succesfully')"
-    $LUA -lcunn -e "print('cunn loaded succesfully')"
+
     if [ $(basename $LUA) = "luajit" ];
     then
         $LUA -lcudnn -e "print('cudnn loaded succesfully')"
     fi
     th -lcutorch -e "cutorch.test()"
-    th -lcunn -e "nn.testcuda()"
+    th  -e "require cunn; nn.testcuda()"
 else
     echo "CUDA not found"
 fi
