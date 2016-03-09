@@ -57,7 +57,7 @@ then
         $LUA -lcudnn -e "print('cudnn loaded succesfully')"
     fi
     th -lcutorch -e "cutorch.test()"
-    th  -e "require cunn; nn.testcuda()"
+    th -lcunn  -e "nn.testcuda()"
 else
     echo "CUDA not found"
 fi
