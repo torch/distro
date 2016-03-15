@@ -268,9 +268,16 @@ elif [[ "$(uname)" == 'Linux' ]]; then
                             gcc-c++ gcc-gfortran git gnuplot unzip \
                             nodejs npm libjpeg-turbo-devel libpng-devel \
                             ImageMagick GraphicsMagick-devel fftw-devel \
-                            sox-devel sox zeromq3-devel \
-                            qt-devel qtwebkit-devel sox-plugins-freeworld \
-                            ipython libgfortran
+                            libgfortran python27-pip git openssl-devel
+
+        #
+        # These libraries are missing from amzn linux
+        # sox-devel sox sox-plugins-freeworld qt-devel qtwebkit-devel
+        #
+
+        sudo yum --enablerepo=epel install -y zeromq3-devel
+        sudo pip install ipython
+
         install_openblas || true
     fi
 
