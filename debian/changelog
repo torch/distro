@@ -1,3 +1,9 @@
+torch7 (0.9.95+cuda75) trusty; urgency=medium
+  * Back to own luajit/luarocks
+  * New versioning that includes linked CUDA version
+
+ -- Boris Fomitchev <bfomitchev@nvidia.com>  Thu, 4 Feb 2016 15:18:00 -0800
+
 torch7 (0.9.93) trusty; urgency=medium
   * Using standard luajit/luarocks
 

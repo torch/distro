@@ -58,6 +58,7 @@ then
     fi
     th -lcutorch -e "cutorch.test()"
     th -lcunn  -e "nn.testcuda()"
+    th extra/cudnn/test/test.lua
 else
     echo "CUDA not found"
 fi

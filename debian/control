@@ -9,7 +9,7 @@ Build-depends: debhelper(>=9), gfortran,
                libjpeg8, libpng12-0, libjpeg-dev, libpng-dev,
                libsox2, libsox-dev, libzmq3-dev,
                nodejs, npm, cmake, git, sudo, unzip, ipython,
-               cuda-cudart-dev-7-5, cuda-ld-conf-7-5, cuda-license-7-5,
+               cuda-toolkit-7-5, cuda-core-7-5, cuda-cudart-dev-7-5, cuda-curand-dev-7-5, cuda-cublas-dev-7-5, cuda-ld-conf-7-5, cuda-license-7-5,
                libhdf5-serial-dev,liblmdb-dev,
 	       software-properties-common
 Standards-Version: 3.9.5
@@ -18,7 +18,7 @@ Package: torch7-nv
 Section: universe/tools
 Architecture: amd64
 Depends: ${misc:Depends}, ${shlibs:Depends},
-               liblapack-dev, libopenblas-dev,
+               liblapack, libopenblas,
                libqt4-core, libqt4-gui,
 	       libreadline6, libncurses5,
                libjpeg8, libpng12-0,
@@ -26,9 +26,9 @@ Depends: ${misc:Depends}, ${shlibs:Depends},
                sox, libsox2, libsox-fmt-all,
                nodejs, npm, ipython,
                libzmq3,
-               cuda-cudart-7-5, cuda-ld-conf-7-5, cuda-license-7-5,
-               libcudnn5 (>=5.0.1),
-               libhdf5-serial-dev,liblmdb-dev,libnccl1,
+               cuda-cudart-7-5, cuda-curand-dev-7-5, cuda-cublas-dev-7-5, cuda-ld-conf-7-5, cuda-license-7-5,
+               libcudnn5 (>=5.0.2),
+               libhdf5-7,liblmdb0,libnccl1 (>=1.1.0),
 	       software-properties-common
 Conflicts: torch7, torch, lua-cjson, lua-penlight, lua-filesystem
 Description: NVidia Torch Bundle (with CUDA). Made for DIGITS.
