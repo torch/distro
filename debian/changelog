@@ -1,4 +1,4 @@
-torch7 (0.9.95+cuda75) trusty; urgency=medium
+torch7 (0.9.95-1+cuda75) trusty; urgency=medium
   * Back to own luajit/luarocks
   * New versioning that includes linked CUDA version
 
