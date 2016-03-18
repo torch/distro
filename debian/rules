@@ -33,18 +33,13 @@ override_dh_auto_test:
 	echo Skipping : $@
 
 override_dh_auto_install:
-	echo "My environment"
-	env
 	rm -fr ${DEBINSTROOT}
-	ln -s  ${INSTROOT} ${DEBINSTROOT}
+	ln -s  ${INSTROOT} ${CURDIR}/debian/tmp
 
-#	PREFIX="${INSTROOT}" $(CURDIR)/install.sh -v -s -b -n
 	PREFIX="${INSTROOT}" $(CURDIR)/install.sh -v -s -b -a
 
 # override_dh_usrlocal:
 #	true
-
-#	PREFIX=${LUAROOT} LUA_BINDIR=${LUABINDIR} LUA=luajit SCRIPTS_DIR=${SCRIPTS_DIR}  ROCKFLAGS="--tree=${LUAROOT}"  CMAKE_PREFIX_PATH="${LUAROOT}" LUA_PATH=${LUAPATH} LUA_CPATH=${LUACPATH} $(CURDIR)/install.sh -v -s -b -n
 
 #   non-native luarocks (builing them)
 #	PREFIX=${LUAROCKS_ROOT} ROCKFLAGS="--tree=${LUAROCKS_ROOT}" $(CURDIR)/install.sh -v -s -b
