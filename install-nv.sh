@@ -193,11 +193,11 @@ cd ${THIS_DIR}/extra/hdf5           && $LUAROCKS make hdf5-0-0.rockspec || exit 
 cd ${THIS_DIR}/extra/nccl         && $LUAROCKS make nccl-scm-1.rockspec || exit 1
 
 # Optional CUDA packages
-if [ -x "$path_to_nvcc" ]
+if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
     echo "Found CUDA on your machine. Installing optional CUDA packages"
     cd ${THIS_DIR}/extra/cudnn   && $LUAROCKS make cudnn-scm-1.rockspec || exit 1
-#    cd ${THIS_DIR}/extra/cunnx   && $LUAROCKS make rocks/cunnx-scm-1.rockspec || exit 1
+    cd ${THIS_DIR}/extra/cunnx   && $LUAROCKS make rocks/cunnx-scm-1.rockspec || exit 1
 fi
 
 export PATH=$OLDPATH # Restore anaconda distribution if we took it out.
