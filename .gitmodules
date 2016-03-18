@@ -4,7 +4,7 @@
         branch = master
 [submodule "exe/qtlua"]
 	path = exe/qtlua
-	url = https://github.com/borisfom/qtlua.git
+	url = https://github.com/torch/qtlua.git
         branch = master
 [submodule "pkg/dok"]
 	path = pkg/dok
