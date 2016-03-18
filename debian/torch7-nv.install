@@ -21,7 +21,6 @@ usr/include/lua.hpp
 usr/include/THC
 usr/include/luaT.h
 usr/include/luaconf.h
-usr/lib/libthreadsmain.so
 usr/lib/luarocks/rocks/hdf5
 usr/lib/luarocks/rocks/nn
 usr/lib/luarocks/rocks/luaffi
@@ -64,7 +63,6 @@ usr/lib/luarocks/rocks/trepl
 usr/lib/luarocks/rocks/threads
 usr/lib/luarocks/rocks/xlua
 usr/lib/luarocks/rocks/nnx
-usr/lib/libTH.so
 usr/lib/lua/5.1/libsox.so
 usr/lib/lua/5.1/libcutorch.so
 usr/lib/lua/5.1/libthreads.so
@@ -72,6 +70,7 @@ usr/lib/lua/5.1/ffi.so
 usr/lib/lua/5.1/libaudio.so
 usr/lib/lua/5.1/treplutils.so
 usr/lib/lua/5.1/libTHNN.so
+usr/lib/lua/5.1/libTHCUNN.so
 usr/lib/lua/5.1/libtorch.so
 usr/lib/lua/5.1/libsignal.so
 usr/lib/lua/5.1/lightningmdb.so
@@ -95,7 +94,10 @@ usr/lib/lua/5.1/libsys.so
 usr/lib/lua/5.1/libppm.so
 usr/lib/lua/5.1/libnnx.so
 usr/lib/lua/5.1/lzmq.so
-usr/lib/libTHC.so
-usr/lib/libluajit.so
-usr/lib/libluaT.so
-usr/lib/libTHCUNN.so
+usr/lib/libTHC.so                        /usr/lib/x86_64-linux-gnu
+usr/lib/libqlua.so                       /usr/lib/x86_64-linux-gnu
+usr/lib/libluaT.so                       /usr/lib/x86_64-linux-gnu
+usr/lib/libluajit.so                     /usr/lib/x86_64-linux-gnu
+usr/lib/libthreadsmain.so                /usr/lib/x86_64-linux-gnu
+usr/lib/libTH.so                         /usr/lib/x86_64-linux-gnu
+usr/lib/libqtlua.so                      /usr/lib/x86_64-linux-gnu
