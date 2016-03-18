@@ -17,7 +17,7 @@ Standards-Version: 3.9.5
 Package: torch7-nv
 Section: universe/tools
 Architecture: amd64
-Depends: ${misc:Depends}, ${shlibs:Depends},
+Depends: ${misc:Depends},
                liblapack, libopenblas,
                libqt4-core, libqt4-gui,
 	       libreadline6, libncurses5,
