@@ -36,7 +36,6 @@ override_dh_auto_install:
 	echo "My environment"
 	env
 	rm -fr ${DEBINSTROOT}
-	mkdir -p  ${DEBINSTROOT}
 	ln -s  ${INSTROOT} ${DEBINSTROOT}
 
 #	PREFIX="${INSTROOT}" $(CURDIR)/install.sh -v -s -b -n
