@@ -140,7 +140,7 @@
 	url = https://github.com/borisfom/FindCUDA.git
 [submodule "extra/lmdb"]
 	path = extra/lmdb
-	url = https://github.com/shmul/lightningmdb.git
+	url = https://github.com/LuaDist2/lightningmdb.git
 [submodule "extra/lua-pb"]
 	path = extra/lua-pb
 	url = https://github.com/Neopallium/lua-pb.git
