@@ -36,7 +36,7 @@ override_dh_auto_install:
 	rm -fr ${DEBINSTROOT}
 	mkdir -p ${CURDIR}/debian/tmp
 	ln -s  ${INSTROOT} ${CURDIR}/debian/tmp
-	PREFIX="${INSTROOT}" $(CURDIR)/install-nv.sh -v -b -a
+	PREFIX="${INSTROOT}" $(CURDIR)/install-nv.sh -b -a
 
 #override_dh_shlibdeps:
 #    dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
