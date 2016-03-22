@@ -1,5 +1,12 @@
 torch7 (0.9.95-2+cuda7.5) trusty; urgency=medium
   * CuDNN fixes (RNN)
+  * CuDNN merge from upstream
+  * CUDNN5 RC
+
+ -- Boris Fomitchev <bfomitchev@nvidia.com>  Tue, 22 Mar 2016 15:18:00 -0800
+
+torch7 (0.9.95-2+cuda7.5) trusty; urgency=medium
+  * CuDNN fixes (RNN)
   * LMDB: changed to LuaDist2
 
  -- Boris Fomitchev <bfomitchev@nvidia.com>  Fri, 18 Mar 2016 15:18:00 -0800
