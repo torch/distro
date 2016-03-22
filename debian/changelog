@@ -1,4 +1,4 @@
-torch7 (0.9.95-2+cuda7.5) trusty; urgency=medium
+torch7 (0.9.95-3+cuda7.5) trusty; urgency=medium
   * CuDNN fixes (RNN)
   * CuDNN merge from upstream
   * CUDNN5 RC
