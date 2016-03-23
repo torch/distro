@@ -1,4 +1,5 @@
 usr/share/lua/5.1
+usr/share/cmake/torch
 usr/bin/luarocks
 usr/bin/th
 usr/bin/totem-run

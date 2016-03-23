@@ -1,3 +1,8 @@
+torch7 (0.9.95-4+cuda8.0) trusty; urgency=medium
+  * CMake fixes for future installed rocks
+
+ -- Boris Fomitchev <bfomitchev@nvidia.com>  Wed, 23 Mar 2016 15:18:00 -0800
+
 torch7 (0.9.95-3+cuda7.5) trusty; urgency=medium
   * CuDNN fixes (RNN)
   * CuDNN merge from upstream
