@@ -1,7 +1,14 @@
+torch7 (0.9.95-7+cuda7.5) trusty; urgency=medium
+  * Fix TemporalConvolution output size
+
+ -- Boris Fomitchev <bfomitchev@nvidia.com>  Mon, 11 Apr 2016 15:18:00 -0800
+
 torch7 (0.9.95-5+cuda7.5) trusty; urgency=medium
   * Rebuilt with /usr/local tree removed
+  * Fix failing SpatialFullConvolution test
 
- -- Boris Fomitchev <bfomitchev@nvidia.com>  Wed, 23 Mar 2016 20:18:00 -0800
+ -- Boris Fomitchev <bfomitchev@nvidia.com>  Thu, 24 Mar 2016 15:18:00 -0800
+
 torch7 (0.9.95-4+cuda7.5) trusty; urgency=medium
   * CMake fixes for future installed rocks
 
