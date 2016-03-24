@@ -1,3 +1,7 @@
+torch7 (0.9.95-5+cuda7.5) trusty; urgency=medium
+  * Rebuilt with /usr/local tree removed
+
+ -- Boris Fomitchev <bfomitchev@nvidia.com>  Wed, 23 Mar 2016 20:18:00 -0800
 torch7 (0.9.95-4+cuda7.5) trusty; urgency=medium
   * CMake fixes for future installed rocks
 
