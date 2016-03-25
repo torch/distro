@@ -1,6 +1,6 @@
 [submodule "exe/luajit-rocks"]
 	path = exe/luajit-rocks
-	url = https://github.com/lim0606/luajit-rocks.git
+	url = https://github.com/torch/luajit-rocks.git
 [submodule "exe/qtlua"]
 	path = exe/qtlua
 	url = https://github.com/torch/qtlua.git
@@ -57,7 +57,7 @@
 	url = https://github.com/torch/argcheck.git
 [submodule "extra/cudnn"]
 	path = extra/cudnn
-	url = https://github.com/lim0606/cudnn.torch.git
+	url = https://github.com/soumith/cudnn.torch.git
 [submodule "exe/trepl"]
 	path = exe/trepl
 	url = https://github.com/torch/trepl.git
