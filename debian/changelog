@@ -1,3 +1,9 @@
+torch7 (0.9.97-1+cuda7.5) trusty; urgency=medium
+  * Picked up latest Torch ToT
+  * Notably: Half(float16) support in cutorch
+
+ -- Boris Fomitchev <bfomitchev@nvidia.com>  Tue, 12 Apr 2016 21:18:00 -0800
+
 torch7 (0.9.95-7+cuda7.5) trusty; urgency=medium
   * Fix TemporalConvolution output size
 
