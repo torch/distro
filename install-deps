@@ -91,7 +91,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
     elif [[ -r /etc/redhat-release ]]; then
         DIST_VERS=( $( cat /etc/redhat-release ) ) # make the file an array
         DISTRO="${DIST_VERS[0],,}" # get the first element and get lcase
-        VERS="${DIST_VERS[2]}" # get the third element (version)
+        VERSION="${DIST_VERS[2]}" # get the third element (version)
     elif [[ -r /etc/lsb-release ]]; then
         DIST_VERS="$( ( . /etc/lsb-release &>/dev/null
                         echo "${DISTRIB_ID,,} $DISTRIB_RELEASE") )"
