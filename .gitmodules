@@ -85,9 +85,6 @@
 [submodule "extra/cunnx"]
 	path = extra/cunnx
 	url = https://github.com/nicholas-leonard/cunnx.git
-[submodule "extra/iTorch"]
-	path = extra/iTorch
-	url = https://github.com/facebook/iTorch.git
 [submodule "extra/graph"]
 	path = extra/graph
 	url = https://github.com/torch/graph

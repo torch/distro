@@ -127,11 +127,6 @@ then
 fi
 
 export PATH=$OLDPATH # Restore anaconda distribution if we took it out.
-if [[ `uname` == "Darwin" ]]; then
-    cd ${THIS_DIR}/extra/iTorch         && $PREFIX/bin/luarocks make OPENSSL_DIR=/usr/local/opt/openssl/
-else
-    cd ${THIS_DIR}/extra/iTorch         && $PREFIX/bin/luarocks make
-fi
 
 if [[ $SKIP_RC == 1 ]]; then
   exit 0
