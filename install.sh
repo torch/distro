@@ -40,6 +40,7 @@ echo "Prefix set to $PREFIX"
 if [[ `uname` == 'Linux' ]]; then
     export CMAKE_LIBRARY_PATH=/opt/OpenBLAS/include:/opt/OpenBLAS/lib:$CMAKE_LIBRARY_PATH
 fi
+export CMAKE_PREFIX_PATH=$PREFIX
 
 git submodule update --init --recursive
 
