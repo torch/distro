@@ -153,3 +153,6 @@
 [submodule "extra/nccl"]
 	path = extra/nccl
 	url = https://github.com/ngimel/nccl.torch.git
+[submodule "extra/tds"]
+	path = extra/tds
+	url = https://github.com/torch/tds.git
