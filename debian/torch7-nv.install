@@ -68,6 +68,7 @@ usr/lib/luarocks/rocks/trepl
 usr/lib/luarocks/rocks/threads
 usr/lib/luarocks/rocks/xlua
 usr/lib/luarocks/rocks/nnx
+usr/lib/luarocks/rocks/tds
 usr/lib/lua/5.1/libsox.so
 usr/lib/lua/5.1/libcutorch.so
 usr/lib/lua/5.1/libthreads.so
@@ -81,6 +82,7 @@ usr/lib/lua/5.1/libtorch.so
 usr/lib/lua/5.1/libqtide.so
 usr/lib/lua/5.1/libqtgui.so
 usr/lib/lua/5.1/libsignal.so
+usr/lib/lua/5.1/libtds.so
 usr/lib/lua/5.1/lightningmdb.so
 usr/lib/lua/5.1/lzmq
 usr/lib/lua/5.1/lzmq/timer.so
