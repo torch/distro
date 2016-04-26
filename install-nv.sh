@@ -13,7 +13,10 @@ TORCH_LUA_VERSION=${TORCH_LUA_VERION:-"LUAJIT21"} # by default install LUAJIT21
 while getopts 'absvnh:' x; do
     case "$x" in
         a)
-            export CUDA_ARCH_NAME=All
+            export CUDA_ARCH_NAME="Kepler;Kepler+Tesla;Maxwell"
+            ;;
+        A)
+            export CUDA_ARCH_NAME="Maxwell;Pascal"
             ;;
         h)
             echo "usage: $0
@@ -192,7 +195,7 @@ cd ${THIS_DIR}/extra/hdf5           && $LUAROCKS make hdf5-0-0.rockspec || exit 
 #NCCL (experimental) support
 cd ${THIS_DIR}/extra/nccl         && $LUAROCKS make nccl-scm-1.rockspec || exit 1
 #Torch Data Structures
-cd ${THIS_DIR}/extra/tds         && $LUAROCKS make rocks/tds-scm-1.rockspec || exit 1
+# cd ${THIS_DIR}/extra/tds         && $LUAROCKS make rocks/tds-scm-1.rockspec || exit 1
 
 # Optional CUDA packages
 if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
@@ -203,11 +206,6 @@ then
 fi
 
 export PATH=$OLDPATH # Restore anaconda distribution if we took it out.
-if [[ `uname` == "Darwin" ]]; then
-    cd ${THIS_DIR}/extra/iTorch         && $LUAROCKS make OPENSSL_DIR=/usr/local/opt/openssl/
-else
-    cd ${THIS_DIR}/extra/iTorch         && $LUAROCKS make
-fi
 
 
 if [[ $SKIP_RC == 1 ]]; then

@@ -110,10 +110,6 @@
 	path = extra/cunnx
 	url = https://github.com/borisfom/cunnx.git
         branch = master
-[submodule "extra/iTorch"]
-	path = extra/iTorch
-	url = https://github.com/facebook/iTorch.git
-        branch = master
 [submodule "extra/graph"]
 	path = extra/graph
 	url = https://github.com/torch/graph

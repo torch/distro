@@ -6,11 +6,9 @@ usr/bin/totem-run
 usr/bin/torch-activate
 usr/bin/lua2json
 usr/bin/totem-init
-usr/bin/itorch_launcher
 usr/bin/mdcat
 usr/bin/luajit
 usr/bin/qlua
-usr/bin/itorch
 usr/bin/luarocks-admin
 usr/bin/json2lua
 usr/etc/luarocks
@@ -62,13 +60,10 @@ usr/lib/luarocks/rocks/paths
 usr/lib/luarocks/rocks/totem
 usr/lib/luarocks/rocks/penlight
 usr/lib/luarocks/rocks/nngraph
-usr/lib/luarocks/rocks/itorch
-usr/lib/luarocks/rocks/itorch/scm-1
 usr/lib/luarocks/rocks/trepl
 usr/lib/luarocks/rocks/threads
 usr/lib/luarocks/rocks/xlua
 usr/lib/luarocks/rocks/nnx
-usr/lib/luarocks/rocks/tds
 usr/lib/lua/5.1/libsox.so
 usr/lib/lua/5.1/libcutorch.so
 usr/lib/lua/5.1/libthreads.so
@@ -82,7 +77,6 @@ usr/lib/lua/5.1/libtorch.so
 usr/lib/lua/5.1/libqtide.so
 usr/lib/lua/5.1/libqtgui.so
 usr/lib/lua/5.1/libsignal.so
-usr/lib/lua/5.1/libtds.so
 usr/lib/lua/5.1/lightningmdb.so
 usr/lib/lua/5.1/lzmq
 usr/lib/lua/5.1/lzmq/timer.so
