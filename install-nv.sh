@@ -13,10 +13,10 @@ TORCH_LUA_VERSION=${TORCH_LUA_VERION:-"LUAJIT21"} # by default install LUAJIT21
 while getopts 'absvnh:' x; do
     case "$x" in
         a)
-            export CUDA_ARCH_NAME="Kepler;Kepler+Tesla;Maxwell"
+            export CUDA_ARCH_BIN="3.0 3.7 5.0"
             ;;
         A)
-            export CUDA_ARCH_NAME="Maxwell;Pascal"
+            export CUDA_ARCH_BIN="5.0 6.0 6.2"
             ;;
         h)
             echo "usage: $0
@@ -167,8 +167,8 @@ cd ${THIS_DIR}/pkg/optim     && $LUAROCKS make optim-1.0.5-0.rockspec       || e
 if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
     echo "Found CUDA on your machine. Installing CUDA packages"
-    cd ${THIS_DIR}/extra/cutorch  && $LUAROCKS  make rocks/cutorch-scm-1.rockspec || exit 1
-    cd ${THIS_DIR}/extra/cunn     && $LUAROCKS  make rocks/cunn-scm-1.rockspec    || exit 1
+    cd ${THIS_DIR}/extra/cutorch  && $LUAROCKS  make CUDA_ARCH_BIN="${CUDA_ARCH_BIN}" rocks/cutorch-scm-1.rockspec || exit 1
+    cd ${THIS_DIR}/extra/cunn     && $LUAROCKS  make CUDA_ARCH_BIN="${CUDA_ARCH_BIN}" rocks/cunn-scm-1.rockspec    || exit 1
 fi
 
 # Optional packages
