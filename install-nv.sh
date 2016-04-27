@@ -10,13 +10,14 @@ BUILD_DIR=${THIS_DIR}/build
 
 TORCH_LUA_VERSION=${TORCH_LUA_VERION:-"LUAJIT21"} # by default install LUAJIT21
 
-while getopts 'absvnh:' x; do
+while getopts 'aAbsvnh:' x; do
     case "$x" in
         a)
-            export CUDA_ARCH_BIN="3.0 3.7 5.0"
+            export CUDA_SELECT_NVCC_ARCH_TARGETS="3.0 3.5 3.7 5.0"
             ;;
         A)
-            export CUDA_ARCH_BIN="5.0 6.0 6.2"
+            export CUDA_SELECT_NVCC_ARCH_TARGETS="5.0 6.0 6.2"
+
             ;;
         h)
             echo "usage: $0
@@ -109,8 +110,8 @@ if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
     echo "Found CUDA on your machine. Installing FindCUDA module to work around .cu bug in CMake 2.8/3.5"
     cd ${THIS_DIR}/extra/FindCUDA && \
-(cmake -E make_directory build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}" -DCMAKE_INSTALL_SUBDIR="${CMAKE_INSTALL_SUBDIR}" && make install) \
-    && echo "FindCuda installed" || exit 1
+(cmake -E make_directory build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}" \
+    -DCMAKE_INSTALL_SUBDIR="${CMAKE_INSTALL_SUBDIR}" && make install) && echo "FindCuda installed" || exit 1
 fi
 
 #
@@ -166,9 +167,9 @@ cd ${THIS_DIR}/pkg/optim     && $LUAROCKS make optim-1.0.5-0.rockspec       || e
 
 if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
 then
-    echo "Found CUDA on your machine. Installing CUDA packages"
-    cd ${THIS_DIR}/extra/cutorch  && $LUAROCKS  make CUDA_ARCH_BIN="${CUDA_ARCH_BIN}" rocks/cutorch-scm-1.rockspec || exit 1
-    cd ${THIS_DIR}/extra/cunn     && $LUAROCKS  make CUDA_ARCH_BIN="${CUDA_ARCH_BIN}" rocks/cunn-scm-1.rockspec    || exit 1
+    echo "Found CUDA on your machine. Installing CUDA packages for ${CUDA_SELECT_NVCC_ARCH_TARGETS}"
+    cd ${THIS_DIR}/extra/cutorch  && $LUAROCKS  make CUDA_SELECT_NVCC_ARCH_TARGETS="${CUDA_SELECT_NVCC_ARCH_TARGETS}" rocks/cutorch-scm-1.rockspec || exit 1
+    cd ${THIS_DIR}/extra/cunn     && $LUAROCKS  make CUDA_SELECT_NVCC_ARCH_TARGETS="${CUDA_SELECT_NVCC_ARCH_TARGETS}" rocks/cunn-scm-1.rockspec    || exit 1
 fi
 
 # Optional packages
