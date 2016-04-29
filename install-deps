@@ -161,16 +161,19 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 
         sudo apt-get update
         sudo apt-get install -y build-essential gcc g++ curl \
-            cmake libreadline-dev git-core libqt4-core libqt4-gui \
-            libqt4-dev libjpeg-dev libpng-dev ncurses-dev \
-            imagemagick libzmq3-dev gfortran unzip gnuplot \
-            gnuplot-x11 ipython
+            cmake libreadline-dev git-core libqt4-dev libjpeg-dev \
+            libpng-dev ncurses-dev imagemagick libzmq3-dev gfortran \
+            unzip gnuplot gnuplot-x11 ipython
 
         if [[ $ubuntu_major_version -lt '14' ]]; then
             # Install from source after installing git and build-essential
             install_openblas || true
         else
             sudo apt-get install -y libopenblas-dev liblapack-dev
+        fi
+
+        if [[ $ubuntu_major_version -lt '15' ]]; then
+            sudo apt-get install libqt4-core libqt4-gui
         fi
 
     elif [[ $distribution == 'elementary' ]]; then
