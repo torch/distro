@@ -17,5 +17,5 @@ apt-get -y install \
   cuda-curand-${CUDA_VERSION} \
   cuda-curand-dev-${CUDA_VERSION} \
   cuda-cusparse-${CUDA_VERSION} \
-  cuda-cusparse-dev-${CUDA_VERSION} \
+  cuda-cusparse-dev-${CUDA_VERSION}
 ln -s /usr/local/cuda-6.5 /usr/local/cuda
