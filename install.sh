@@ -106,7 +106,7 @@ cd ${THIS_DIR}/pkg/optim     && $PREFIX/bin/luarocks make optim-1.0.5-0.rockspec
 if [ -x "$path_to_nvcc" ]
 then
     echo "Found CUDA on your machine. Installing CUDA packages"
-    cd ${THIS_DIR}/extra/cutorch && $PREFIX/bin/luarocks make rocks/cutorch-scm-1.rockspec || exit 1
+    cd ${THIS_DIR}/extra/cutorch && CMAKE_CXX_FLAGS=-D_FORCE_INLINES $PREFIX/bin/luarocks make rocks/cutorch-scm-1.rockspec || exit 1
     cd ${THIS_DIR}/extra/cunn    && $PREFIX/bin/luarocks make rocks/cunn-scm-1.rockspec    || exit 1
 fi
 
