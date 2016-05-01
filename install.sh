@@ -97,6 +97,7 @@ cd ${THIS_DIR}/extra/graph   && $PREFIX/bin/luarocks make rocks/graph-scm-1.rock
 cd ${THIS_DIR}/extra/nngraph && $PREFIX/bin/luarocks make                              || exit 1
 cd ${THIS_DIR}/pkg/image     && $PREFIX/bin/luarocks make image-1.1.alpha-0.rockspec   || exit 1
 cd ${THIS_DIR}/pkg/optim     && $PREFIX/bin/luarocks make optim-1.0.5-0.rockspec       || exit 1
+cd ${THIS_DIR}/extra/torch-autograd && $PREFIX/bin/luarocks make                       || exit 1
 
 if [ -x "$path_to_nvcc" ]
 then

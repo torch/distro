@@ -103,3 +103,6 @@
 [submodule "extra/lua-cjson"]
 	path = extra/lua-cjson
 	url = https://github.com/mpx/lua-cjson
+[submodule "torch-autograd"]
+	path = torch-autograd
+	url = https://github.com/twitter/torch-autograd
