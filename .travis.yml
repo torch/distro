@@ -52,6 +52,6 @@ script:
 - export PRE_PATH=$PATH
 - export PATH=/usr/local/cuda/bin/:$PATH
 - cd ~/torch && ./install.sh -b
-- source ~/torch/install/bin/torch-activate
 - export PATH=$PRE_PATH
+- source ~/torch/install/bin/torch-activate
 - ./test.sh
