@@ -42,13 +42,7 @@ then
     $LUA -laudio           -e "print('audio loaded succesfully')"
 fi
 
-# CUDA tests
-set +e 
-path_to_nvcc=$(which nvcc)
-path_to_nvidiasmi=$(which nvidia-smi)
-set -e 
-
-if [ -x "$path_to_nvcc" ] || [ -x "$path_to_nvidiasmi" ]
+if `$LUA -lcutorch -e ""`
 then
     $LUA -lcutorch -e "print('cutorch loaded succesfully')"
     $LUA -lcunn -e "print('cunn loaded succesfully')"

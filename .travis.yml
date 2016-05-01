@@ -49,9 +49,7 @@ before_script:
 - git clone https://github.com/szagoruyko/distro.git ~/torch --recursive
 - sudo -E bash ~/torch/travis_cuda_install.sh
 script: 
-- export PRE_PATH=$PATH
 - export PATH=/usr/local/cuda/bin/:$PATH
 - cd ~/torch && ./install.sh -b
-- export PATH=$PRE_PATH
 - source ~/torch/install/bin/torch-activate
 - ./test.sh
