@@ -62,7 +62,7 @@ cd ..
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
 path_to_nvcc=$(which nvcc)
-if [[ -v path_to_nvcc ]]; then { # look for it in /usr/local
+if [ $? == 1 ]; then { # look for it in /usr/local
   if [[ -f /usr/local/cuda/bin/nvcc ]]; then {
     path_to_nvcc=/usr/local/cuda/bin/nvcc
   } fi
