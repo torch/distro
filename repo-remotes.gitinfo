@@ -1,0 +1,130 @@
+
+[remote "upstream"]
+	url = https://github.com/borisfom/distro.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[remote "luajit-rocks"]
+	url = https://github.com/torch/luajit-rocks.git
+	fetch = +refs/heads/*:refs/remotes/luajit-rocks/*
+[remote "qtlua"]
+	url = https://github.com/torch/qtlua.git
+	fetch = +refs/heads/*:refs/remotes/qtlua/*
+[remote "dok"]
+	url = https://github.com/torch/dok.git
+	fetch = +refs/heads/*:refs/remotes/dok/*
+[remote "gnuplot"]
+	url = https://github.com/torch/gnuplot.git
+	fetch = +refs/heads/*:refs/remotes/gnuplot/*
+[remote "paths"]
+	url = https://github.com/torch/paths.git
+	fetch = +refs/heads/*:refs/remotes/paths/*
+[remote "cwrap"]
+	url = https://github.com/torch/cwrap.git
+	fetch = +refs/heads/*:refs/remotes/cwrap/*
+[remote "cunn"]
+	url = https://github.com/borisfom/cunn.git
+	fetch = +refs/heads/*:refs/remotes/cunn/*
+[remote "cutorch"]
+	url = https://github.com/borisfom/cutorch.git
+	fetch = +refs/heads/*:refs/remotes/cutorch/*
+[remote "torch"]
+	url = https://github.com/torch/torch7.git
+	fetch = +refs/heads/*:refs/remotes/torch/*
+[remote "sundown"]
+	url = https://github.com/torch/sundown-ffi.git
+	fetch = +refs/heads/*:refs/remotes/sundown/*
+[remote "qttorch"]
+	url = https://github.com/torch/qttorch.git
+	fetch = +refs/heads/*:refs/remotes/qttorch/*
+[remote "xlua"]
+	url = https://github.com/torch/xlua.git
+	fetch = +refs/heads/*:refs/remotes/xlua/*
+[remote "sys"]
+	url = https://github.com/torch/sys.git
+	fetch = +refs/heads/*:refs/remotes/sys/*
+[remote "image"]
+	url = https://github.com/torch/image.git
+	fetch = +refs/heads/*:refs/remotes/image/*
+[remote "optim"]
+	url = https://github.com/torch/optim.git
+	fetch = +refs/heads/*:refs/remotes/optim/*
+[remote "sdl2"]
+	url = https://github.com/torch/sdl2-ffi.git
+	fetch = +refs/heads/*:refs/remotes/sdl2/*
+[remote "threads"]
+	url = https://github.com/torch/threads-ffi.git
+	fetch = +refs/heads/*:refs/remotes/threads/*
+[remote "graphicsmagick"]
+	url = https://github.com/clementfarabet/graphicsmagick.git
+	fetch = +refs/heads/*:refs/remotes/graphicsmagick/*
+[remote "argcheck"]
+	url = https://github.com/torch/argcheck.git
+	fetch = +refs/heads/*:refs/remotes/argcheck/*
+[remote "cudnn"]
+	url = https://github.com/borisfom/cudnn.torch.git
+	fetch = +refs/heads/*:refs/remotes/cudnn/*
+[remote "trepl"]
+	url = https://github.com/torch/trepl.git
+	fetch = +refs/heads/*:refs/remotes/trepl/*
+[remote "audio"]
+	url = https://github.com/soumith/lua---audio.git
+	fetch = +refs/heads/*:refs/remotes/audio/*
+[remote "signal"]
+	url = https://github.com/soumith/torch-signal.git
+	fetch = +refs/heads/*:refs/remotes/signal/*
+[remote "fftw3"]
+	url = https://github.com/soumith/fftw3-ffi.git
+	fetch = +refs/heads/*:refs/remotes/fftw3/*
+[remote "nnx"]
+	url = https://github.com/clementfarabet/lua---nnx.git
+	fetch = +refs/heads/*:refs/remotes/nnx/*
+[remote "nn"]
+	url = https://github.com/torch/nn.git
+	fetch = +refs/heads/*:refs/remotes/nn/*
+[remote "env"]
+	url = https://github.com/torch/env.git
+	fetch = +refs/heads/*:refs/remotes/env/*
+[remote "cuda-convnet2.torch"]
+	url = https://github.com/soumith/cuda-convnet2.torch.git
+	fetch = +refs/heads/*:refs/remotes/cuda-convnet2.torch/*
+[remote "cunnx"]
+	url = https://github.com/borisfom/cunnx.git
+	fetch = +refs/heads/*:refs/remotes/cunnx/*
+[remote "graph"]
+	url = https://github.com/torch/graph
+	fetch = +refs/heads/*:refs/remotes/graph/*
+[remote "nngraph"]
+	url = https://github.com/torch/nngraph
+	fetch = +refs/heads/*:refs/remotes/nngraph/*
+[remote "luaffifb"]
+	url = https://github.com/facebook/luaffifb
+	fetch = +refs/heads/*:refs/remotes/luaffifb/*
+[remote "luafilesystem"]
+	url = https://github.com/keplerproject/luafilesystem.git
+	fetch = +refs/heads/*:refs/remotes/luafilesystem/*
+[remote "penlight"]
+	url = https://github.com/stevedonovan/Penlight.git
+	fetch = +refs/heads/*:refs/remotes/penlight/*
+[remote "lua-cjson"]
+	url = https://github.com/mpx/lua-cjson
+	fetch = +refs/heads/*:refs/remotes/lua-cjson/*
+[remote "FindCUDA"]
+	url = https://github.com/borisfom/FindCUDA.git
+	fetch = +refs/heads/*:refs/remotes/FindCUDA/*
+[remote "lmdb"]
+	url = https://github.com/LuaDist2/lightningmdb.git
+	fetch = +refs/heads/*:refs/remotes/lmdb/*
+[remote "lua-pb"]
+	url = https://github.com/Neopallium/lua-pb.git
+	fetch = +refs/heads/*:refs/remotes/lua-pb/*
+[remote "totem"]
+	url = https://github.com/deepmind/torch-totem.git
+	fetch = +refs/heads/*:refs/remotes/totem/*
+[remote "hdf5"]
+	url = https://github.com/deepmind/torch-hdf5.git
+	fetch = +refs/heads/*:refs/remotes/hdf5/*
+[remote "nccl"]
+	url = https://github.com/ngimel/nccl.torch.git
+	fetch = +refs/heads/*:refs/remotes/nccl/*
+[remote "tds"]
+	url = https://github.com/torch/tds.git
+	fetch = +refs/heads/*:refs/remotes/tds/*
