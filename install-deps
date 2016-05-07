@@ -283,6 +283,11 @@ elif [[ "$(uname)" == 'Linux' ]]; then
         install_openblas || true
     fi
 
+elif [[ "$(uname)" == 'FreeBSD' ]]; then
+    pkg install ImageMagick cmake curl fftw3 git gnuplot libjpeg-turbo \
+        libzmq3 ncurses node npm openblas openssl png py27-ipython \
+        py27-pip qt4-corelib qt4-gui readline unzip
+
 else
     # Unsupported
     echo '==> platform not supported, aborting'
