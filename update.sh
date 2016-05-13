@@ -1,6 +1,6 @@
 # git pull
 # git submodule update
-git pull
+git fetch
 git submodule foreach git fetch
 git submodule foreach git checkout master
 git submodule foreach git pull
