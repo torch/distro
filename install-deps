@@ -152,18 +152,18 @@ elif [[ "$(uname)" == 'Linux' ]]; then
                 libsox-fmt-all
         fi
 
+        sudo apt-get update
+        sudo apt-get install -y build-essential gcc g++ curl \
+            cmake libreadline-dev git-core libqt4-dev libjpeg-dev \
+            libpng-dev ncurses-dev imagemagick libzmq3-dev gfortran \
+            unzip gnuplot gnuplot-x11 ipython
+
         gcc_major_version=$(gcc --version | grep ^gcc | awk '{print $4}' | \
                             cut -c 1)
         if [[ $gcc_major_version == '5' ]]; then
             echo '==> Found GCC 5, installing GCC 4.9.'
             sudo apt-get install -y gcc-4.9 libgfortran-4.9-dev g++-4.9
         fi
-
-        sudo apt-get update
-        sudo apt-get install -y build-essential gcc g++ curl \
-            cmake libreadline-dev git-core libqt4-dev libjpeg-dev \
-            libpng-dev ncurses-dev imagemagick libzmq3-dev gfortran \
-            unzip gnuplot gnuplot-x11 ipython
 
         if [[ $ubuntu_major_version -lt '14' ]]; then
             # Install from source after installing git and build-essential
