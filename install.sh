@@ -6,6 +6,8 @@ BATCH_INSTALL=0
 THIS_DIR=$(cd $(dirname $0); pwd)
 PREFIX=${PREFIX:-"${THIS_DIR}/install"}
 TORCH_LUA_VERSION=${TORCH_LUA_VERSION:-"LUAJIT21"} # by default install LUAJIT21
+# default is empty arch list
+TORCH_CUDA_ARCH_LIST=
 
 while getopts 'bsh:' x; do
     case "$x" in
