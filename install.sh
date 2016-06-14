@@ -28,11 +28,11 @@ This script will install Torch and related, useful packages into $PREFIX.
 done
 
 
-# Scrub an anaconda install, if exists, from the PATH.
+# Scrub an anaconda/conda install, if exists, from the PATH.
 # It has a malformed MKL library (as of 1/17/2015)
 OLDPATH=$PATH
-if [[ $(echo $PATH | grep anaconda) ]]; then
-    export PATH=$(echo $PATH | tr ':' '\n' | grep -v "anaconda/bin" | grep -v "anaconda/lib" | grep -v "anaconda/include" | uniq | tr '\n' ':')
+if [[ $(echo $PATH | grep conda) ]]; then
+    export PATH=$(echo $PATH | tr ':' '\n' | grep -v "conda[2-9]\?/bin" | grep -v "conda[2-9]\?/lib" | grep -v "conda[2-9]\?/include" | uniq | tr '\n' ':')
 fi
 
 echo "Prefix set to $PREFIX"
