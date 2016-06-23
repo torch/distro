@@ -294,7 +294,7 @@ else
     exit 1
 fi
 
-ipython_exists=$(command -v ipython)
+ipython_exists=$(command -v ipython) || true
 if [[ $ipython_exists ]]; then {
     ipython_version=$(ipython --version|cut -f1 -d'.')
     if [[ $ipython_version != 2 && $ipython_version != 3 && $ipython_version != 4 ]]; then {
