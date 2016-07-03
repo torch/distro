@@ -239,7 +239,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
         elif [[ $fedora_major_version == '22' ||  $fedora_major_version == '23'  ]]; then
             #using dnf - since yum has been deprecated
             #sox-plugins-freeworld is not yet available in repos for F22
-            sudo dnf install -y cmake curl readline-devel ncurses-devel \
+            sudo dnf install -y make cmake curl readline-devel ncurses-devel \
             			gcc-c++ gcc-gfortran git gnuplot unzip \
             			nodejs npm libjpeg-turbo-devel libpng-devel \
             			ImageMagick GraphicsMagick-devel fftw-devel \
@@ -253,7 +253,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
     elif [[ $distribution == 'centos' ]]; then
         if [[ $centos_major_version == '7' ]]; then
             sudo yum install -y epel-release # a lot of things live in EPEL
-            sudo yum install -y cmake curl readline-devel ncurses-devel \
+            sudo yum install -y make cmake curl readline-devel ncurses-devel \
                                 gcc-c++ gcc-gfortran git gnuplot unzip \
                                 nodejs npm libjpeg-turbo-devel libpng-devel \
                                 ImageMagick GraphicsMagick-devel fftw-devel \
