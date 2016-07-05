@@ -24,7 +24,7 @@
 	url = https://github.com/torch/cutorch.git
 [submodule "pkg/torch"]
 	path = pkg/torch
-	url = https://github.com/torch/torch7.git
+	url = https://github.com/ColfaxResearch/torch7.git
 [submodule "pkg/sundown"]
 	path = pkg/sundown
 	url = https://github.com/torch/sundown-ffi.git
@@ -75,7 +75,7 @@
 	url = https://github.com/clementfarabet/lua---nnx.git
 [submodule "extra/nn"]
 	path = extra/nn
-	url = https://github.com/torch/nn.git
+	url = https://github.com/ColfaxResearch/nn.git
 [submodule "exe/env"]
 	path = exe/env
 	url = https://github.com/torch/env.git
