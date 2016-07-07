@@ -251,7 +251,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
             exit 1
         fi
     elif [[ $distribution == 'centos' ]]; then
-        if [[ $centos_major_version == '7' ]]; then
+#        if [[ $centos_major_version == '7' ]]; then
             sudo yum install -y epel-release # a lot of things live in EPEL
             sudo yum install -y make cmake curl readline-devel ncurses-devel \
                                 gcc-c++ gcc-gfortran git gnuplot unzip \
@@ -260,11 +260,11 @@ elif [[ "$(uname)" == 'Linux' ]]; then
                                 sox-devel sox zeromq3-devel \
                                 qt-devel qtwebkit-devel sox-plugins-freeworld
             sudo yum install -y python-ipython
-            install_openblas || true
-        else
-            echo "Only CentOS 7 is supported for now, aborting."
-            exit 1
-        fi
+#            install_openblas || true
+#        else
+#            echo "Only CentOS 7 is supported for now, aborting."
+#            exit 1
+#        fi
     elif [[ $distribution == 'amzn' ]]; then
         sudo yum install -y cmake curl readline-devel ncurses-devel \
                             gcc-c++ gcc-gfortran git gnuplot unzip \
