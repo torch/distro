@@ -236,18 +236,27 @@ elif [[ "$(uname)" == 'Linux' ]]; then
                                 qt-devel qtwebkit-devel sox-plugins-freeworld \
                                 ipython
             install_openblas || true
-        elif [[ $fedora_major_version == '22' ||  $fedora_major_version == '23'  ]]; then
+        elif [[ $fedora_major_version == '22' ||  $fedora_major_version == '23' ]]; then
             #using dnf - since yum has been deprecated
             #sox-plugins-freeworld is not yet available in repos for F22
             sudo dnf install -y make cmake curl readline-devel ncurses-devel \
-            			gcc-c++ gcc-gfortran git gnuplot unzip \
-            			nodejs npm libjpeg-turbo-devel libpng-devel \
-            			ImageMagick GraphicsMagick-devel fftw-devel \
-            			sox-devel sox qt-devel qtwebkit-devel \
-            			python-ipython czmq czmq-devel
+                                gcc-c++ gcc-gfortran git gnuplot unzip \
+                                nodejs npm libjpeg-turbo-devel libpng-devel \
+                                ImageMagick GraphicsMagick-devel fftw-devel \
+                                sox-devel sox qt-devel qtwebkit-devel \
+                                python-ipython czmq czmq-devel
+            install_openblas || true
+        elif [[ $fedora_major_version == '24' ]]; then
+            # Using DNF, but no longer installing npm since that comes with nodejs now.
+            sudo dnf install -y make cmake curl readline-devel ncurses-devel \
+                                gcc-c++ gcc-gfortran git gnuplot unzip \
+                                nodejs libjpeg-turbo-devel libpng-devel \
+                                ImageMagick GraphicsMagick-devel fftw-devel \
+                                sox-devel sox qt-devel qtwebkit-devel \
+                                python-ipython czmq czmq-devel
             install_openblas || true
         else
-            echo "Only Fedora 20 or Fedora 22 is supported for now, aborting."
+            echo "Only Fedora 20-24 are supported for now, aborting."
             exit 1
         fi
     elif [[ $distribution == 'centos' ]]; then
