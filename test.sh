@@ -36,10 +36,6 @@ th -lnn    -e "nn.test()"
 if [ $(basename $LUA) = "luajit" ]
 then
     $LUA -lsundown         -e "print('sundown loaded succesfully')"
-    $LUA -lsignal          -e "print('signal loaded succesfully')"
-    $LUA -lgraphicsmagick  -e "print('graphicsmagick loaded succesfully')"
-    $LUA -lfftw3           -e "print('fftw3 loaded succesfully')"
-    $LUA -laudio           -e "print('audio loaded succesfully')"
 fi
 
 if `$LUA -lcutorch -e ""`

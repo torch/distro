@@ -43,15 +43,9 @@
 [submodule "pkg/optim"]
 	path = pkg/optim
 	url = https://github.com/torch/optim.git
-[submodule "extra/sdl2"]
-	path = extra/sdl2
-	url = https://github.com/torch/sdl2-ffi.git
 [submodule "extra/threads"]
 	path = extra/threads
 	url = https://github.com/torch/threads-ffi.git
-[submodule "extra/graphicsmagick"]
-	path = extra/graphicsmagick
-	url = https://github.com/clementfarabet/graphicsmagick.git
 [submodule "extra/argcheck"]
 	path = extra/argcheck
 	url = https://github.com/torch/argcheck.git
@@ -61,15 +55,6 @@
 [submodule "exe/trepl"]
 	path = exe/trepl
 	url = https://github.com/torch/trepl.git
-[submodule "extra/audio"]
-	path = extra/audio
-	url = https://github.com/soumith/lua---audio.git
-[submodule "extra/signal"]
-	path = extra/signal
-	url = https://github.com/soumith/torch-signal.git
-[submodule "extra/fftw3"]
-	path = extra/fftw3
-	url = https://github.com/soumith/fftw3-ffi.git
 [submodule "extra/nnx"]
 	path = extra/nnx
 	url = https://github.com/clementfarabet/lua---nnx.git
