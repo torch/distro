@@ -74,7 +74,7 @@ if [[ `uname` == 'Darwin' ]]; then
     # Install dependencies:
     brew update
     brew install git readline cmake wget qt
-    brew install libjpeg imagemagick zeromq graphicsmagick openssl
+    brew install libjpeg zeromq openssl
     brew link readline --force
     brew cask install xquartz
     brew list -1 | grep -q "^gnuplot\$" && brew remove gnuplot
@@ -143,19 +143,16 @@ elif [[ "$(uname)" == 'Linux' ]]; then
             exit 1
         elif [[ $ubuntu_major_version -lt '14' ]]; then
             sudo -E add-apt-repository -y ppa:chris-lea/zeromq
-            sudo -E add-apt-repository -y ppa:chris-lea/node.js
         elif [[ $ubuntu_major_version -lt '15' ]]; then
             sudo -E add-apt-repository -y ppa:jtaylor/ipython
         else
-            sudo apt-get install -y software-properties-common \
-                libgraphicsmagick1-dev nodejs npm libfftw3-dev sox libsox-dev \
-                libsox-fmt-all
+            sudo apt-get install -y software-properties-common
         fi
 
         sudo apt-get update
         sudo apt-get install -y build-essential gcc g++ curl \
             cmake libreadline-dev git-core libqt4-dev libjpeg-dev \
-            libpng-dev ncurses-dev imagemagick libzmq3-dev gfortran \
+            libpng-dev ncurses-dev libzmq3-dev gfortran \
             unzip gnuplot gnuplot-x11 ipython
 
         gcc_major_version=$(gcc --version | grep ^gcc | awk '{print $4}' | \
@@ -181,21 +178,17 @@ elif [[ "$(uname)" == 'Linux' ]]; then
         target_pkgs=( build-essential gcc g++ curl \
                       cmake libreadline-dev git-core libqt4-core libqt4-gui \
                       libqt4-dev libjpeg-dev libpng-dev ncurses-dev \
-                      imagemagick libzmq3-dev gfortran unzip gnuplot \
+                      libzmq3-dev gfortran unzip gnuplot \
                       gnuplot-x11 ipython )
         sudo apt-get update
         # python-software-properties is required for apt-add-repository
         sudo apt-get install -y python-software-properties
         if [[ $elementary_version == '0.3' ]]; then
             echo '==> Found Ubuntu version 14.xx based elementary installation, installing dependencies'
-            sudo apt-get install -y software-properties-common \
-                libgraphicsmagick1-dev nodejs npm libfftw3-dev sox libsox-dev \
-                libsox-fmt-all
-
+            sudo apt-get install -y software-properties-common
             sudo -E add-apt-repository -y ppa:jtaylor/ipython
         else
             sudo -E add-apt-repository -y ppa:chris-lea/zeromq
-            sudo -E add-apt-repository -y ppa:chris-lea/node.js
         fi
         sudo apt-get update
         sudo apt-get install -y "${target_pkgs[@]}"
@@ -208,7 +201,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
         sudo pacman -S --quiet --noconfirm --needed \
             cmake curl readline ncurses git \
             gnuplot unzip libjpeg-turbo libpng libpng \
-            imagemagick graphicsmagick fftw sox zeromq \
+            zeromq \
             ipython qt4 qtwebkit || exit 1
         pacman -Sl multilib &>/dev/null
         if [[ $? -ne 0 ]]; then
@@ -230,29 +223,25 @@ elif [[ "$(uname)" == 'Linux' ]]; then
         if [[ $fedora_major_version == '20' ]]; then
             sudo yum install -y cmake curl readline-devel ncurses-devel \
                                 gcc-c++ gcc-gfortran git gnuplot unzip \
-                                nodejs npm libjpeg-turbo-devel libpng-devel \
-                                ImageMagick GraphicsMagick-devel fftw-devel \
-                                sox-devel sox zeromq3-devel \
-                                qt-devel qtwebkit-devel sox-plugins-freeworld \
+                                libjpeg-turbo-devel libpng-devel \
+                                zeromq3-devel \
+                                qt-devel qtwebkit-devel \
                                 ipython
             install_openblas || true
         elif [[ $fedora_major_version == '22' ||  $fedora_major_version == '23' ]]; then
             #using dnf - since yum has been deprecated
-            #sox-plugins-freeworld is not yet available in repos for F22
             sudo dnf install -y make cmake curl readline-devel ncurses-devel \
                                 gcc-c++ gcc-gfortran git gnuplot unzip \
-                                nodejs npm libjpeg-turbo-devel libpng-devel \
-                                ImageMagick GraphicsMagick-devel fftw-devel \
-                                sox-devel sox qt-devel qtwebkit-devel \
+                                libjpeg-turbo-devel libpng-devel \
+                                qt-devel qtwebkit-devel \
                                 python-ipython czmq czmq-devel
             install_openblas || true
         elif [[ $fedora_major_version == '24' ]]; then
-            # Using DNF, but no longer installing npm since that comes with nodejs now.
+            # Using DNF
             sudo dnf install -y make cmake curl readline-devel ncurses-devel \
                                 gcc-c++ gcc-gfortran git gnuplot unzip \
-                                nodejs libjpeg-turbo-devel libpng-devel \
-                                ImageMagick GraphicsMagick-devel fftw-devel \
-                                sox-devel sox qt-devel qtwebkit-devel \
+                                libjpeg-turbo-devel libpng-devel \
+                                qt-devel qtwebkit-devel \
                                 python-ipython czmq czmq-devel
             install_openblas || true
         else
@@ -264,10 +253,9 @@ elif [[ "$(uname)" == 'Linux' ]]; then
             sudo yum install -y epel-release # a lot of things live in EPEL
             sudo yum install -y make cmake curl readline-devel ncurses-devel \
                                 gcc-c++ gcc-gfortran git gnuplot unzip \
-                                nodejs npm libjpeg-turbo-devel libpng-devel \
-                                ImageMagick GraphicsMagick-devel fftw-devel \
-                                sox-devel sox zeromq3-devel \
-                                qt-devel qtwebkit-devel sox-plugins-freeworld
+                                libjpeg-turbo-devel libpng-devel \
+                                zeromq3-devel \
+                                qt-devel qtwebkit-devel
             sudo yum install -y python-ipython
             install_openblas || true
         else
@@ -277,13 +265,12 @@ elif [[ "$(uname)" == 'Linux' ]]; then
     elif [[ $distribution == 'amzn' ]]; then
         sudo yum install -y cmake curl readline-devel ncurses-devel \
                             gcc-c++ gcc-gfortran git gnuplot unzip \
-                            nodejs npm libjpeg-turbo-devel libpng-devel \
-                            ImageMagick GraphicsMagick-devel fftw-devel \
+                            libjpeg-turbo-devel libpng-devel \
                             libgfortran python27-pip git openssl-devel
 
         #
         # These libraries are missing from amzn linux
-        # sox-devel sox sox-plugins-freeworld qt-devel qtwebkit-devel
+        # qt-devel qtwebkit-devel
         #
 
         sudo yum --enablerepo=epel install -y zeromq3-devel
@@ -293,8 +280,8 @@ elif [[ "$(uname)" == 'Linux' ]]; then
     fi
 
 elif [[ "$(uname)" == 'FreeBSD' ]]; then
-    pkg install ImageMagick cmake curl fftw3 git gnuplot libjpeg-turbo \
-        libzmq3 ncurses node npm openblas openssl png py27-ipython \
+    pkg install cmake curl git gnuplot libjpeg-turbo \
+        libzmq3 ncurses openblas openssl png py27-ipython \
         py27-pip qt4-corelib qt4-gui readline unzip
 
 else
