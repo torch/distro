@@ -67,9 +67,6 @@
 [submodule "extra/cuda-convnet2.torch"]
 	path = extra/cuda-convnet2.torch
 	url = git@github.com:soumith/cuda-convnet2.torch.git
-[submodule "extra/cunnx"]
-	path = extra/cunnx
-	url = https://github.com/nicholas-leonard/cunnx.git
 [submodule "extra/graph"]
 	path = extra/graph
 	url = https://github.com/torch/graph
