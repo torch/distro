@@ -1,5 +1,6 @@
-git pull
-git submodule update
-git submodule foreach git pull origin master
-git add extra pkg exe
-git commit -m "updating packages"
+#!/usr/bin/env bash
+
+git fetch
+git reset --hard origin/master
+# Submodule update is done inside install.sh
+./install.sh

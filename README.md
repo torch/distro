@@ -3,32 +3,52 @@
 Self-contained Torch installation
 ============
 
-Install dependencies. Uses `apt-get` on Ubuntu, which might require `sudo`. Uses `brew` on OSX.
-```sh
-curl -s https://raw.githubusercontent.com/torch/distro/master/install-deps | bash
+#### Please refer to the [Torch installation guide](http://torch.ch/docs/getting-started.html#_) for details on how to make a fresh install of Torch.
+
+
+## Repo content
+#### Dependencies
+Globally installed dependencies can be installed via:
+```bash
+bash intall-deps
 ```
 
-Install this repo, which installs the torch distribution, with a lot of nice goodies.
-```sh
-git clone https://github.com/torch/distro.git ~/torch --recursive
-cd ~/torch; ./install.sh
+#### Lua and Torch
+The self-contained Lua and Torch installations are performed via:
+```bash
+./install.sh
 ```
 
 By default Torch will install LuaJIT 2.1. If you want other options, you can use the command:
-```sh
+```bash
+# If a different version was installed, used ./clean.sh to clean it
 TORCH_LUA_VERSION=LUA51 ./install.sh
 TORCH_LUA_VERSION=LUA52 ./install.sh
 ```
 
-Now, everything should be installed. Either open a new shell, or source your profile via
-```sh
-. ~/.bashrc  # or: . ~/.zshrc
-th -e "print 'I just installed Torch! Yesss.'"
+## Update
+To update your already installed distro to the latest `master` branch of `torch/distro` simply run:
+```bash
+./update.sh
 ```
 
-Note: If you use a non-standard shell, you'll want to run this command
-```sh
-./install/bin/torch-activate
+## Cleaning
+To remove all the temporary compilation files you can run:
+```bash
+./clean.sh
+```
+
+To remove the installation run:
+```bash
+# Warning: this will remove your current installation
+rm -rf ./install
+```
+You may also want to remove the `torch-activate` entry from your shell start-up script (`~/.bashrc` or `~/.profile`).
+
+## Test
+You can test that all libraries are installed properly by running:
+```bash
+./test.sh
 ```
 
 Tested on Ubuntu 14.04, CentOS/RHEL 6.3 and OSX
