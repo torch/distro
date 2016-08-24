@@ -10,7 +10,7 @@ Self-contained Torch installation
 #### Dependencies
 Globally installed dependencies can be installed via:
 ```bash
-bash intall-deps
+bash install-deps
 ```
 
 #### Lua and Torch
