@@ -143,12 +143,11 @@ elif [[ "$(uname)" == 'Linux' ]]; then
             exit 1
         elif [[ $ubuntu_major_version -lt '14' ]]; then
             sudo -E add-apt-repository -y ppa:chris-lea/zeromq
-            sudo -E add-apt-repository -y ppa:chris-lea/node.js
         elif [[ $ubuntu_major_version -lt '15' ]]; then
             sudo -E add-apt-repository -y ppa:jtaylor/ipython
         else
             sudo apt-get install -y software-properties-common \
-                libgraphicsmagick1-dev nodejs npm libfftw3-dev sox libsox-dev \
+                libgraphicsmagick1-dev libfftw3-dev sox libsox-dev \
                 libsox-fmt-all
         fi
 
@@ -189,13 +188,12 @@ elif [[ "$(uname)" == 'Linux' ]]; then
         if [[ $elementary_version == '0.3' ]]; then
             echo '==> Found Ubuntu version 14.xx based elementary installation, installing dependencies'
             sudo apt-get install -y software-properties-common \
-                libgraphicsmagick1-dev nodejs npm libfftw3-dev sox libsox-dev \
+                libgraphicsmagick1-dev libfftw3-dev sox libsox-dev \
                 libsox-fmt-all
 
             sudo -E add-apt-repository -y ppa:jtaylor/ipython
         else
             sudo -E add-apt-repository -y ppa:chris-lea/zeromq
-            sudo -E add-apt-repository -y ppa:chris-lea/node.js
         fi
         sudo apt-get update
         sudo apt-get install -y "${target_pkgs[@]}"
@@ -230,7 +228,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
         if [[ $fedora_major_version == '20' ]]; then
             sudo yum install -y cmake curl readline-devel ncurses-devel \
                                 gcc-c++ gcc-gfortran git gnuplot unzip \
-                                nodejs npm libjpeg-turbo-devel libpng-devel \
+                                libjpeg-turbo-devel libpng-devel \
                                 ImageMagick GraphicsMagick-devel fftw-devel \
                                 sox-devel sox zeromq3-devel \
                                 qt-devel qtwebkit-devel sox-plugins-freeworld \
@@ -241,16 +239,15 @@ elif [[ "$(uname)" == 'Linux' ]]; then
             #sox-plugins-freeworld is not yet available in repos for F22
             sudo dnf install -y make cmake curl readline-devel ncurses-devel \
                                 gcc-c++ gcc-gfortran git gnuplot unzip \
-                                nodejs npm libjpeg-turbo-devel libpng-devel \
+                                libjpeg-turbo-devel libpng-devel \
                                 ImageMagick GraphicsMagick-devel fftw-devel \
                                 sox-devel sox qt-devel qtwebkit-devel \
                                 python-ipython czmq czmq-devel
             install_openblas || true
         elif [[ $fedora_major_version == '24' ]]; then
-            # Using DNF, but no longer installing npm since that comes with nodejs now.
             sudo dnf install -y make cmake curl readline-devel ncurses-devel \
                                 gcc-c++ gcc-gfortran git gnuplot unzip \
-                                nodejs libjpeg-turbo-devel libpng-devel \
+                                libjpeg-turbo-devel libpng-devel \
                                 ImageMagick GraphicsMagick-devel fftw-devel \
                                 sox-devel sox qt-devel qtwebkit-devel \
                                 python-ipython czmq czmq-devel
@@ -264,7 +261,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
             sudo yum install -y epel-release # a lot of things live in EPEL
             sudo yum install -y make cmake curl readline-devel ncurses-devel \
                                 gcc-c++ gcc-gfortran git gnuplot unzip \
-                                nodejs npm libjpeg-turbo-devel libpng-devel \
+                                libjpeg-turbo-devel libpng-devel \
                                 ImageMagick GraphicsMagick-devel fftw-devel \
                                 sox-devel sox zeromq3-devel \
                                 qt-devel qtwebkit-devel sox-plugins-freeworld
@@ -277,7 +274,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
     elif [[ $distribution == 'amzn' ]]; then
         sudo yum install -y cmake curl readline-devel ncurses-devel \
                             gcc-c++ gcc-gfortran git gnuplot unzip \
-                            nodejs npm libjpeg-turbo-devel libpng-devel \
+                            libjpeg-turbo-devel libpng-devel \
                             ImageMagick GraphicsMagick-devel fftw-devel \
                             libgfortran python27-pip git openssl-devel
 
@@ -294,7 +291,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 
 elif [[ "$(uname)" == 'FreeBSD' ]]; then
     pkg install ImageMagick cmake curl fftw3 git gnuplot libjpeg-turbo \
-        libzmq3 ncurses node npm openblas openssl png py27-ipython \
+        libzmq3 ncurses openblas openssl png py27-ipython \
         py27-pip qt4-corelib qt4-gui readline unzip
 
 else
