@@ -137,11 +137,6 @@ fi
 
 export PATH=$OLDPATH # Restore anaconda distribution if we took it out.
 
-if [[ $SKIP_RC == 1 ]]; then
-  exit 0
-fi
-
-
 # Add C libs to LUA_CPATH
 if [[ `uname` == "Darwin" ]]; then
     CLIB_LUA_CPATH=$PREFIX/lib/?.dylib
@@ -157,6 +152,10 @@ export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH
 export LUA_CPATH='$CLIB_LUA_CPATH;'\$LUA_CPATH
 EOF
 chmod +x $PREFIX/bin/torch-activate
+
+if [[ $SKIP_RC == 1 ]]; then
+  exit 0
+fi
 
 RC_FILE=0
 DEFAULT=yes
