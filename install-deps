@@ -141,9 +141,10 @@ elif [[ "$(uname)" == 'Linux' ]]; then
         if [[ $ubuntu_major_version -lt '12' ]]; then
             echo '==> Ubuntu version not supported.'
             exit 1
-        elif [[ $ubuntu_major_version -lt '14' ]]; then
+        elif [[ $ubuntu_major_version -lt '14' ]]; then # 12.xx
             sudo -E add-apt-repository -y ppa:chris-lea/zeromq
-        elif [[ $ubuntu_major_version -lt '15' ]]; then
+        elif [[ $ubuntu_major_version -lt '15' ]]; then # 14.xx
+	    sudo -E apt-get install -y software-properties-common
             sudo -E add-apt-repository -y ppa:jtaylor/ipython
         else
             sudo apt-get install -y software-properties-common \
