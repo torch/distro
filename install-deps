@@ -165,16 +165,11 @@ elif [[ "$(uname)" == 'Linux' ]]; then
             sudo apt-get install -y gcc-4.9 libgfortran-4.9-dev g++-4.9
         fi
 
-        if [[ $ubuntu_major_version -lt '14' ]]; then
-            # Install from source after installing git and build-essential
-            install_openblas || true
-        else
-            sudo apt-get install -y libopenblas-dev liblapack-dev
-        fi
-
         if [[ $ubuntu_major_version -lt '15' ]]; then
             sudo apt-get install libqt4-core libqt4-gui
         fi
+
+        install_openblas || true
 
     elif [[ $distribution == 'elementary' ]]; then
         declare -a target_pkgs
