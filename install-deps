@@ -127,6 +127,9 @@ elif [[ "$(uname)" == 'Linux' ]]; then
     elif [[ "$DISTRO" = "amzn" ]]; then
         distribution="amzn"
         amzn_major_version="$VERSION"
+    elif [[ "$DISTRO" == "raspbian" ]]; then
+        distribution="raspbian"
+        debian_major_version="$VERSION"
     else
         echo '==> Only Ubuntu, elementary OS, Fedora, Archlinux and CentOS distributions are supported.'
         exit 1
@@ -168,6 +171,16 @@ elif [[ "$(uname)" == 'Linux' ]]; then
         if [[ $ubuntu_major_version -lt '15' ]]; then
             sudo apt-get install libqt4-core libqt4-gui
         fi
+
+        install_openblas || true
+
+    elif [[ $distribution == 'raspbian' ]]; then
+        echo "==> Found Raspbian version ${debian_major_version}.xx"
+        sudo apt-get update
+        sudo apt-get install -y build-essential gcc g++ curl \
+            cmake libreadline-dev git-core libqt4-dev libjpeg-dev \
+            libpng-dev ncurses-dev imagemagick libzmq3-dev gfortran \
+            unzip gnuplot gnuplot-x11 ipython
 
         install_openblas || true
 
