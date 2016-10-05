@@ -137,7 +137,11 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 
     # Install dependencies for Torch:
     if [[ $distribution == 'ubuntu' ]]; then
-        sudo apt-get update
+        if sudo apt-get update ; then
+            echo "Updated successfully."
+        else
+            echo "Some portion of the update is failed"
+        fi
         # python-software-properties is required for apt-add-repository
         sudo apt-get install -y python-software-properties
         echo "==> Found Ubuntu version ${ubuntu_major_version}.xx"
@@ -155,7 +159,11 @@ elif [[ "$(uname)" == 'Linux' ]]; then
                 libsox-fmt-all
         fi
 
-        sudo apt-get update
+        if sudo apt-get update ; then
+            echo "Updated successfully."
+        else
+            echo "Some portion of the update is failed"
+        fi
         sudo apt-get install -y build-essential gcc g++ curl \
             cmake libreadline-dev git-core libqt4-dev libjpeg-dev \
             libpng-dev ncurses-dev imagemagick libzmq3-dev gfortran \
@@ -176,7 +184,11 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 
     elif [[ $distribution == 'raspbian' ]]; then
         echo "==> Found Raspbian version ${debian_major_version}.xx"
-        sudo apt-get update
+        if sudo apt-get update ; then
+            echo "Updated successfully."
+        else
+            echo "Some portion of the update is failed"
+        fi
         sudo apt-get install -y build-essential gcc g++ curl \
             cmake libreadline-dev git-core libqt4-dev libjpeg-dev \
             libpng-dev ncurses-dev imagemagick libzmq3-dev gfortran \
@@ -191,7 +203,11 @@ elif [[ "$(uname)" == 'Linux' ]]; then
                       libqt4-dev libjpeg-dev libpng-dev ncurses-dev \
                       imagemagick libzmq3-dev gfortran unzip gnuplot \
                       gnuplot-x11 ipython )
-        sudo apt-get update
+        if sudo apt-get update ; then
+            echo "Updated successfully."
+        else
+            echo "Some portion of the update is failed"
+        fi
         # python-software-properties is required for apt-add-repository
         sudo apt-get install -y python-software-properties
         if [[ $elementary_version == '0.3' ]]; then
@@ -204,7 +220,11 @@ elif [[ "$(uname)" == 'Linux' ]]; then
         else
             sudo -E add-apt-repository -y ppa:chris-lea/zeromq
         fi
-        sudo apt-get update
+        if sudo apt-get update ; then
+            echo "Updated successfully."
+        else
+            echo "Some portion of the update is failed"
+        fi
         sudo apt-get install -y "${target_pkgs[@]}"
 
         install_openblas || true
