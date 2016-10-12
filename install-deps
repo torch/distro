@@ -130,8 +130,11 @@ elif [[ "$(uname)" == 'Linux' ]]; then
     elif [[ "$DISTRO" == "raspbian" ]]; then
         distribution="raspbian"
         debian_major_version="$VERSION"
+    elif [[ "$DISTRO" == "opensuse" ]]; then
+	distribution="opensuse"
+	opensuse_major_version="$VERSION"
     else
-        echo '==> Only Ubuntu, elementary OS, Fedora, Archlinux and CentOS distributions are supported.'
+        echo '==> Only Ubuntu, elementary OS, Fedora, Archlinux, OpenSUSE and CentOS distributions are supported.'
         exit 1
     fi
 
@@ -195,6 +198,17 @@ elif [[ "$(uname)" == 'Linux' ]]; then
             unzip gnuplot gnuplot-x11 ipython
 
         install_openblas || true
+
+    elif [[ $distribution == 'opensuse' ]]; then
+        if sudo zypper refresh ; then
+            echo "Updated successfully."
+        else
+            echo "Some portion of the update failed"
+        fi
+        sudo zypper install -y -t pattern devel_basis
+        sudo zypper install -y gcc curl cmake readline-devel IPython git-core \
+            libqt4 libjpeg8-devel libpng15-compat-devel imagemagick unzip \
+            gnuplot gcc-fortran libzmq3
 
     elif [[ $distribution == 'elementary' ]]; then
         declare -a target_pkgs
