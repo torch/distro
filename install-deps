@@ -110,6 +110,12 @@ elif [[ "$(uname)" == 'Linux' ]]; then
     # Detect archlinux
     elif [[ "$DISTRO" = "arch" ]]; then
         distribution="archlinux"
+    # Detect deepin
+    elif [[ "$DISTRO" = "deepin" ]]; then
+        export DEBIAN_FRONTEND=noninteractive
+        distribution="deepin"
+        deepin_major_version="${VERSION%%.*}"
+    
     # Detect Ubuntu
     elif [[ "$DISTRO" = "ubuntu" ]]; then
         export DEBIAN_FRONTEND=noninteractive
@@ -132,10 +138,74 @@ elif [[ "$(uname)" == 'Linux' ]]; then
         distribution="raspbian"
         debian_major_version="$VERSION"
     else
-        echo '==> Only Ubuntu, elementary OS, Fedora, Archlinux and CentOS distributions are supported.'
+        echo '==> Only Ubuntu,deepin, elementary OS, Fedora, Archlinux and CentOS distributions are supported.'
         exit 1
     fi
 
+     # Install dependencies for Torch:
+    if [[ $distribution == 'deepin' ]]; then
+        if sudo apt-get update ; then
+            echo "Updated successfully."
+        else
+            echo "Some portion of the update is failed"
+        fi
+        # python-software-properties is required for apt-add-repository
+
+
+
+        echo "==> Found deepin version ${deepin_major_version}.xx"
+        if [[ $deepin_major_version -lt '12' ]]; then
+            echo '==> deepin version not supported.'
+            exit 1
+        elif [[ $deepin_major_version -lt '14' ]]; then # 12.xx
+            sudo -E add-apt-repository -y ppa:chris-lea/zeromq
+        elif [[ $deepin_major_version -lt '15' ]]; then # 14.xx
+	    sudo -E apt-get install -y software-properties-common
+            sudo -E add-apt-repository -y ppa:jtaylor/ipython
+        else
+            sudo apt-get install -y software-properties-common \
+                libgraphicsmagick1-dev libfftw3-dev sox libsox-dev \
+                libsox-fmt-all
+        fi
+
+        if sudo apt-get update ; then
+            echo "Updated successfully."
+        else
+            echo "Some portion of the update is failed"
+        fi
+        sudo apt-get install -y build-essential gcc g++ curl \
+            cmake libreadline-dev git-core libqt4-dev libjpeg-dev \
+            libpng-dev ncurses-dev imagemagick libzmq3-dev gfortran \
+            unzip gnuplot gnuplot-x11 ipython
+
+        gcc_major_version=$(gcc --version | grep ^gcc | awk '{print $4}' | \
+                            cut -c 1)
+        if [[ $gcc_major_version == '5' ]]; then
+            echo '==> Found GCC 5, installing GCC 4.9.'
+            sudo apt-get install -y gcc-4.9 libgfortran-4.9-dev g++-4.9
+        fi
+
+        if [[ $deepin_major_version -lt '15' ]]; then
+            sudo apt-get install libqt4-core libqt4-gui
+        fi
+
+        install_openblas || true
+
+    elif [[ $distribution == 'raspbian' ]]; then
+        echo "==> Found Raspbian version ${debian_major_version}.xx"
+        if sudo apt-get update ; then
+            echo "Updated successfully."
+        else
+            echo "Some portion of the update is failed"
+        fi
+        sudo apt-get install -y build-essential gcc g++ curl \
+            cmake libreadline-dev git-core libqt4-dev libjpeg-dev \
+            libpng-dev ncurses-dev imagemagick libzmq3-dev gfortran \
+            unzip gnuplot gnuplot-x11 ipython
+
+        install_openblas || true
+
+    
     # Install dependencies for Torch:
     if [[ $distribution == 'ubuntu' ]]; then
         if sudo apt-get update ; then
