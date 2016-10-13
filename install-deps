@@ -73,12 +73,13 @@ if [[ `uname` == 'Darwin' ]]; then
 
     # Install dependencies:
     brew update
-    brew install git readline cmake wget qt
+    brew install git readline cmake wget
     brew install libjpeg imagemagick zeromq graphicsmagick openssl
     brew link readline --force
     brew cask install xquartz
     brew list -1 | grep -q "^gnuplot\$" && brew remove gnuplot
     brew install gnuplot --with-wxmac --with-cairo --with-pdflib-lite --with-x11 --without-lua
+    brew install qt || true
 
 elif [[ "$(uname)" == 'Linux' ]]; then
 
