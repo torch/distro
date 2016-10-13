@@ -64,9 +64,6 @@
 [submodule "exe/env"]
 	path = exe/env
 	url = https://github.com/torch/env.git
-[submodule "extra/cuda-convnet2.torch"]
-	path = extra/cuda-convnet2.torch
-	url = git@github.com:soumith/cuda-convnet2.torch.git
 [submodule "extra/graph"]
 	path = extra/graph
 	url = https://github.com/torch/graph
