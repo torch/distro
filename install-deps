@@ -12,7 +12,7 @@ install_openblas() {
     rm -rf OpenBLAS
     git clone https://github.com/xianyi/OpenBLAS.git
     cd OpenBLAS
-    if [ $(getconf _NPROCESSORS_ONLN) == 1 ]; then
+    if [ $(getconf _NPROCESSORS_CONF) == 1 ]; then
         make NO_AFFINITY=1 USE_OPENMP=0 USE_THREAD=0
     else
         make NO_AFFINITY=1 USE_OPENMP=1
