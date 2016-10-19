@@ -134,8 +134,12 @@ elif [[ "$(uname)" == 'Linux' ]]; then
     elif [[ "$DISTRO" == "opensuse" ]]; then
 	distribution="opensuse"
 	opensuse_major_version="$VERSION"
+    # Detect Debian
+    elif [[ "$DISTRO" = "debian" ]]; then
+	distribution="debian"
+	debian_major_version="$VERSION"
     else
-        echo '==> Only Ubuntu, elementary OS, Fedora, Archlinux, OpenSUSE and CentOS distributions are supported.'
+        echo '==> Only Ubuntu, elementary OS, Fedora, Archlinux, OpenSUSE, Debian and CentOS distributions are supported.'
         exit 1
     fi
 
@@ -331,8 +335,29 @@ elif [[ "$(uname)" == 'Linux' ]]; then
         sudo pip install ipython
 
         install_openblas || true
-    fi
+    elif [[ $distribution == 'debian' ]]; then
+	if [[ $debian_major_version == '8' ]]; then
+	    echo "==> Found Debian version ${debian_major_version}"
+	    if sudo apt-get update ; then
+	       echo "Updated successfully."
+	    else
+	       echo "Some portion of the update is failed"
+	    fi
+	    #Basic package required for Torch
+	    sudo apt-get install -y build-essential curl \
+		 cmake libreadline-dev git-core libqt4-dev libjpeg-dev \
+		 libpng-dev ncurses-dev imagemagick libzmq3-dev gfortran \
+		 unzip gnuplot gnuplot-x11 ipython
 
+	    #require for common torch plug-ins
+	    sudo apt-get install libgraphicsmagick1-dev libfftw3-dev sox libsox-dev
+
+	    install_openblas || true
+	else
+	    echo "Only Jessie Debian 8 is supported for now, aborting."
+	    exit 1
+	fi
+    fi
 elif [[ "$(uname)" == 'FreeBSD' ]]; then
     pkg install ImageMagick cmake curl fftw3 git gnuplot libjpeg-turbo \
         libzmq3 ncurses openblas openssl png py27-ipython \
