@@ -52,7 +52,7 @@ set "PREFIX=%BASE%\install"
 set "CMAKE_LIBRARY_PATH=%BASE%/include:%BASE%/lib:%CMAKE_LIBRARY_PATH%"
 set "CMAKE_PREFIX_PATH=%PREFIX%"
 
-rem "%GIT%" submodule update --init --recursive
+"%GIT%" submodule update --init --recursive
 
 echo BASE: %BASE%
 
@@ -136,11 +136,20 @@ cd %THIS_DIR%pkg\optim
 cmd /c luarocks make optim-1.0.5-0.rockspec
 if errorlevel 1 exit /B 1
 
+(
+echo set "LUA_CPATH=%BASE%/install/?.DLL;%BASE%/install/LIB/?.DLL;?.DLL"
+echo set "LUA_DEV=%BASE%/install"
+echo set "LUA_PATH=;;%BASE%/install/?;%BASE%/install/?.lua;%BASE%/install/lua/?;%BASE%/install/lua/?.lua;%BASE%/install/lua/?/init.lua
+echo set "PATH=%PATH%;%BASE%\install;%BASE%\install\bin"
+) > %BASE%\install\torch-active.bat
+
+
 luajit -e "require('torch')"
 if errorlevel 1 exit /B 1
 
 luajit -e "require('torch'); torch.test()"
 if errorlevel 1 exit /B 1
+
 
 goto :eof
 
