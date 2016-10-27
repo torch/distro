@@ -1,3 +1,4 @@
+setlocal
 set "PATH=%PATH%;C:\Program Files\CMake\bin"
 
 if %1 == -E  (
