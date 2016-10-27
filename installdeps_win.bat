@@ -1,6 +1,4 @@
-set "BASE=%CD%"
-set "TORCH_INSTALL=%CD%\install"
-
+setlocal
 rem This is very imperfect, since it assumes a lot of stuff is done by hand
 rem But its a start
 rem based heavily on hiili's instructions at https://github.com/torch/torch7/wiki/Windows#using-visual-studio
@@ -115,10 +113,11 @@ NMake
 if errorlevel 1 exit /B 1
 mkdir %PREFIX%\bin\
 copy src\edit.dll %PREFIX%\bin\edit.dll
-mkdir %PREFIX%\include\editline
-copy ..\include\editline\readline.h %PREFIX%\include\editline\readline.h
+mkdir %PREFIX%\include\readline
+copy ..\include\editline\readline.h %PREFIX%\include\readline\readline.h
 mkdir %PREFIX%\lib\
 copy src\edit.lib %PREFIX%\lib\libedit.lib
+copy src\edit_static.lib %PREFIX%\lib\libedit_static.lib
 EXIT /B
 
 :DownloadLapack
