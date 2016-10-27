@@ -1,0 +1,26 @@
+diff --git a/lib/luaT/luaT.c b/lib/luaT/luaT.c
+index 95166ed..2dc307a 100644
+--- a/lib/luaT/luaT.c
++++ b/lib/luaT/luaT.c
+@@ -151,7 +151,7 @@ const char* luaT_newlocalmetatable(lua_State *L, const char *tname, const char *
+ {
+   lua_pushcfunction(L, luaT_lua_newmetatable);
+   lua_pushstring(L, tname);
+-  (parent_tname ? lua_pushstring(L, parent_tname) : lua_pushnil(L));
++  (parent_tname ? (void)lua_pushstring(L, parent_tname) : lua_pushnil(L));
+   (constructor ? lua_pushcfunction(L, constructor) : lua_pushnil(L));
+   (destructor ? lua_pushcfunction(L, destructor) : lua_pushnil(L));
+   (factory ? lua_pushcfunction(L, factory) : lua_pushnil(L));
+diff --git a/rocks/torch-scm-1.rockspec b/rocks/torch-scm-1.rockspec
+index 2228726..30df777 100644
+--- a/rocks/torch-scm-1.rockspec
++++ b/rocks/torch-scm-1.rockspec
+@@ -27,7 +27,7 @@ cmake -E make_directory build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release
+ 	 platforms = {
+       windows = {
+            build_command = [[
+-cmake -E make_directory build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DLUA=$(LUA) -DLUALIB=$(LUALIB) -DLUA_BINDIR="$(LUA_BINDIR)" -DLUA_INCDIR="$(LUA_INCDIR)" -DLUA_LIBDIR="$(LUA_LIBDIR)" -DLUADIR="$(LUADIR)" -DLIBDIR="$(LIBDIR)" -DCMAKE_INSTALL_PREFIX="$(PREFIX)" && $(MAKE)
++cmake -E make_directory build && cd build && cmake .. -DINTEL_MKL_DIR=$(INTEL_MKL_DIR) -DINTEL_COMPILER_DIR=$(INTEL_COMPILER_DIR) -DBLAS_LIBRARIES=$(BLAS_LIBRARIES) -DLAPACK_LIBRARIES=$(LAPACK_LIBRARIES) -DLAPACK_FOUND=$(LAPACK_FOUND) -DCMAKE_BUILD_TYPE=Release -DLUA=$(LUA) -DLUALIB=$(LUALIB) -DLUA_BINDIR="$(LUA_BINDIR)" -DLUA_INCDIR="$(LUA_INCDIR)" -DLUA_LIBDIR="$(LUA_LIBDIR)" -DLUADIR="$(LUADIR)" -DLIBDIR="$(LIBDIR)" -DCMAKE_INSTALL_PREFIX="$(PREFIX)" && $(MAKE)
+ ]]
+       }
+    },

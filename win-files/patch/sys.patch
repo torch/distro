@@ -1,0 +1,20 @@
+diff --git a/init.lua b/init.lua
+index 75f1722..54f81fa 100644
+--- a/init.lua
++++ b/init.lua
+@@ -50,13 +50,13 @@ sys.execute = execute
+ function sys.fexecute(cmd, readwhat)
+    readwhat = readwhat or '*all'
+    local tmpfile = os.tmpname()
+-   local cmd = cmd .. ' 1>'.. tmpfile..' 2>' .. tmpfile
++   local cmd = cmd .. ' >'.. tmpfile..' 2>&1'
+    os.execute(cmd)
+    local file = _G.assert(io.open(tmpfile))
+    local s= file:read(readwhat)
+    file:close()
+    s = s:gsub('^%s*',''):gsub('%s*$','')
+-   os.execute('rm ' .. tmpfile)
++   os.remove(tmpfile)
+    return s
+ end
+ 

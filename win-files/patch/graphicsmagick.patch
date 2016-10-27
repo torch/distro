@@ -1,0 +1,767 @@
+diff --git a/Image.lua b/Image.lua
+index 610fe1f..66b17f0 100644
+--- a/Image.lua
++++ b/Image.lua
+@@ -318,11 +318,17 @@ ffi.cdef
+                                       const double amount,
+                                       const double threshold);
+ ]]
+--- Load lib:
+-local clib = ffi.load('GraphicsMagickWand')
+ 
+--- Initialize lib:
+-clib.InitializeMagick();
++-- Load and initialize lib:
++local magiclib, clib = nil, nil
++if ffi.os == 'Windows' then
++    magiclib = ffi.load('CORE_RL_magick_.dll')
++    clib = ffi.load('CORE_RL_wand_.dll')
++    magiclib.InitializeMagick();
++else
++    clib = ffi.load('GraphicsMagickWand')
++    clib.InitializeMagick();
++end
+ 
+ -- Image object:
+ local Image = {
+diff --git a/convert.lua b/convert.lua
+index 6d6e622..606b86a 100644
+--- a/convert.lua
++++ b/convert.lua
+@@ -1,9 +1,11 @@
+ 
+ -- Dependencies:
+ require 'sys'
++local ffi = require 'ffi'
+ 
+ -- Detect/find GM:
+-local found = sys.fexecute('which gm'):find('gm')
++local findgm = ffi.os == 'Windows' and 'where gm' or 'which gm'
++local found = sys.fexecute(findgm):find('gm')
+ if not found then
+    print 'gm (GraphicsMagick) binary not found, please install (see www.graphicsmagick.org)'
+ end
+diff --git a/info.lua b/info.lua
+index be9db3c..4ae37b5 100644
+--- a/info.lua
++++ b/info.lua
+@@ -1,21 +1,25 @@
+ 
+ -- Dependencies:
+ require 'sys'
++local ffi = require 'ffi'
+ 
+--- Detect/find GM:
+-local found = sys.fexecute('which identify'):find('identify')
++-- Detect/find identify:
++local found, util
++if ffi.os == 'Windows' then
++  found = sys.fexecute('where gm'):find('gm')
++  util = 'gm identify'
++else
++  found = sys.fexecute('which identify'):find('identify')
++  util = 'identify'
++end
++
++if not found then
++  return nil
++end
+ 
+ -- Exif parser
+ local parseExif = require 'graphicsmagick.exif'
+ 
+--- Which util:
+-local util
+-if found then
+-   util = 'identify '
+-else
+-   return nil
+-end
+-
+ -- Helper
+ local function readarg(file, arg)
+    local cmd = util .. ' -format ' .. arg .. ' "' .. file .. '"'
+diff --git a/test/affine.lua b/test/affine.lua
+index a61fb92..4375c6f 100644
+--- a/test/affine.lua
++++ b/test/affine.lua
+@@ -1,21 +1,31 @@
++require 'torch'
++
++local tester = torch.Tester()
++local tests = torch.TestSuite()
++
+ local gm = require 'graphicsmagick'
+ 
+-sys.execute('gm convert -background "rgb(128,128,128)" ' ..
+-  '-affine 0.906307787,-0.422618262,0.422618262,0.906307787,10,0 ' ..
+-  '-transform lena.jpg out_gm.jpg')
++function tests.affine()
++  sys.execute('gm convert -background "rgb(128,128,128)" ' ..
++    '-affine 0.906307787,-0.422618262,0.422618262,0.906307787,10,0 ' ..
++    '-transform lena.jpg out_gm.jpg')
++
++  gm.Image()
++    :load('lena.jpg')
++    :setBackground(0.5, 0.5, 0.5)
++    :affineTransform(0.906307787, -0.422618262, 0.422618262, 0.906307787, 10, 0)
++    :save('out_th.jpg')
+ 
+-gm.Image()
+-  :load('lena.jpg')
+-  :setBackground(0.5, 0.5, 0.5)
+-  :affineTransform(0.906307787, -0.422618262, 0.422618262, 0.906307787, 10, 0)
+-  :save('out_th.jpg')
++  local out_gm = gm.Image()
++    :load('out_gm.jpg')
++    :toTensor()
+ 
+-local out_gm = gm.Image()
+-  :load('out_gm.jpg')
+-  :toTensor()
++  local out_th = gm.Image()
++    :load('out_th.jpg')
++    :toTensor()
+ 
+-local out_th = gm.Image()
+-  :load('out_th.jpg')
+-  :toTensor()
++  tester:assert((out_gm:float() - out_th:float()):mean() < 1)
++end
+ 
+-assert((out_gm:float() - out_th:float()):mean() < 1)
++tester:add(tests)
++tester:run()
+diff --git a/test/colorspace.lua b/test/colorspace.lua
+index e18fe43..5747f77 100644
+--- a/test/colorspace.lua
++++ b/test/colorspace.lua
+@@ -1,24 +1,33 @@
++require 'torch'
++
++local tester = torch.Tester()
++local tests = torch.TestSuite()
+ 
+ gm = require 'graphicsmagick'
+ require 'image'
+ 
+-i = gm.Image('lena.jpg')
++function tests.colorspace()
++  i = gm.Image('lena.jpg')
+ 
+--- Export image to a Tensor in LAB space:
+-t = i:toTensor('float','LAB','DHW')
+-print(i:colorspace())
++  -- Export image to a Tensor in LAB space:
++  t = i:toTensor('float','LAB','DHW')
++  print()
++  print(i:colorspace())
+ 
+--- Image looks funky:
+-image.display(t)
++  -- Image looks funky:
++  image.display(t)
+ 
+--- Import from tensor (no way of letting know 
+--- gm that the image was in LAB, so it's stuck in LAB space):
+-ii = gm.Image(t, 'RGB', 'DHW')
++  -- Import from tensor (no way of letting know 
++  -- gm that the image was in LAB, so it's stuck in LAB space):
++  ii = gm.Image(t, 'RGB', 'DHW')
+ 
+--- Import other images:
+-image.display{ image = {
+-   gm.Image('forest.jpg'):toTensor('byte','LAB','DHW'),
+-   gm.Image('forest.jpg'):toTensor('byte','HSL','DHW'),
+-   gm.Image('forest.jpg'):toTensor('byte','HWB','DHW')
+-}}
++  -- Import other images:
++  image.display{ image = {
++     gm.Image('forest.jpg'):toTensor('byte','LAB','DHW'),
++     gm.Image('forest.jpg'):toTensor('byte','HSL','DHW'),
++     gm.Image('forest.jpg'):toTensor('byte','HWB','DHW')
++  }}
++end
+ 
++tester:add(tests)
++tester:run()
+diff --git a/test/corrupt.lua b/test/corrupt.lua
+index 109c052..44e37c0 100644
+--- a/test/corrupt.lua
++++ b/test/corrupt.lua
+@@ -1,25 +1,36 @@
++require 'torch'
++
++local tester = torch.Tester()
++local tests = torch.TestSuite()
++
+ local gm = require('graphicsmagick')
+ 
+-local readfile = function(fn)
+-  local f = io.open(fn,"rb")
+-  if not f then return nil end
+-  local data = f:read("*all")
+-  f:close()
+-  return data
+-end
++function tests.corrupt()
++  local readfile = function(fn)
++    local f = io.open(fn,"rb")
++    if not f then return nil end
++    local data = f:read("*all")
++    f:close()
++    return data
++  end
+ 
+-local ok
++  local ok
+ 
+--- load a corrupted JPEG created with zzuf:
+---     zzuf -r 0.01 -s 1234 < city.jpg > city-corrupt.jpg
+-ok = pcall(gm.Image, 'city-corrupt.jpg')
++  -- load a corrupted jpeg created with zzuf:
++  --     zzuf -r 0.01 -s 1234 < city.jpg > city-corrupt.jpg
++  ok = pcall(gm.image, 'city-corrupt.jpg')
+ 
+--- check opening failed without malloc error or core dumped
+-assert(not ok, 'corrupted JPEG should not be loaded')
++  -- check opening failed without malloc error or core dumped
++  assert(not ok, 'corrupted jpeg should not be loaded')
+ 
+--- load this corrupted JPEG from a string
+-local str = assert(readfile('city-corrupt.jpg'))
+-local img = gm.Image()
+-ok = pcall(img.fromString, img, str)
++  -- load this corrupted jpeg from a string
++  local str = readfile('city-corrupt.jpg')
++  tester:assert(str~=nil, 'can not read city-corrupt.jpg')
++  local img = gm.Image()
++  ok = pcall(img.fromstring, img, str)
++
++  tester:assert(not ok, 'corrupted jpeg should not be loaded')
++end
+ 
+-assert(not ok, 'corrupted JPEG should not be loaded')
++tester:add(tests)
++tester:run()
+diff --git a/test/fromTensor.lua b/test/fromTensor.lua
+index 72e24b8..41f5f8f 100644
+--- a/test/fromTensor.lua
++++ b/test/fromTensor.lua
+@@ -1,16 +1,24 @@
++require 'torch'
+ 
+-gm = require 'graphicsmagick'
++local tester = torch.Tester()
++local tests = torch.TestSuite()
+ 
++gm = require 'graphicsmagick'
+ require 'image'
+ 
+-t1 = image.lena()
+-t2 = t1:clone():transpose(1,3):transpose(1,2):mul(255):byte()
++function tests.from_tensor()
++  t1 = image.lena()
++  t2 = t1:clone():transpose(1,3):transpose(1,2):mul(255):byte()
+ 
+-print('Converting: ', {t1,t2})
++  print()
++  print('Converting: ', {t1,t2})
+ 
+-i1 = gm.Image(t1,'RGB','DHW')
+-i2 = gm.Image(t2,'RGB','HWD')
++  i1 = gm.Image(t1,'RGB','DHW')
++  i2 = gm.Image(t2,'RGB','HWD')
+ 
+-i1:show()
+-i2:show()
++  i1:show()
++  i2:show()
++end
+ 
++tester:add(tests)
++tester:run()
+diff --git a/test/gamma.lua b/test/gamma.lua
+index f661137..cddfb65 100644
+--- a/test/gamma.lua
++++ b/test/gamma.lua
+@@ -1,13 +1,18 @@
++require 'torch'
++
++local tester = torch.Tester()
++local tests = torch.TestSuite()
++
+ local gm = require 'graphicsmagick'
+ require 'image'
+ 
+-local function gamma_correction()
++function tests.gamma_correction()
+    local src = gm.Image("lena.jpg")
+    local gamma_r = src:clone():gammaCorrection(0.5, "Red"):toTensor("float", "RGB", "DHW")
+    local gamma_all = src:clone():gammaCorrection(0.5):toTensor("float", "RGB", "DHW")
+    local gamma_all2 = src:clone():gammaCorrection(0.5, "All"):toTensor("float", "RGB", "DHW")
+ 
+-   assert((gamma_all - gamma_all2):abs():sum() == 0)
++   tester:assert((gamma_all - gamma_all2):abs():sum() == 0)
+ 
+    image.display({image = src:toTensor("float", "RGB", "DHW"),
+ 		  min = 0, max = 1, legend = "lena.jpg"})
+@@ -16,13 +21,14 @@ local function gamma_correction()
+    image.display({image = gamma_all,
+ 		  min = 0, max = 1, legend = "gamma all = 0.5"})
+ end
+-local function embed_gamma_png()
++function tests.embed_gamma_png()
+    local src = gm.Image("lena.jpg")
+    local display_gamma = 1.0 / 2.2 -- gamma for modern LCD
+    local creator_gamma = 1.0 / 1.8 -- gamma for old macintosh
+ 
+    -- Set gamma and save
+    src:gamma(creator_gamma):format("PNG"):save("lena-gamma.png")
++   print()
+    print("Look at lena-gamma.png with web browser. ($ google-chrome lena-gamma.png) ")
+    print("set gamma", src:gamma())
+ 
+@@ -31,12 +37,12 @@ local function embed_gamma_png()
+    print("get gamma", embed_gamma)
+ 
+    -- embed_gamma == creator_gamma
+-   assert(1.79 < 1.0 / embed_gamma and 1.0 / embed_gamma < 1.81)
++   tester:assert(1.79 < 1.0 / embed_gamma and 1.0 / embed_gamma < 1.81)
+ 
+    -- src and embed_gamma_image are the same
+    local a = src:toTensor("float", "RGB", "DHW")
+    local b = embed_gamma_image:toTensor("float", "RGB", "DHW")
+-   assert((a - b):abs():sum() == 0)
++   tester:assert((a - b):abs():sum() == 0)
+ 
+    local gamma_for_correction = embed_gamma / display_gamma
+    local corrected = embed_gamma_image:clone():gammaCorrection(gamma_for_correction)
+@@ -45,11 +51,12 @@ local function embed_gamma_png()
+    image.display({image = corrected:toTensor("float", "RGB", "DHW"), 
+ 		  min = 0, max = 1, legend = "gamma correction with embed gamma"})
+ end
+-local function gamma_resize()
++
++function tests.gamma_resize()
+    -- references: "Gamma error in picture scaling", http://www.4p8.com/eric.brasseur/gamma.html
+    local gamma_default = 1.0 / 2.2
+    local src = gm.Image('gamma_3x3.jpg')
+-   assert(src:colorspace() == "RGB")
++   tester:assert(src:colorspace() == "RGB")
+ 
+    local gamma = src:gamma()
+    if gamma == 0 then
+@@ -85,6 +92,5 @@ local function gamma_resize()
+ 		  min = 0, max = 1, legend = "gamma resize lanczos"})
+ end
+ 
+-gamma_correction()
+-embed_gamma_png()
+-gamma_resize()
++tester:add(tests)
++tester:run()
+diff --git a/test/image_type.lua b/test/image_type.lua
+index ae560df..6b353cc 100644
+--- a/test/image_type.lua
++++ b/test/image_type.lua
+@@ -1,25 +1,35 @@
++require 'torch'
++
++local tester = torch.Tester()
++local tests = torch.TestSuite()
++
+ require 'pl'
+ local gm = require 'graphicsmagick'
+ 
+--- true color
+-local city = gm:Image():load("city.jpg")
+-assert(city:type() == "TrueColor")
++function tests.image_type()
++  -- true color
++  local city = gm:Image():load("city.jpg")
++  tester:assert(city:type() == "TrueColor")
++
++  -- gray scale
++  city:clone():type("Grayscale"):save("city-gray.png")
++  local city_gray = gm:Image():load("city-gray.png")
++  tester:assert(city_gray:type() == "Grayscale")
+ 
+--- gray scale
+-city:clone():type("Grayscale"):save("city-gray.png")
+-local city_gray = gm:Image():load("city-gray.png")
+-assert(city_gray:type() == "Grayscale")
++  -- matte (alpha)
++  local rgb = city:toTensor("float", "RGB", "DHW")
++  local rgba = torch.FloatTensor(4, rgb:size(2), rgb:size(3))
++  rgba[1]:copy(rgb[1])
++  rgba[2]:copy(rgb[2])
++  rgba[3]:copy(rgb[3])
++  rgba[4]:fill(0.5)
++  gm.Image(rgba, "RGBA", "DHW"):format("PNG"):save("city-alpha.png")
++  local city_alpha = gm:Image():load("city-alpha.png")
++  tester:assert(city_alpha:type() == "TrueColorMatte")
+ 
+--- matte (alpha)
+-local rgb = city:toTensor("float", "RGB", "DHW")
+-local rgba = torch.FloatTensor(4, rgb:size(2), rgb:size(3))
+-rgba[1]:copy(rgb[1])
+-rgba[2]:copy(rgb[2])
+-rgba[3]:copy(rgb[3])
+-rgba[4]:fill(0.5)
+-gm.Image(rgba, "RGBA", "DHW"):format("PNG"):save("city-alpha.png")
+-local city_alpha = gm:Image():load("city-alpha.png")
+-assert(city_alpha:type() == "TrueColorMatte")
++  file.delete("city-gray.png")
++  file.delete("city-alpha.png")
++end
+ 
+-file.delete("city-gray.png")
+-file.delete("city-alpha.png")
++tester:add(tests)
++tester:run()
+diff --git a/test/loadDirectory.lua b/test/loadDirectory.lua
+index cfc4411..9e828e4 100644
+--- a/test/loadDirectory.lua
++++ b/test/loadDirectory.lua
+@@ -1,59 +1,67 @@
+-
+ --
+ -- this script demonstrates how to load a list of images from
+ -- a directoty, by using GraphicsMagick's ability to load
+ -- the smallest size required
+ --
+ 
+-gm = require 'graphicsmagick'
+ require 'torch'
++
++local tester = torch.Tester()
++local tests = torch.TestSuite()
++
++gm = require 'graphicsmagick'
+ require 'pl'
+ 
+-opt = {
+-   dir = arg[1] or '.',      -- load all jpegs fro this dir
+-   maxsize = arg[2] or 128   -- resize down to 128x128
+-}
++function tests.load_directory()
++  opt = {
++     dir = arg[1] or '.',      -- load all jpegs from this dir
++     maxsize = arg[2] or 128   -- resize down to 128x128
++  }
+ 
+-files = dir.getfiles(opt.dir)
++  files = dir.getfiles(opt.dir)
+ 
+ 
++  print()
++  print('Loading with no size hint (naive method):')
+ 
+-print('Loading with no size hint (naive method):')
++  images = {}
++  t = torch.Timer()
++  for _,file in ipairs(files) do
++     if file:lower():find('jpg$') or file:lower():find('jpeg$') then
++        local ok, img = pcall(gm.Image, file)
++        if ok then
++           img = img:size(opt.maxsize):toTensor('byte', 'RGB', 'DHW')
++           table.insert(images, img)
++        else
++           print('WARNING: skipping ' .. file .. '(' .. img .. ')')
++        end
++     end
++  end
++  passed = t:time().real
+ 
+-images = {}
+-t = torch.Timer()
+-for _,file in ipairs(files) do
+-   if file:lower():find('jpg$') or file:lower():find('jpeg$') then
+-      local ok, img = pcall(gm.Image, file)
+-      if ok then
+-         img = img:size(opt.maxsize):toTensor('byte', 'RGB', 'DHW')
+-         table.insert(images, img)
+-      else
+-         print('WARNING: skipping ' .. file .. '(' .. img .. ')')
+-      end
+-   end
+-end
+-passed = t:time().real
++  print('Loaded ' .. #images .. ' images:', images, 'in ' .. passed .. ' seconds')
+ 
+-print('Loaded ' .. #images .. ' images:', images, 'in ' .. passed .. ' seconds')
+ 
+ 
++  print('Loading with size hint (smart method):')
+ 
+-print('Loading with size hint (smart method):')
++  images = {}
++  t = torch.Timer()
++  for _,file in ipairs(files) do
++     if file:lower():find('jpg$') or file:lower():find('jpeg$') then
++        local ok, img = pcall(gm.Image, file, opt.maxsize)
++        if ok then
++           img = img:size(opt.maxsize):toTensor('byte', 'RGB', 'DHW')
++           table.insert(images, img)
++        else
++           print('WARNING: skipping ' .. file .. '(' .. img .. ')')
++        end
++     end
++  end
++  passed = t:time().real
+ 
+-images = {}
+-t = torch.Timer()
+-for _,file in ipairs(files) do
+-   if file:lower():find('jpg$') or file:lower():find('jpeg$') then
+-      local ok, img = pcall(gm.Image, file, opt.maxsize)
+-      if ok then
+-         img = img:size(opt.maxsize):toTensor('byte', 'RGB', 'DHW')
+-         table.insert(images, img)
+-      else
+-         print('WARNING: skipping ' .. file .. '(' .. img .. ')')
+-      end
+-   end
++  print('Loaded ' .. #images .. ' images:', images, 'in ' .. passed .. ' seconds')
+ end
+-passed = t:time().real
+ 
+-print('Loaded ' .. #images .. ' images:', images, 'in ' .. passed .. ' seconds')
++tester:add(tests)
++tester:run()
+diff --git a/test/loadsave.lua b/test/loadsave.lua
+index 9781a2b..a1a5c88 100644
+--- a/test/loadsave.lua
++++ b/test/loadsave.lua
+@@ -1,6 +1,16 @@
+-gm = require 'graphicsmagick'
++require 'torch'
+ 
+-lena = gm.load('lena.jpg')
+-gm.save('test_rgb.jpg',lena)
++local tester = torch.Tester()
++local tests = torch.TestSuite()
+ 
+-gm.save('test_gray.jpg',lena[2],70)
++function tests.loadsave()
++  gm = require 'graphicsmagick'
++
++  lena = gm.load('lena.jpg')
++  gm.save('test_rgb.jpg',lena)
++
++  gm.save('test_gray.jpg',lena[2],70)
++end
++
++tester:add(tests)
++tester:run()
+diff --git a/test/opacity.lua b/test/opacity.lua
+index 34bf00b..3ce9c8a 100644
+--- a/test/opacity.lua
++++ b/test/opacity.lua
+@@ -1,11 +1,21 @@
++require 'torch'
++
++local tester = torch.Tester()
++local tests = torch.TestSuite()
++
+ local gm = require 'graphicsmagick'
+ 
+-local rgb = gm.Image('lena.jpg'):toTensor("float", "RGB", "DHW")
+-local rgba = torch.FloatTensor(4, rgb:size(2), rgb:size(3))
+-rgba[1]:copy(rgb[1])
+-rgba[2]:copy(rgb[2])
+-rgba[3]:copy(rgb[3])
+-rgba[4]:fill(0.5) -- alpha
++function tests.opacity()
++  local rgb = gm.Image('lena.jpg'):toTensor("float", "RGB", "DHW")
++  local rgba = torch.FloatTensor(4, rgb:size(2), rgb:size(3))
++  rgba[1]:copy(rgb[1])
++  rgba[2]:copy(rgb[2])
++  rgba[3]:copy(rgb[3])
++  rgba[4]:fill(0.5) -- alpha
++
++  gm.Image(rgba, "RGBA", "DHW"):format("PNG"):save("opacity50.png")
++  -- see saved image
++end
+ 
+-gm.Image(rgba, "RGBA", "DHW"):format("PNG"):save("opacity50.png")
+--- see saved image
++tester:add(tests)
++tester:run()
+diff --git a/test/sampling_factors.lua b/test/sampling_factors.lua
+index 6c93ef8..acaddee 100644
+--- a/test/sampling_factors.lua
++++ b/test/sampling_factors.lua
+@@ -1,16 +1,27 @@
++require 'torch'
++
++local tester = torch.Tester()
++local tests = torch.TestSuite()
++
+ local gm = require 'graphicsmagick'
+ 
+-local img = gm.Image('lena.jpg')
+-img:samplingFactors({2.0, 1.0, 1.0})
+-img:save("yuv420.jpg", 50)
+-print(img:samplingFactors())
+--- jpeg:sampling-factor: 2x2,1x1,1x1
+-os.execute("identify -verbose yuv420.jpg|grep sampling")
+-os.execute("rm -f yuv420.jpg")
++function tests.sampling_factors()
++  local img = gm.Image('lena.jpg')
++  img:samplingFactors({2.0, 1.0, 1.0})
++  img:save("yuv420.jpg", 50)
++  print()
++  print(img:samplingFactors())
++  -- jpeg:sampling-factor: 2x2,1x1,1x1
++  os.execute("gm identify -verbose yuv420.jpg|grep sampling")
++  os.execute("rm -f yuv420.jpg")
++
++  img:samplingFactors({1.0, 1.0, 1.0})
++  img:save("yuv444.jpg", 50)
++  print(img:samplingFactors())
++  -- jpeg:sampling-factor: 1x1,1x1,1x1
++  os.execute("gm identify -verbose yuv444.jpg|grep sampling")
++  os.execute("rm -f yuv444.jpg")
++end
+ 
+-img:samplingFactors({1.0, 1.0, 1.0})
+-img:save("yuv444.jpg", 50)
+-print(img:samplingFactors())
+--- jpeg:sampling-factor: 1x1,1x1,1x1
+-os.execute("identify -verbose yuv444.jpg|grep sampling")
+-os.execute("rm -f yuv444.jpg")
++tester:add(tests)
++tester:run()
+diff --git a/test/thumb.lua b/test/thumb.lua
+index 0bd7b5e..40e5bcf 100644
+--- a/test/thumb.lua
++++ b/test/thumb.lua
+@@ -1,8 +1,16 @@
++require 'torch'
++
++local tester = torch.Tester()
++local tests = torch.TestSuite()
+ 
+ gm = require 'graphicsmagick'
+ 
+-i = gm.Image('city.jpg', 256)  -- load image, at no more than 128x128 res (for speed)
+-   :size(256)                  -- size down, to fit into a 128x128 box
+-   :save('thumb.jpg')          -- save
+-   :show()
++function tests.thumb()
++  gm.Image('city.jpg', 256)  -- load image, at no more than 128x128 res (for speed)
++     :size(256)                  -- size down, to fit into a 128x128 box
++     :save('thumb.jpg')          -- save
++     :show()
++end
+ 
++tester:add(tests)
++tester:run()
+diff --git a/test/toTensor.lua b/test/toTensor.lua
+index 2c02a2e..e726284 100644
+--- a/test/toTensor.lua
++++ b/test/toTensor.lua
+@@ -1,18 +1,27 @@
++require 'torch'
++
++local tester = torch.Tester()
++local tests = torch.TestSuite()
+ 
+ gm = require 'graphicsmagick'
+ 
+-i = gm.Image('lena.jpg')
+-t1 = i:toTensor()
+-t2 = i:toTensor('float', 'RGB', 'DHW')
+-t3 = i:toTensor('byte', 'RGBA', 'DHW')
+-t4 = i:toTensor('double', 'I', 'DHW')
++function tests.to_tensor()
++  i = gm.Image('lena.jpg')
++  t1 = i:toTensor()
++  t2 = i:toTensor('float', 'RGB', 'DHW')
++  t3 = i:toTensor('byte', 'RGBA', 'DHW')
++  t4 = i:toTensor('double', 'I', 'DHW')
+ 
+-print('Loaded:',{t1,t2,t3,t4})
++  print()
++  print('Loaded:',{t1,t2,t3,t4})
+ 
+-ok = pcall(require, 'image')
+-if ok then
+-   image.display(t2)
+-   image.display(t3)
+-   image.display(t4)
++  ok = pcall(require, 'image')
++  if ok then
++     image.display(t2)
++     image.display(t3)
++     image.display(t4)
++  end
+ end
+ 
++tester:add(tests)
++tester:run()
+diff --git a/test/transform.lua b/test/transform.lua
+index 6a9f76a..7424c2f 100644
+--- a/test/transform.lua
++++ b/test/transform.lua
+@@ -1,14 +1,24 @@
++require 'torch'
++
++local tester = torch.Tester()
++local tests = torch.TestSuite()
+ 
+ gm = require 'graphicsmagick'
+ 
+-i = gm.Image()
++function tests.transform()
++  i = gm.Image()
++
++  i:load('city.jpg'):flop():size(1024):save('scaledup.jpg')
++  i:load('city.jpg'):rotate(45):save('rotated.jpg')
++  i:load('city.jpg'):crop(256, 256, 10, 10):save('cropped.jpg')
++
++  i2 = i:clone()
++  i2:rotate(45)
+ 
+-i:load('city.jpg'):flop():size(1024):save('scaledup.jpg')
+-i:load('city.jpg'):rotate(45):save('rotated.jpg')
+-i:load('city.jpg'):crop(256, 256, 10, 10):save('cropped.jpg')
++  i:show()
++  i2:show()
++end
+ 
+-i2 = i:clone()
+-i2:rotate(45)
+ 
+-i:show()
+-i2:show()
++tester:add(tests)
++tester:run()
+diff --git a/test/unsharp_mask.lua b/test/unsharp_mask.lua
+index 100e735..7e6b876 100644
+--- a/test/unsharp_mask.lua
++++ b/test/unsharp_mask.lua
+@@ -1,7 +1,12 @@
++require 'torch'
++
++local tester = torch.Tester()
++local tests = torch.TestSuite()
++
+ local gm = require 'graphicsmagick'
+ require 'image'
+ 
+-local function unsharp_mask()
++function tests.unsharp_mask()
+    local src = gm.Image("city.jpg")
+    local unsharp1 = src:clone():unsharpMask(2, 1.0, 1.0, 0.02):toTensor("float", "RGB", "DHW")
+    local unsharp2 = src:clone():unsharpMask(2, 1.4, 0.5, 0.0):toTensor("float", "RGB", "DHW")
+@@ -13,4 +18,6 @@ local function unsharp_mask()
+    image.display({image = unsharp2,
+ 		  min = 0, max = 1, legend = "UnsharpMask 2, 1.4, 0.5, 0.0"})
+ end
+-unsharp_mask()
++
++tester:add(tests)
++tester:run()

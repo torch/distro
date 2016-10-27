@@ -1,0 +1,22 @@
+diff --git a/paths.c b/paths.c
+index a2a0f4c..3730bf8 100644
+--- a/paths.c
++++ b/paths.c
+@@ -602,7 +602,7 @@ lua_dir(lua_State *L)
+ 
+   SB sb;
+   struct _finddata_t info;
+-  long hfind;
++  intptr_t hfind;
+   /* special cases */
+   lua_createtable(L, 0, 0);
+   if ((s[0]=='/' || s[0]=='\\') && 
+@@ -611,7 +611,7 @@ lua_dir(lua_State *L)
+       int drive;
+       hfind = GetLogicalDrives();
+       for (drive='A'; drive<='Z'; drive++)
+-        if (hfind & (1<<(drive-'A'))) {
++        if (hfind & ((intptr_t)1<<(drive-'A'))) {
+           lua_pushfstring(L, "%c:/", drive);
+           lua_rawseti(L, -2, ++k);
+         }
