@@ -23,11 +23,11 @@ build = {
    modules = {
       ['sys.init'] = 'init.lua',
       ['sys.fpath'] = 'fpath.lua',
-      ['sys.color'] = 'colors.lua',
+      ['sys.colors'] = 'colors.lua',
       libsys = {
          sources = {
             "sys.c"
          }
       }
-   },
+   }
 }

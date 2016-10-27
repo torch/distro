@@ -126,7 +126,7 @@ cd %THIS_DIR%extra\nn
 cmd /c luarocks make rocks/nn-scm-1.rockspec
 if errorlevel 1 goto :error
 cd %THIS_DIR%extra\graph
-cmd /c luarocks make rocks/graph-scm-1.rockspec
+cmd /c luarocks make %Base%/win-files/graph-scm-1.rockspec
 if errorlevel 1 goto :error
 cd %THIS_DIR%extra\nngraph
 cmd /c luarocks make
@@ -139,14 +139,6 @@ cmd /c luarocks make optim-1.0.5-0.rockspec
 if errorlevel 1 goto :error
 
 popd
-
-(
-echo set "LUA_CPATH=%BASE%/install/?.DLL;%BASE%/install/LIB/?.DLL;?.DLL"
-echo set "LUA_DEV=%BASE%/install"
-echo set "LUA_PATH=;;%BASE%/install/?;%BASE%/install/?.lua;%BASE%/install/lua/?;%BASE%/install/lua/?.lua;%BASE%/install/lua/?/init.lua
-echo set "PATH=%PATH%;%BASE%\install;%BASE%\install\bin"
-) > %BASE%\install\torch-active.bat
-
 
 luajit -e "require('torch')"
 if errorlevel 1 exit /B 1
