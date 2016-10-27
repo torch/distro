@@ -40,9 +40,11 @@ setlocal
 call "%VS140COMNTOOLS%\..\..\VC\bin\amd64\vcvars64.bat"
 @echo on
 
-set "CMAKE=C:\Program Files\CMake\bin\cmake.exe"
-set "GIT=C:\Program Files\Git\bin\git.exe"
+if "%TORCH_LUA_VERSION%" == "" (
+    SET "TORCH_LUA_VERSION=LUAJIT21"
+)
 
+set "PATH=%PATH%;C:\Program Files\CMake\bin;C:\Program Files\Git\"
 rem check if git and cmake is there
 
 set BASE=%~dp0
@@ -52,19 +54,19 @@ set "PREFIX=%BASE%\install"
 set "CMAKE_LIBRARY_PATH=%BASE%/include:%BASE%/lib:%CMAKE_LIBRARY_PATH%"
 set "CMAKE_PREFIX_PATH=%PREFIX%"
 
-"%GIT%" submodule update --init --recursive
+git submodule update --init --recursive
 
 echo BASE: %BASE%
 
 echo luajit-rocks
 mkdir "%BASE%\build"
 cd "%BASE%\build"
-"%CMAKE%" ..\exe\luajit-rocks -DWITH_LUAJIT21=true -DCMAKE_INSTALL_PREFIX=%PREFIX% -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release
-if errorlevel 1 exit /B 1
+cmake ..\exe\luajit-rocks -DWITH_%TORCH_LUA_VERSION%=ON -DCMAKE_INSTALL_PREFIX=%PREFIX% -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release
+if errorlevel 1 goto :error
 nmake
-if errorlevel 1 exit /B 1
-"%CMAKE%" -DCMAKE_INSTALL_PREFIX=%PREFIX% -G "NMake Makefiles" -P cmake_install.cmake -DCMAKE_BUILD_TYPE=Release
-if errorlevel 1 exit /B 1
+if errorlevel 1 goto :error
+cmake -DCMAKE_INSTALL_PREFIX=%PREFIX% -G "NMake Makefiles" -P cmake_install.cmake -DCMAKE_BUILD_TYPE=Release
+if errorlevel 1 goto :error
 
 set "LUA_CPATH=%BASE%/install/?.DLL;%BASE%/install/LIB/?.DLL;?.DLL"
 set "LUA_DEV=%BASE%/install"
@@ -84,57 +86,59 @@ echo did copy of cmake
 echo "Installing common Lua packages"
 cd %THIS_DIR%extra\luafilesystem
 cmd /c luarocks make rockspecs/luafilesystem-1.6.3-1.rockspec
-if errorlevel 1 exit /B 1
+if errorlevel 1 goto :error
 cd %THIS_DIR%extra\penlight
 cmd /c luarocks make
-if errorlevel 1 exit /B 1
+if errorlevel 1 goto :error
 cd %THIS_DIR%extra\lua-cjson
 cmd /c luarocks make
-if errorlevel 1 exit /B 1
+if errorlevel 1 goto :error
 
 echo "Installing core Torch packages"
 cd %THIS_DIR%extra\luaffifb
 cmd /c luarocks make %Base%/win-files/luaffi-scm-1.rockspec
-if errorlevel 1 exit /B 1
+if errorlevel 1 goto :error
 cd %THIS_DIR%pkg\sundown
 cmd /c luarocks make rocks/sundown-scm-1.rockspec
-if errorlevel 1 exit /B 1
+if errorlevel 1 goto :error
 cd %THIS_DIR%pkg\cwrap
 cmd /c luarocks make rocks/cwrap-scm-1.rockspec
-if errorlevel 1 exit /B 1
+if errorlevel 1 goto :error
 cd %THIS_DIR%pkg\paths
 cmd /c luarocks make rocks/paths-scm-1.rockspec
-if errorlevel 1 exit /B 1
+if errorlevel 1 goto :error
 cd %THIS_DIR%pkg\torch
 cmd /c luarocks make %Base%/win-files/torch-scm-1.rockspec
-if errorlevel 1 exit /B 1
+if errorlevel 1 goto :error
 cd %THIS_DIR%pkg\dok
 cmd /c luarocks make rocks/dok-scm-1.rockspec
-if errorlevel 1 exit /B 1
+if errorlevel 1 goto :error
 cd %THIS_DIR%exe\trepl
 cmd /c luarocks make %Base%/win-files/trepl-scm-1.rockspec
-if errorlevel 1 exit /B 1
+if errorlevel 1 goto :error
 cd %THIS_DIR%pkg\sys
-cmd /c luarocks make sys-1.1-0.rockspec
-if errorlevel 1 exit /B 1
+cmd /c luarocks make %Base%/win-files/sys-1.1-0.rockspec
+if errorlevel 1 goto :error
 cd %THIS_DIR%pkg\xlua
 cmd /c luarocks make xlua-1.0-0.rockspec
-if errorlevel 1 exit /B 1
+if errorlevel 1 goto :error
 cd %THIS_DIR%extra\nn
 cmd /c luarocks make rocks/nn-scm-1.rockspec
-if errorlevel 1 exit /B 1
+if errorlevel 1 goto :error
 cd %THIS_DIR%extra\graph
 cmd /c luarocks make rocks/graph-scm-1.rockspec
-if errorlevel 1 exit /B 1
+if errorlevel 1 goto :error
 cd %THIS_DIR%extra\nngraph
 cmd /c luarocks make
-if errorlevel 1 exit /B 1
+if errorlevel 1 goto :error
 cd %THIS_DIR%pkg\image
 cmd /c luarocks make image-1.1.alpha-0.rockspec
-if errorlevel 1 exit /B 1
+if errorlevel 1 goto :error
 cd %THIS_DIR%pkg\optim
 cmd /c luarocks make optim-1.0.5-0.rockspec
-if errorlevel 1 exit /B 1
+if errorlevel 1 goto :error
+
+popd
 
 (
 echo set "LUA_CPATH=%BASE%/install/?.DLL;%BASE%/install/LIB/?.DLL;?.DLL"
@@ -150,6 +154,8 @@ if errorlevel 1 exit /B 1
 luajit -e "require('torch'); torch.test()"
 if errorlevel 1 exit /B 1
 
+luajit -e "require('nn'); nn.test()"
+if errorlevel 1 exit /B 1
 
 goto :eof
 
