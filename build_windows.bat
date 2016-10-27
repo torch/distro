@@ -37,68 +37,29 @@ rem     cd torch
 
 rem based heavily/entirely on what hiili wrote at https://github.com/torch/torch7/wiki/Windows#using-visual-studio
 
-rem call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
-call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64\vcvars64.bat"
-set "PATH=%PATH%;C:\Program Files\CMake\bin"
-set "PATH=%PATH%;C:\Program Files\Git\bin"
+call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
+rem call "%VS140COMNTOOLS%\..\..\VC\bin\amd64\vcvars64.bat"
+@echo on
 
-set "BASE=%CD%"
-set "TORCH_INSTALL=%CD%\install"
+set "CMAKE=C:\Program Files\CMake\bin\cmake.exe"
+set "GIT=C:\Program Files\Git\bin\git.exe"
+
+rem check if git and cmake is there
+
+set BASE=%~dp0
+set "THIS_DIR=%BASE%"
+set "PREFIX=%BASE%\install"
 
 echo BASE: %BASE%
 
-rem rmdir /s /q "%BASE%\soft"
-mkdir "%BASE%\soft"
-
-rmdir /s /q pkg\torch
-git submodule update --init pkg/torch
-if errorlevel 1 exit /B 1
-rem git submodule update --init --recursive
-
-rem install msys64
-rem compared to the instructions on the website, using bash direclty is synchronous, and puts the output into our
-rem console/jenkins
-rem we install it here, since it's a bit non-standard (cf 7zip, cmake, msvc2015, which I think are reasonably standard?)
-rem we need it, because we need a fortran compiler
-cd /d "%BASE%\soft"
-powershell.exe -Command (new-object System.Net.WebClient).DownloadFile('https://sourceforge.net/projects/msys2/files/Base/x86_64/msys2-base-x86_64-20160205.tar.xz/download', 'msys2-base-x86_64-20160205.tar.xz')
-if errorlevel 1 exit /B 1
-"c:\program files\7-Zip\7z.exe" x msys2-base-x86_64-20160205.tar.xz
-if errorlevel 1 exit /B 1
-"c:\program files\7-Zip\7z.exe" x msys2-base-x86_64-20160205.tar >nul
-if errorlevel 1 exit /B 1
-cmd /c msys64\usr\bin\bash --login exit
-cmd /c msys64\usr\bin\bash --login -c "pacman -Syu --noconfirm"
-cmd /c msys64\usr\bin\bash --login -c "pacman -Sy git tar make mingw-w64-x86_64-gcc mingw-w64-x86_64-gcc-fortran --noconfirm"
-
-rem install lapack; I debated whether to put it in 'build' or 'installdeps', but decided 'build' is  maybe better,
-rem on the basis that it might be less stable, subject to changes/bugs/tweaks than eg 7zip install?
-rem (and also it is architecture specific etc, probalby subject to device-specific optimizations?)
-cd /d "%BASE%\soft"
-powershell.exe -Command (new-object System.Net.WebClient).DownloadFile('http://www.netlib.org/lapack/lapack-3.6.1.tgz', 'lapack-3.6.1.tgz')
-if errorlevel 1 exit /B 1
-"c:\program files\7-Zip\7z.exe" x lapack-3.6.1.tgz
-if errorlevel 1 exit /B 1
-"c:\program files\7-Zip\7z.exe" x lapack-3.6.1.tar >nul
-if errorlevel 1 exit /B 1
-dir lapack-3.6.1
-cd lapack-3.6.1
-mkdir build
-cd build
-set "SOFT=%BASE%\soft"
-cmd /c %BASE%\soft\msys64\usr\bin\bash.exe --login "%BASE%\win-files\install_lapack.sh"
-
 echo luajit-rocks
-git clone https://github.com/torch/luajit-rocks.git
-if errorlevel 1 exit /B 1
-cd luajit-rocks
-mkdir build
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=%BASE%/install -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release
+mkdir "%BASE%\build"
+cd "%BASE%\build"
+"%CMAKE%" ..\exe\luajit-rocks -DWITH_LUAJIT21=true -DTARGET_ARCH=x64 -DCMAKE_INSTALL_PREFIX=%PREFIX% -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release
 if errorlevel 1 exit /B 1
 nmake
 if errorlevel 1 exit /B 1
-cmake -DCMAKE_INSTALL_PREFIX=%BASE%/install -G "NMake Makefiles" -P cmake_install.cmake -DCMAKE_BUILD_TYPE=Release
+"%CMAKE%" -DCMAKE_INSTALL_PREFIX=%PREFIX% -G "NMake Makefiles" -P cmake_install.cmake -DCMAKE_BUILD_TYPE=Release
 if errorlevel 1 exit /B 1
 
 set "LUA_CPATH=%BASE%/install/?.DLL;%BASE%/install/LIB/?.DLL;?.DLL"
@@ -116,10 +77,59 @@ copy "%BASE%\win-files\cmake.cmd" "%BASE%\install"
 if errorlevel 1 exit goto :error
 echo did copy of cmake
 
-rem cd "%BASE%\pkg"
-cd "%BASE%\pkg\torch"
-git checkout 7bbe17917ea560facdc652520e5ea01692e460d3
-cmd /c luarocks make "%BASE%\win-files\torch-scm-1.rockspec"
+echo "Installing common Lua packages"
+cd %THIS_DIR%/extra/luafilesystem
+cmd /c luarocks make rockspecs/luafilesystem-1.6.3-1.rockspec
+if errorlevel 1 exit /B 1
+cd %THIS_DIR%/extra/penlight
+cmd /c luarocks make
+if errorlevel 1 exit /B 1
+cd %THIS_DIR%/extra/lua-cjson
+cmd /c luarocks make
+if errorlevel 1 exit /B 1
+
+echo "Installing core Torch packages"
+cd %THIS_DIR%/extra/luaffifb
+cmd /c luarocks make
+if errorlevel 1 exit /B 1
+cd %THIS_DIR%/pkg/sundown
+cmd /c luarocks make rocks/sundown-scm-1.rockspec
+if errorlevel 1 exit /B 1
+cd %THIS_DIR%/pkg/cwrap
+cmd /c luarocks make rocks/cwrap-scm-1.rockspec
+if errorlevel 1 exit /B 1
+cd %THIS_DIR%/pkg/paths
+cmd /c luarocks make rocks/paths-scm-1.rockspec
+if errorlevel 1 exit /B 1
+cd %THIS_DIR%/pkg/torch
+cmd /c luarocks make rocks/torch-scm-1.rockspec
+if errorlevel 1 exit /B 1
+cd %THIS_DIR%/pkg/dok
+cmd /c luarocks make rocks/dok-scm-1.rockspec
+if errorlevel 1 exit /B 1
+cd %THIS_DIR%/exe/trepl
+cmd /c luarocks make
+if errorlevel 1 exit /B 1
+cd %THIS_DIR%/pkg/sys
+cmd /c luarocks make sys-1.1-0.rockspec
+if errorlevel 1 exit /B 1
+cd %THIS_DIR%/pkg/xlua
+cmd /c luarocks make xlua-1.0-0.rockspec
+if errorlevel 1 exit /B 1
+cd %THIS_DIR%/extra/nn
+cmd /c luarocks make rocks/nn-scm-1.rockspec
+if errorlevel 1 exit /B 1
+cd %THIS_DIR%/extra/graph
+cmd /c luarocks make rocks/graph-scm-1.rockspec
+if errorlevel 1 exit /B 1
+cd %THIS_DIR%/extra/nngraph
+cmd /c luarocks make
+if errorlevel 1 exit /B 1
+cd %THIS_DIR%/pkg/image
+cmd /c luarocks make image-1.1.alpha-0.rockspec
+if errorlevel 1 exit /B 1
+cd %THIS_DIR%/pkg/optim
+cmd /c luarocks make optim-1.0.5-0.rockspec
 if errorlevel 1 exit /B 1
 
 luajit -e "require('torch')"
