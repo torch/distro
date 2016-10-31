@@ -6,22 +6,17 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 
-set GIT_CMD=
-for /f "delims=" %%i in ('where git') do (
-  set GIT_CMD=%%i
-  goto :AFTER_GIT
-)
-:AFTER_GIT
-
-if "%GIT_CMD%"=="" goto :HELP
-
-set TORCH_DISTRO=%cd%
+set TORCH_DISTRO=%~dp0.
 
 for /d %%G in ("%TORCH_DISTRO%\win-files\3rd\wineditline-*") do rmdir /s /q "%%~G"\build
-
 cd %TORCH_DISTRO%\win-files\3rd\dlfcn-win32 && git clean -fdx
 
 cd %TORCH_DISTRO%\exe\luajit-rocks && git clean -fdx
+cd %TORCH_DISTRO%\exe\lua-5.1.5 && del /q *.obj *.o *.lib *.dll *.exp *.exe
+cd %TORCH_DISTRO%\exe\lua-5.2.4 && del /q *.obj *.o *.lib *.dll *.exp *.exe
+cd %TORCH_DISTRO%\exe\lua-5.3.3 && del /q *.obj *.o *.lib *.dll *.exp *.exe
+cd %TORCH_DISTRO%\exe\luajit-2.0 && git clean -fdx
+cd %TORCH_DISTRO%\exe\luajit-2.1 && git clean -fdx
 cd %TORCH_DISTRO%\exe\luarocks && git clean -fdx
 
 cd %TORCH_DISTRO%\extra\luafilesystem && git clean -fdx
@@ -55,11 +50,4 @@ cd %TORCH_DISTRO%\extra\graphicsmagick && git clean -fdx
 cd %TORCH_DISTRO%\extra\totem && git clean -fdx
 
 echo Cleaning is finished
-goto :END
-
-:HELP
-echo Git is not installed globally in this system.
-echo Please run torch-activate.cmd before run clean.bat so that git in your installation can be found.
-
-:END
 @endlocal

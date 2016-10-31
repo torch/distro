@@ -16,9 +16,9 @@ echo %ECHO_PREFIX% cleaning temporary compilation files
 call clean.bat
 
 echo %ECHO_PREFIX% deleting Torch7 installation directory
-rmdir /s %TORCH_INSTALL_DIR%
+rmdir /s /q %TORCH_INSTALL_DIR%
 
-echo %ECHO_PREFIX% deleting Torch7 conda env (even if env is removed, packages will stil be kept in conda/pkgs)
+echo %ECHO_PREFIX% deleting Torch7 conda environment (even if env is removed, packages will stil be kept in conda/pkgs)
 conda env remove -n %TORCH_CONDA_ENV% --yes
 
 echo %ECHO_PREFIX% Torch7 has been uninstalled

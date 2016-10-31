@@ -2,3 +2,4 @@ build/
 install/
 */*/build
 extra/luafilesystem/lfs.so
+win-files/3rd/

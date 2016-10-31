@@ -34,13 +34,19 @@ REM  set LAPACK_LIBRARIES=D:\\Libraries\\lib\libopenblas.dll.a
 :: where to find cudnn library
 REM  set CUDNN_PATH=D:\NVIDIA\CUDNN\v5.1\bin\cudnn64_5.dll
 
+:: whether update dependencies if already setup, default to not update
+REM  set TORCH_UPDATE_DEPS=
 
 ::::  End of customization  ::::
 
 
 set ECHO_PREFIX=+++++++
+set TORCH_SETUP_FAIL=1
 
 ::::  validate lua version  ::::
+
+:: [TODO] currently luajit lua luarocks are installed from source. they can be changed to use luajit-rocks when
+::        luajit-rocks is ready for windows
 
 if "%TORCH_LUA_VERSION%" == "" set TORCH_LUA_VERSION=LUAJIT21
 if "%TORCH_LUA_VERSION%" == "LUAJIT21" (
@@ -54,15 +60,15 @@ if "%TORCH_LUA_VERSION%" == "LUAJIT20" (
   set TORCH_LUAROCKS_LUA=5.1
 )
 if "%TORCH_LUA_VERSION%" == "LUA53" (
-  set TORCH_LUA_SOURCE=lua-5.3
+  set TORCH_LUA_SOURCE=lua-5.3.3
   set TORCH_LUAROCKS_LUA=5.3
 )
 if "%TORCH_LUA_VERSION%" == "LUA52" (
-  set TORCH_LUA_SOURCE=lua-5.2
+  set TORCH_LUA_SOURCE=lua-5.2.4
   set TORCH_LUAROCKS_LUA=5.2
 )
 if "%TORCH_LUA_VERSION%" == "LUA51" (
-  set TORCH_LUA_SOURCE=lua-5.1
+  set TORCH_LUA_SOURCE=lua-5.1.5
   set TORCH_LUAROCKS_LUA=5.1
 )
 if "%TORCH_LUA_SOURCE%" == "" (
@@ -72,7 +78,7 @@ if "%TORCH_LUA_SOURCE%" == "" (
 
 ::::    Setup directories   ::::
 
-set TORCH_DISTRO=%cd%
+set TORCH_DISTRO=%~dp0.
 if "%TORCH_INSTALL_DIR%" == "" set TORCH_INSTALL_DIR=%TORCH_DISTRO%\install
 set TORCH_INSTALL_BIN=%TORCH_INSTALL_DIR%\bin
 set TORCH_INSTALL_LIB=%TORCH_INSTALL_DIR%\lib
@@ -127,51 +133,73 @@ echo %ECHO_PREFIX% Createing conda environment '%TORCH_CONDA_ENV%' for Torch7 de
 conda create -n %TORCH_CONDA_ENV% -c conda-forge vc --yes
 set TORCH_CONDA_LIBRARY=%CONDA_DIR%envs\\%TORCH_CONDA_ENV%\\Library
 
+set PATH=%TORCH_CONDA_LIBRARY%\bin;%PATH%;
+
+set TORCH_CONDA_PKGS=%TORCH_DISTRO%\win-files\check_conda_packages_for_torch.txt
+conda list -n %TORCH_CONDA_ENV% > %TORCH_CONDA_PKGS%
+
+findstr "openblas" "%TORCH_CONDA_PKGS%" >nul
+if not errorlevel 1 set TORCH_SETUP_NO_BLAS=
 if "%TORCH_SETUP_NO_BLAS%" == "1" (
   echo %ECHO_PREFIX% Installing openblas by conda, since there is no blas library specified
   conda install -n %TORCH_CONDA_ENV% -c ukoethe openblas --yes || goto :Fail
 )
 
-echo %ECHO_PREFIX% Installing other dependencies by conda for image, qtlua, etc
-conda install -n %TORCH_CONDA_ENV% -c conda-forge jpeg libpng zlib libxml2 qt=4.8.7 --yes
+findstr "jpeg" "%TORCH_CONDA_PKGS%" >nul
+if errorlevel 1 set TORCH_DEPENDENCIES=%TORCH_DEPENDENCIES% jpeg
+findstr "libpng" "%TORCH_CONDA_PKGS%" >nul
+if errorlevel 1 set TORCH_DEPENDENCIES=%TORCH_DEPENDENCIES% libpng
+findstr "zlib" "%TORCH_CONDA_PKGS%" >nul
+if errorlevel 1 set TORCH_DEPENDENCIES=%TORCH_DEPENDENCIES% zlib
+findstr "libxml2" "%TORCH_CONDA_PKGS%" >nul
+if errorlevel 1 set TORCH_DEPENDENCIES=%TORCH_DEPENDENCIES% libxml2
+findstr "qt" "%TORCH_CONDA_PKGS%" >nul
+if errorlevel 1 set TORCH_DEPENDENCIES=%TORCH_DEPENDENCIES% qt=4.8.7
 
-echo %ECHO_PREFIX% Installing tools by conda
-set PATH=%TORCH_CONDA_LIBRARY%\bin;%PATH%;
+del /q %TORCH_CONDA_PKGS%
 
-for /f "delims=" %%i in ('where git') do (
-  set GIT_CMD=%%i
-  goto :AFTER_GIT
+if not "%TORCH_DEPENDENCIES%" == "" (
+  echo %ECHO_PREFIX% Installing %TORCH_DEPENDENCIES% by conda for Torch7
+  conda install -n %TORCH_CONDA_ENV% -c conda-forge %TORCH_DEPENDENCIES% --yes
 )
-:AFTER_GIT
-if "%GIT_CMD%" == "" conda install -n %TORCH_CONDA_ENV% -c conda-forge git --yes
 
 for /f "delims=" %%i in ('where cmake') do (
   set CMAKE_CMD=%%i
   goto :AFTER_CMAKE
 )
+if "%CMAKE_CMD%" == "" (
+  echo %ECHO_PREFIX% Installing cmake by conda
+  conda install -n %TORCH_CONDA_ENV% -c conda-forge cmake --yes
+)
 :AFTER_CMAKE
-if "%CMAKE_CMD%" == "" conda install -n %TORCH_CONDA_ENV% -c conda-forge cmake --yes
 
-set NEW_PATH=%TORCH_CONDA_LIBRARY%\bin;%TORCH_CONDA_LIBRARY%\mingw64\bin;%TORCH_CONDA_LIBRARY%\usr\bin;%NEW_PATH%
+set NEW_PATH=%TORCH_CONDA_LIBRARY%\bin;%NEW_PATH%
 
-::::  git clone luajit-rocks   ::::
+::::  git clone luarocks   ::::
 
-echo %ECHO_PREFIX% Git clone luajit-rocks for its tools
+echo %ECHO_PREFIX% Git clone luarocks for its tools
 cd %TORCH_DISTRO%\exe\
-if not exist luajit-rocks\.git git clone https://github.com/torch/luajit-rocks.git
-
-set PATH=%TORCH_DISTRO%\exe\luajit-rocks\luarocks\win32\tools;%PATH%;
+if not exist luarocks\.git git clone https://github.com/keplerproject/luarocks.git luarocks
+set PATH=%TORCH_DISTRO%\exe\luarocks\win32\tools\;%PATH%;
 
 ::::     install lua       ::::
 
 echo %ECHO_PREFIX% Installing %TORCH_LUA_SOURCE%
-cd %TORCH_DISTRO%\exe\luajit-rocks\%TORCH_LUA_SOURCE%\src
+cd %TORCH_DISTRO%\exe\
+if not "%TORCH_LUAJIT_VERSION%" == "" (
+if not exist %TORCH_LUA_SOURCE%\.git git clone -b v%TORCH_LUAJIT_VERSION% http://luajit.org/git/luajit-2.0.git %TORCH_LUA_SOURCE% || goto :Fail
+  cd %TORCH_LUA_SOURCE% && ( if "%TORCH_UPDATE_DEPS%" == "1" git pull ) & cd src
+) else (
+  wget -nc https://www.lua.org/ftp/%TORCH_LUA_SOURCE%.tar.gz --no-check-certificate || goto :Fail
+  7z x %TORCH_LUA_SOURCE%.tar.gz -y >NUL && 7z x %TORCH_LUA_SOURCE%.tar -y >NUL && cd %TORCH_LUA_SOURCE%\src
+)
 if not "%TORCH_LUAJIT_VERSION%"=="" (
   call msvcbuild.bat || goto :FAIL
   copy /y jit\* %TORCH_INSTALL_BIN%\lua\jit\
   copy /y luajit.h %TORCH_INSTALL_INC%\luajit.h
   set LUAJIT_CMD=%TORCH_INSTALL_DIR%\luajit.cmd
 ) else (
+  del /q *.obj *.o *.lib *.dll *.exp *.exe
   cl /nologo /c /O2 /W3 /D_CRT_SECURE_NO_DEPRECATE /MD /DLUA_BUILD_AS_DLL *.c || goto :FAIL
   ren lua.obj lua.o || goto :FAIL
   ren luac.obj luac.o || goto :FAIL
@@ -193,7 +221,7 @@ for %%g in (lua.h,luaconf.h,lualib.h,lauxlib.h) do copy /y %%g %TORCH_INSTALL_IN
 echo %ECHO_PREFIX% Installing luarocks
 cd %TORCH_DISTRO%\exe\
 if not exist luarocks\.git git clone https://github.com/keplerproject/luarocks.git luarocks
-cd luarocks && git fetch & call install.bat /F /Q /P %TORCH_INSTALL_ROC% /SELFCONTAINED /FORCECONFIG /NOREG /NOADMIN /LUA %TORCH_INSTALL_DIR% || goto :FAIL
+cd luarocks && ( if "%TORCH_UPDATE_DEPS%" == "1" git pull ) & call install.bat /F /Q /P %TORCH_INSTALL_ROC% /SELFCONTAINED /FORCECONFIG /NOREG /NOADMIN /LUA %TORCH_INSTALL_DIR% || goto :FAIL
 for /f %%a in ('dir %TORCH_INSTALL_ROC%\config*.lua /b') do set LUAROCKS_CONFIG=%%a
 set LUAROCKS_CONFIG=%TORCH_INSTALL_ROC%\%LUAROCKS_CONFIG%
 echo rocks_servers = { >> %LUAROCKS_CONFIG%
@@ -202,7 +230,6 @@ echo   [[https://raw.githubusercontent.com/rocks-moonscript-org/moonrocks-mirror
 echo } >> %LUAROCKS_CONFIG%
 
 set LUAROCKS_CMD=%TORCH_INSTALL_DIR%\luarocks.cmd
-set NEW_PATH=%TORCH_INSTALL_ROC%\tools\;%NEW_PATH%
 
 :::: install wineditline   ::::
 
@@ -217,7 +244,7 @@ cmake -E make_directory build && cd build && cmake .. -G "NMake Makefiles" -DCMA
 echo %ECHO_PREFIX% Installing dlfcn-win32 for thread package
 cd %TORCH_DISTRO%\win-files\3rd\
 if not exist dlfcn-win32\.git git clone https://github.com/dlfcn-win32/dlfcn-win32.git
-cd dlfcn-win32 && git pull
+cd dlfcn-win32 && ( if "%TORCH_UPDATE_DEPS%" == "1" git pull )
 cmake -E make_directory build && cd build && cmake .. -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=..\ && nmake install
 set WIN_DLFCN_INCDIR=%TORCH_DISTRO:\=\\%\\win-files\\3rd\\dlfcn-win32\\include
 set WIN_DLFCN_LIBDIR=%TORCH_DISTRO:\=\\%\\win-files\\3rd\\dlfcn-win32\\lib
@@ -241,7 +268,7 @@ if not "%LUAJIT_CMD%" == "" (
   echo %ECHO_PREFIX% Creating torch-activate.cmd lua.cmd luac.cmd luarocks.cmd cmake.cmd
 )
 
-set NEW_PATH=%TORCH_INSTALL_BIN%;%TORCH_INSTALL_ROC%;%TORCH_INSTALL_ROC%\tools;%TORCH_INSTALL_ROC%\systree\bin;%NEW_PATH%;%%PATH%%;;
+set NEW_PATH=%TORCH_INSTALL_DIR%;%TORCH_INSTALL_BIN%;%TORCH_INSTALL_ROC%;%TORCH_INSTALL_ROC%\tools;%TORCH_INSTALL_ROC%\systree\bin;%NEW_PATH%;%%PATH%%;;
 set NEW_LUA_PATH=%TORCH_INSTALL_ROC%\lua\?.lua;%TORCH_INSTALL_ROC%\lua\?\init.lua;%TORCH_INSTALL_ROC%\systree\share\lua\%TORCH_LUAROCKS_LUA%\?.lua;%TORCH_INSTALL_ROC%\systree\share\lua\%TORCH_LUAROCKS_LUA%\?\init.lua;;
 set NEW_LUA_CPATH=%TORCH_INSTALL_ROC%\systree\lib\lua\%TORCH_LUAROCKS_LUA%\?.dll;;
 
@@ -299,11 +326,11 @@ echo :G_NMake >> %CMAKE_CMD%
 echo shift >> %CMAKE_CMD%
 echo cmake.exe .. -G "NMake Makefiles" %%* >> %CMAKE_CMD%
 
+set TORCH_SETUP_FAIL=0
 echo %ECHO_PREFIX% Setup succeed!
 goto :END
 
 :FAIL
-set TORCH_SETUP_FAIL=1
 echo %ECHO_PREFIX% Setup fail!
 
 :END

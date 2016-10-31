@@ -8,12 +8,25 @@
 
 if "%TORCH_INSTALL_DIR%" == "" goto :HELP
 
-for /f "delims=" %%i in ('where luajit.cmd') do set LUA=%%i
+for /f "delims=" %%i in ('where luajit.cmd') do (
+  set LUA=%%i
+  goto :AFTER_LUAJIT
+)
+
+:AFTER_LUAJIT
 if exist "%LUA%" (
   set TORCH_USE_LUAJIT=1
 ) else (
-  for /f "delims=" %%i in ('where lua.cmd') do set LUA=%%i
-  if not exist "%LUA%" echo Neither luajit nor lua found in Torch7 environment && goto :Fail
+  for /f "delims=" %%i in ('where lua.cmd') do (
+    set LUA=%%i
+    goto :AFTER_LUA
+  )
+)
+
+:AFTER_LUA
+if not exist "%LUA%" (
+  echo Neither luajit nor lua found in Torch7 environment
+  goto :Fail
 )
 
 set LUA_SAFE_PATH=%LUA:\=\\%
