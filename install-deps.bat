@@ -134,9 +134,20 @@ conda create -n %TORCH_CONDA_ENV% -c conda-forge vc --yes
 set TORCH_CONDA_LIBRARY=%CONDA_DIR%envs\\%TORCH_CONDA_ENV%\\Library
 
 set PATH=%TORCH_CONDA_LIBRARY%\bin;%PATH%;
+set NEW_PATH=%TORCH_CONDA_LIBRARY%\bin;%NEW_PATH%
 
 set TORCH_CONDA_PKGS=%TORCH_DISTRO%\win-files\check_conda_packages_for_torch.txt
 conda list -n %TORCH_CONDA_ENV% > %TORCH_CONDA_PKGS%
+
+for /f "delims=" %%i in ('where cmake') do (
+  set CMAKE_CMD=%%i
+  goto :AFTER_CMAKE
+)
+if "%CMAKE_CMD%" == "" (
+  echo %ECHO_PREFIX% Installing cmake by conda
+  conda install -n %TORCH_CONDA_ENV% -c conda-forge cmake --yes
+)
+:AFTER_CMAKE
 
 findstr "openblas" "%TORCH_CONDA_PKGS%" >nul
 if not errorlevel 1 set TORCH_SETUP_NO_BLAS=
@@ -162,18 +173,6 @@ if not "%TORCH_DEPENDENCIES%" == "" (
   echo %ECHO_PREFIX% Installing %TORCH_DEPENDENCIES% by conda for Torch7
   conda install -n %TORCH_CONDA_ENV% -c conda-forge %TORCH_DEPENDENCIES% --yes
 )
-
-for /f "delims=" %%i in ('where cmake') do (
-  set CMAKE_CMD=%%i
-  goto :AFTER_CMAKE
-)
-if "%CMAKE_CMD%" == "" (
-  echo %ECHO_PREFIX% Installing cmake by conda
-  conda install -n %TORCH_CONDA_ENV% -c conda-forge cmake --yes
-)
-:AFTER_CMAKE
-
-set NEW_PATH=%TORCH_CONDA_LIBRARY%\bin;%NEW_PATH%
 
 ::::  git clone luarocks   ::::
 
