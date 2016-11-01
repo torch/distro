@@ -61,7 +61,7 @@ It will automatically install not installed dependencies.
 
 #### Run torch-activate.cmd, then use availabe Torch executables
 ```bat
-path_to_Torch\torch-activate.cmd
+path_to_Torch\torch-activate
 th
 ```
 Trepl on windows should work similarly as on linux or macos.
@@ -74,18 +74,18 @@ clean.bat
 
 To remove the installation:
 ```bat
-path_to_Torch\torch-activate.cmd
+path_to_Torch\torch-activate
 uninstall.bat
 ```
-torch-activate.cmd is called before uninstall.bat so that unstall knows which Torch7 to uninstall.
+torch-activate.cmd is called before uninstall.bat so that uninstall knows which Torch7 to uninstall.
 In addition to clean.bat, this will remove the directory pointed to by TORCH\_INSTALL\_DIR and TORCH\_CONDA\_ENV from conda.
 
 ## Test
 You can test that all libraries are installed properly by running:
 ```bat
-path_to_Torch\torch-activate.cmd
+path_to_Torch\torch-activate
 test.bat
 ```
 torch-activate.cmd is called before test.bat so that test knows which Torch7 to test.
 
-Tested on Windows 10, Visual Studio Community 2015, Anaconda4, Cuda Toolkit8.0, MKL2017
+Tested on Windows 10 x64, Visual Studio Community 2015, Anaconda4, Cuda Toolkit8.0, MKL2017

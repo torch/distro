@@ -26,7 +26,7 @@ if exist "%LUA%" (
 :AFTER_LUA
 if not exist "%LUA%" (
   echo Neither luajit nor lua found in Torch7 environment
-  goto :Fail
+  goto :FAIL
 )
 
 set LUA_SAFE_PATH=%LUA:\=\\%
