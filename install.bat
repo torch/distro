@@ -24,20 +24,20 @@ set PATCH_DIR=%TORCH_DISTRO%\win-files\patch
 echo %ECHO_PREFIX% Installing common lua packages
 cd %TORCH_DISTRO%\extra\luafilesystem && call %LUAROCKS_CMD% make rockspecs\luafilesystem-1.6.3-1.rockspec || goto :FAIL
 cd %TORCH_DISTRO%\extra\penlight && call %LUAROCKS_CMD% make penlight-scm-1.rockspec || goto :FAIL
-cd %TORCH_DISTRO%\extra\lua-cjson && git apply %PATCH_DIR%\lua-cjson.patch --whitespace=nowarn & call %LUAROCKS_CMD% make lua-cjson-2.1devel-1.rockspec & git apply %PATCH_DIR%\lua-cjson.patch --reverse --whitespace=nowarn || goto :FAIL
+cd %TORCH_DISTRO%\extra\lua-cjson && git apply %PATCH_DIR%\lua-cjson.patch --whitespace=fix & call %LUAROCKS_CMD% make lua-cjson-2.1devel-1.rockspec & git apply %PATCH_DIR%\lua-cjson.patch --reverse --whitespace=fix || goto :FAIL
 
 echo %ECHO_PREFIX% Installing core Torch7 packages
-cd %TORCH_DISTRO%\extra\luaffifb && git apply %PATCH_DIR%\luaffifb.patch --whitespace=nowarn & call %LUAROCKS_CMD% make luaffi-scm-1.rockspec & git apply %PATCH_DIR%\luaffifb.patch --reverse --whitespace=nowarn || goto :FAIL
+cd %TORCH_DISTRO%\extra\luaffifb && git apply %PATCH_DIR%\luaffifb.patch --whitespace=fix & call %LUAROCKS_CMD% make luaffi-scm-1.rockspec & git apply %PATCH_DIR%\luaffifb.patch --reverse --whitespace=fix || goto :FAIL
 cd %TORCH_DISTRO%\pkg\sundown && call %LUAROCKS_CMD% make rocks\sundown-scm-1.rockspec || goto :FAIL
 cd %TORCH_DISTRO%\pkg\cwrap && call %LUAROCKS_CMD% make rocks\cwrap-scm-1.rockspec || goto :FAIL
 cd %TORCH_DISTRO%\pkg\paths && call %LUAROCKS_CMD% make rocks\paths-scm-1.rockspec || goto :FAIL
 if "%TORCH_SETUP_HAS_MKL%" == "1" (
-  cd %TORCH_DISTRO%\pkg\torch && git apply %PATCH_DIR%\torch.patch --whitespace=nowarn & call %LUAROCKS_CMD% make rocks\torch-scm-1.rockspec INTEL_MKL_DIR="%INTEL_MKL_DIR%" INTEL_COMPILER_DIR="%INTEL_COMPILER_DIR%" & git apply %PATCH_DIR%\torch.patch --reverse --whitespace=nowarn || goto :FAIL
+  cd %TORCH_DISTRO%\pkg\torch && git apply %PATCH_DIR%\torch.patch --whitespace=fix & call %LUAROCKS_CMD% make rocks\torch-scm-1.rockspec INTEL_MKL_DIR="%INTEL_MKL_DIR%" INTEL_COMPILER_DIR="%INTEL_COMPILER_DIR%" & git apply %PATCH_DIR%\torch.patch --reverse --whitespace=fix || goto :FAIL
 ) else (
   if "%TORCH_SETUP_HAS_LAPACK%" == "1" (
-    cd %TORCH_DISTRO%\pkg\torch && git apply %PATCH_DIR%\torch.patch --whitespace=nowarn & call %LUAROCKS_CMD% make rocks\torch-scm-1.rockspec BLAS_LIBRARIES="%BLAS_LIBRARIES%" LAPACK_LIBRARIES="%LAPACK_LIBRARIES%" LAPACK_FOUND=TRUE & git apply %PATCH_DIR%\torch.patch --reverse --whitespace=nowarn || goto :FAIL
+    cd %TORCH_DISTRO%\pkg\torch && git apply %PATCH_DIR%\torch.patch --whitespace=fix & call %LUAROCKS_CMD% make rocks\torch-scm-1.rockspec BLAS_LIBRARIES="%BLAS_LIBRARIES%" LAPACK_LIBRARIES="%LAPACK_LIBRARIES%" LAPACK_FOUND=TRUE & git apply %PATCH_DIR%\torch.patch --reverse --whitespace=fix || goto :FAIL
   ) else (
-    cd %TORCH_DISTRO%\pkg\torch && git apply %PATCH_DIR%\torch.patch --whitespace=nowarn & call %LUAROCKS_CMD% make rocks\torch-scm-1.rockspec & git apply %PATCH_DIR%\torch.patch --reverse --whitespace=nowarn || goto :FAIL
+    cd %TORCH_DISTRO%\pkg\torch && git apply %PATCH_DIR%\torch.patch --whitespace=fix & call %LUAROCKS_CMD% make rocks\torch-scm-1.rockspec & git apply %PATCH_DIR%\torch.patch --reverse --whitespace=fix || goto :FAIL
   )
 )
 cd %TORCH_DISTRO%\pkg\dok && call %LUAROCKS_CMD% make rocks\dok-scm-1.rockspec || goto :FAIL
@@ -53,7 +53,7 @@ cd %TORCH_DISTRO%\pkg\optim && call %LUAROCKS_CMD% make optim-1.0.5-0.rockspec |
 if not "%TORCH_SETUP_HAS_CUDA%" == "" (
   echo %ECHO_PREFIX% Found CUDA on your machine. Installing CUDA packages
   cd %TORCH_DISTRO%\extra\cutorch && call %LUAROCKS_CMD% make rocks\cutorch-scm-1.rockspec || goto :FAIL
-  cd %TORCH_DISTRO%\extra\cunn && git apply %TORCH_DISTRO%\win-files\patch\cunn.patch --whitespace=nowarn & call %LUAROCKS_CMD% make rocks\cunn-scm-1.rockspec & git apply %TORCH_DISTRO%\win-files\patch\cunn.patch --reverse --whitespace=nowarn || goto :FAIL
+  cd %TORCH_DISTRO%\extra\cunn && git apply %TORCH_DISTRO%\win-files\patch\cunn.patch --whitespace=fix & call %LUAROCKS_CMD% make rocks\cunn-scm-1.rockspec & git apply %TORCH_DISTRO%\win-files\patch\cunn.patch --reverse --whitespace=fix || goto :FAIL
 )
 
 echo %ECHO_PREFIX% Installing optional Torch7 packages
@@ -67,7 +67,7 @@ cd %TORCH_DISTRO%\extra\argcheck && call %LUAROCKS_CMD% make rocks\argcheck-scm-
 
 if not "%TORCH_SETUP_HAS_CUDA%" == "" (
   echo %ECHO_PREFIX% Found CUDA on your machine. Installing optional CUDA packages
-  cd %TORCH_DISTRO%\extra\cudnn && git apply %TORCH_DISTRO%\win-files\patch\cudnn.patch --whitespace=nowarn & call %LUAROCKS_CMD% make cudnn-scm-1.rockspec & git apply %TORCH_DISTRO%\win-files\patch\cudnn.patch --reverse --whitespace=nowarn
+  cd %TORCH_DISTRO%\extra\cudnn && git apply %TORCH_DISTRO%\win-files\patch\cudnn.patch --whitespace=fix & call %LUAROCKS_CMD% make cudnn-scm-1.rockspec & git apply %TORCH_DISTRO%\win-files\patch\cudnn.patch --reverse --whitespace=fix
 )
 
 echo %ECHO_PREFIX% Installation succeed!

@@ -63,8 +63,9 @@ It will automatically install not installed dependencies.
 ```bat
 path_to_Torch\torch-activate
 th
+qlua
 ```
-Trepl on windows should work similarly as on linux or macos.
+Trepl on windows should work similarly as on linux or macos. qlua should be used to run qt related lua codes.
 
 ## Clean or Uninstall
 To remove all the temporary compilation files:

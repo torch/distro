@@ -45,7 +45,7 @@ call %LUA% -loptim     -e "print('optim loaded succesfully')" || goto :FAIL
 call %LUA% -lsys       -e "print('sys loaded succesfully')" || goto :FAIL
 for /f "delims=" %%i in ('where basename') do set BASENAME=%%i
 if "%BASENAME%" == "" (
-  call %LUA% -lxlua    -e "print(xlua loaded succesfully')" || goto :FAIL
+  call %LUA% -lxlua    -e "print('xlua loaded succesfully')" || goto :FAIL
 ) else (
   call %LUA% -lxlua    -e "print('x$(basename %LUA_SAFE_PATH%) loaded succesfully')" || goto :FAIL
 )
