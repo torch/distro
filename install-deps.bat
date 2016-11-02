@@ -273,57 +273,57 @@ set NEW_LUA_CPATH=%TORCH_INSTALL_ROC%\systree\lib\lua\%TORCH_LUAROCKS_LUA%\?.dll
 
 set TORCHACTIVATE_CMD=%TORCH_INSTALL_DIR%\torch-activate.cmd
 if exist %TORCHACTIVATE_CMD% del %TORCHACTIVATE_CMD%
-echo @echo off >> %TORCHACTIVATE_CMD%
-echo set TORCH_INSTALL_DIR=%TORCH_INSTALL_DIR% >> %TORCHACTIVATE_CMD%
-echo set TORCH_CONDA_ENV=%TORCH_CONDA_ENV% >> %TORCHACTIVATE_CMD%
-echo set PATH=%NEW_PATH% >> %TORCHACTIVATE_CMD%
-echo set LUA_PATH=%NEW_LUA_PATH% >> %TORCHACTIVATE_CMD%
-echo set LUA_CPATH=%NEW_LUA_CPATH% >> %TORCHACTIVATE_CMD%
-if not "%CUDNN_PATH%" == "" echo set CUDNN_PATH=%CUDNN_PATH% >> %TORCHACTIVATE_CMD%
+echo @echo off>> %TORCHACTIVATE_CMD%
+echo set TORCH_INSTALL_DIR=%TORCH_INSTALL_DIR%>> %TORCHACTIVATE_CMD%
+echo set TORCH_CONDA_ENV=%TORCH_CONDA_ENV%>> %TORCHACTIVATE_CMD%
+echo set PATH=%NEW_PATH%>> %TORCHACTIVATE_CMD%
+echo set LUA_PATH=%NEW_LUA_PATH%>> %TORCHACTIVATE_CMD%
+echo set LUA_CPATH=%NEW_LUA_CPATH%>> %TORCHACTIVATE_CMD%
+if not "%CUDNN_PATH%" == "" echo set CUDNN_PATH=%CUDNN_PATH%>> %TORCHACTIVATE_CMD%
 
 if not "%LUAJIT_CMD%" == "" (
   if exist "%LUAJIT_CMD%" del %LUAJIT_CMD%
-  echo @echo off >> "%LUAJIT_CMD%"
-  echo setlocal >> "%LUAJIT_CMD%"
-  echo call %TORCHACTIVATE_CMD% >> "%LUAJIT_CMD%"
-  echo %TORCH_INSTALL_DIR%\bin\luajit.exe %%* >> "%LUAJIT_CMD%"
-  echo endlocal >> "%LUAJIT_CMD%"
+  echo @echo off>> "%LUAJIT_CMD%"
+  echo setlocal>> "%LUAJIT_CMD%"
+  echo call %TORCHACTIVATE_CMD%>> "%LUAJIT_CMD%"
+  echo %TORCH_INSTALL_DIR%\bin\luajit.exe %%*>> "%LUAJIT_CMD%"
+  echo endlocal>> "%LUAJIT_CMD%"
 )
 
 if not "%LUA_CMD%" == "" (
   if exist "%LUA_CMD%" del %LUA_CMD%
-  echo @echo off >> "%LUA_CMD%"
-  echo setlocal >> "%LUA_CMD%"
-  echo call %TORCHACTIVATE_CMD% >> "%LUA_CMD%"
-  echo %TORCH_INSTALL_DIR%\bin\lua.exe %%* >> "%LUA_CMD%"
-  echo endlocal >> "%LUA_CMD%"
+  echo @echo off>> "%LUA_CMD%"
+  echo setlocal>> "%LUA_CMD%"
+  echo call %TORCHACTIVATE_CMD%>> "%LUA_CMD%"
+  echo %TORCH_INSTALL_DIR%\bin\lua.exe %%*>> "%LUA_CMD%"
+  echo endlocal>> "%LUA_CMD%"
 )
 
 if not "%LUAC_CMD%" == "" (
   if exist "%LUAC_CMD%" del %LUAC_CMD%
-  echo @echo off >> "%LUAC_CMD%"
-  echo setlocal >> "%LUAC_CMD%"
-  echo call %TORCHACTIVATE_CMD% >> "%LUAC_CMD%"
-  echo %TORCH_INSTALL_DIR%\bin\luac.exe %%* >> "%LUAC_CMD%"
-  echo endlocal >> "%LUAC_CMD%"
+  echo @echo off>> "%LUAC_CMD%"
+  echo setlocal>> "%LUAC_CMD%"
+  echo call %TORCHACTIVATE_CMD%>> "%LUAC_CMD%"
+  echo %TORCH_INSTALL_DIR%\bin\luac.exe %%*>> "%LUAC_CMD%"
+  echo endlocal>> "%LUAC_CMD%"
 )
 
 if exist %LUAROCKS_CMD% del %LUAROCKS_CMD%
-echo @echo off >> %LUAROCKS_CMD%
-echo setlocal >> %LUAROCKS_CMD%
-echo call %TORCHACTIVATE_CMD% >> %LUAROCKS_CMD%
-echo call %TORCH_INSTALL_DIR%\luarocks\luarocks.bat %%* >> %LUAROCKS_CMD%
-echo endlocal >> %LUAROCKS_CMD%
+echo @echo off>> %LUAROCKS_CMD%
+echo setlocal>> %LUAROCKS_CMD%
+echo call %TORCHACTIVATE_CMD%>> %LUAROCKS_CMD%
+echo call %TORCH_INSTALL_DIR%\luarocks\luarocks.bat %%*>> %LUAROCKS_CMD%
+echo endlocal>> %LUAROCKS_CMD%
 
 set CMAKE_CMD=%TORCH_INSTALL_DIR%\cmake.cmd
 if exist %CMAKE_CMD% del %CMAKE_CMD%
-echo @echo off >> %CMAKE_CMD%
-echo if "%%1" == ".." if not "%%2" == "-G" goto :G_NMake >> %CMAKE_CMD%
-echo cmake.exe %%* >> %CMAKE_CMD%
-echo goto :EOF >> %CMAKE_CMD%
-echo :G_NMake >> %CMAKE_CMD%
-echo shift >> %CMAKE_CMD%
-echo cmake.exe .. -G "NMake Makefiles" %%* >> %CMAKE_CMD%
+echo @echo off>> %CMAKE_CMD%
+echo if "%%1" == ".." if not "%%2" == "-G" goto :G_NMake>> %CMAKE_CMD%
+echo cmake.exe %%*>> %CMAKE_CMD%
+echo goto :EOF>> %CMAKE_CMD%
+echo :G_NMake>> %CMAKE_CMD%
+echo shift>> %CMAKE_CMD%
+echo cmake.exe .. -G "NMake Makefiles" %%*>> %CMAKE_CMD%
 
 set TORCH_SETUP_FAIL=0
 echo %ECHO_PREFIX% Setup succeed!
