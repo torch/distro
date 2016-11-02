@@ -43,6 +43,40 @@ REM  set TORCH_UPDATE_DEPS=
 set ECHO_PREFIX=+++++++
 set TORCH_SETUP_FAIL=1
 
+:::: validate msvc version  ::::
+
+if "%VisualStudioVersion%" == "" (
+  if not "%VS140COMNTOOLS%" == "" ( call "%VS140COMNTOOLS%..\..\VC\vcvarsall.bat" x64 && goto :VS_SETUP)
+  if not "%VS120COMNTOOLS%" == "" ( call "%VS120COMNTOOLS%..\..\VC\vcvarsall.bat" x64 && goto :VS_SETUP)
+  if not "%VS110COMNTOOLS%" == "" ( call "%VS110COMNTOOLS%..\..\VC\vcvarsall.bat" x64 && goto :VS_SETUP)
+  if not "%VS100COMNTOOLS%" == "" ( call "%VS100COMNTOOLS%..\..\VC\vcvarsall.bat" x64 && goto :VS_SETUP)
+  if not "%VS90COMNTOOLS%"  == "" ( call "%VS90COMNTOOLS%..\..\VC\vcvarsall.bat"  x64 && goto :VS_SETUP)
+)
+:VS_SETUP
+
+if "%VisualStudioVersion%" == "" (
+  echo %ECHO_PREFIX% Can not find environment variable VisualStudioVersion, msvc is not setup porperly
+  goto :FAIL
+)
+
+set TORCH_VS_VERSION=%VisualStudioVersion:.0=%
+
+if "%PreferredToolArchitecture%" == "x64" (
+  if "%CommandPromptType%" == "Cross" (
+    if "%Platform%" == "ARM" set TORCH_VS_PLATFORM=amd64_arm
+    if "%Platform%" == "X86" set TORCH_VS_PLATFORM=amd64_x86
+  )
+) else (
+  if "%CommandPromptType%" == "Cross" (
+    if "%Platform%" == "ARM" set TORCH_VS_PLATFORM=x86_arm
+    if "%Platform%" == "x64" set TORCH_VS_PLATFORM=x64_amd64
+  )
+  if "%CommandPromptType%" == "Native" (
+    if "%Platform%" == "X64" set TORCH_VS_PLATFORM=x64
+  )
+  if "%Platform%" == ""      set TORCH_VS_PLATFORM=x86
+)
+
 ::::  validate lua version  ::::
 
 :: [TODO] currently luajit lua luarocks are installed from source. they can be changed to use luajit-rocks when
@@ -90,55 +124,65 @@ if not exist %TORCH_INSTALL_INC% md %TORCH_INSTALL_INC%
 if not %TORCH_LUAJIT_VERSION% == "" if not exist %TORCH_INSTALL_BIN%\lua\jit md %TORCH_INSTALL_BIN%\lua\jit
 if not exist %TORCH_DISTRO%\win-files\3rd md %TORCH_DISTRO%\win-files\3rd
 
-echo %ECHO_PREFIX% Torch7 will be installed under %TORCH_INSTALL_DIR% with %TORCH_LUA_SOURCE%
+echo %ECHO_PREFIX% Torch7 will be installed under %TORCH_INSTALL_DIR% with %TORCH_LUA_SOURCE%, vs%TORCH_VS_VERSION% %TORCH_VS_PLATFORM%
 echo %ECHO_PREFIX% Bin: %TORCH_INSTALL_BIN%
 echo %ECHO_PREFIX% Lib: %TORCH_INSTALL_LIB%
 echo %ECHO_PREFIX% Inc: %TORCH_INSTALL_INC%
 
 ::::   Setup dependencies   ::::
 
+:: has blas/lapack?
 if not "%INTEL_MKL_DIR%" == "" if exist %INTEL_MKL_DIR% set TORCH_SETUP_HAS_MKL=1
 if not "%BLAS_LIBRARIES%" == "" if exist %BLAS_LIBRARIES% set TORCH_SETUP_HAS_BLAS=1
 if not "%LAPACK_LIBRARIES%" == "" if exist %LAPACK_LIBRARIES% set TORCH_SETUP_HAS_LAPACK=1
 if not "%TORCH_SETUP_HAS_MKL%" == "1" if not "%TORCH_SETUP_HAS_BLAS%" == "1" set TORCH_SETUP_NO_BLAS=1
+
+:: has cuda?
 for /f "delims=" %%i in ('where nvcc') do (
   set NVCC_CMD=%%i
   goto :AFTER_NVCC
 )
 :AFTER_NVCC
-
 if not "%NVCC_CMD%" == "" set TORCH_SETUP_HAS_CUDA=1
 
+:: has conda?
 for /f "delims=" %%i in ('where conda') do (
   set CONDA_CMD=%%i
   goto :AFTER_CONDA
 )
 :AFTER_CONDA
 
-if not "%CONDA_CMD%" == "" (
-  set CONDA_DIR=%CONDA_CMD:Scripts\conda.exe=%
-  if "%TORCH_CONDA_ENV%" == "" set TORCH_CONDA_ENV=torch
-) else (
+if "%CONDA_CMD%" == "" (
   echo %ECHO_PREFIX% Can not find conda, some dependencies can not be resolved
   if "%TORCH_SETUP_NO_BLAS%" == "1" (
-    echo %ECHO_PREFIX% Can not install torch, since there is no blas library specified
+    echo %ECHO_PREFIX% Can not install torch, please either specify the blas library or install conda
     goto :FAIL
   )
+  goto :NO_CONDA
 )
 
-:: use \\ instead of \ for luarocks arguments
-set CONDA_DIR=%CONDA_DIR:\=\\%
+if %TORCH_VS_VERSION% GEQ 14 ( set CONDA_VS_VERSION=14&& goto :CONDA_SETUP )
+if %TORCH_VS_VERSION% GEQ 10 ( set CONDA_VS_VERSION=10&& goto :CONDA_SETUP )
+set CONDA_VS_VERSION=9
+
+:CONDA_SETUP
+
+if "%TORCH_CONDA_ENV%" == "" set TORCH_CONDA_ENV=torch-vc%CONDA_VS_VERSION%
 
 echo %ECHO_PREFIX% Createing conda environment '%TORCH_CONDA_ENV%' for Torch7 dependencies
-conda create -n %TORCH_CONDA_ENV% -c conda-forge vc --yes
-set TORCH_CONDA_LIBRARY=%CONDA_DIR%envs\\%TORCH_CONDA_ENV%\\Library
+conda create -n %TORCH_CONDA_ENV% -c conda-forge vc=%CONDA_VS_VERSION% --yes
 
+set CONDA_DIR=%CONDA_CMD:\Scripts\conda.exe=%
+set TORCH_CONDA_LIBRARY=%CONDA_DIR%\envs\%TORCH_CONDA_ENV%\Library
+set TORCH_CONDA_LIBRARY=%TORCH_CONDA_LIBRARY:\=\\%
 set PATH=%TORCH_CONDA_LIBRARY%\bin;%PATH%;
 set NEW_PATH=%TORCH_CONDA_LIBRARY%\bin;%NEW_PATH%
 
 set TORCH_CONDA_PKGS=%TORCH_DISTRO%\win-files\check_conda_packages_for_torch.txt
 conda list -n %TORCH_CONDA_ENV% > %TORCH_CONDA_PKGS%
 
+:: has cmake?
+:: cmake should be installed before qt since its on qt5 while qtlua is on qt4
 for /f "delims=" %%i in ('where cmake') do (
   set CMAKE_CMD=%%i
   goto :AFTER_CMAKE
@@ -173,6 +217,8 @@ if not "%TORCH_DEPENDENCIES%" == "" (
   echo %ECHO_PREFIX% Installing %TORCH_DEPENDENCIES% by conda for Torch7
   conda install -n %TORCH_CONDA_ENV% -c conda-forge %TORCH_DEPENDENCIES% --yes
 )
+
+:NO_CONDA
 
 ::::  git clone luarocks   ::::
 
@@ -255,7 +301,7 @@ set NEW_PATH=%TORCH_DISTRO%\win-files\3rd\dlfcn-win32\bin;%NEW_PATH%
 echo %ECHO_PREFIX% Downloading graphviz for graph package
 cd %TORCH_DISTRO%\win-files\3rd\
 wget -nc https://github.com/mahkoCosmo/GraphViz_x64/raw/master/graphviz-2.38_x64.tar.gz --no-check-certificate -O graphviz-2.38_x64.tar.gz
-7z x graphviz-2.38_x64.tar.gz -ographviz -y >NUL
+7z x graphviz-2.38_x64.tar.gz -y && 7z x graphviz-2.38_x64.tar -ographviz-2.38_x64 -y >NUL
 
 set NEW_PATH=%TORCH_DISTRO%\win-files\3rd\graphviz-2.38_x64\bin;%NEW_PATH%
 
@@ -276,6 +322,9 @@ if exist %TORCHACTIVATE_CMD% del %TORCHACTIVATE_CMD%
 echo @echo off>> %TORCHACTIVATE_CMD%
 echo set TORCH_INSTALL_DIR=%TORCH_INSTALL_DIR%>> %TORCHACTIVATE_CMD%
 echo set TORCH_CONDA_ENV=%TORCH_CONDA_ENV%>> %TORCHACTIVATE_CMD%
+echo set TORCH_VS_VERSION=%TORCH_VS_VERSION%>> %TORCHACTIVATE_CMD%
+echo set TORCH_VS_PLATFORM=%TORCH_VS_PLATFORM%>> %TORCHACTIVATE_CMD%
+echo for /f "delims=" %%%%i in ('call echo %%%%VS%TORCH_VS_VERSION%0COMNTOOLS%%%%') do call "%%%%i..\..\VC\vcvarsall.bat" %TORCH_VS_PLATFORM%>> %TORCHACTIVATE_CMD%
 echo set PATH=%NEW_PATH%>> %TORCHACTIVATE_CMD%
 echo set LUA_PATH=%NEW_LUA_PATH%>> %TORCHACTIVATE_CMD%
 echo set LUA_CPATH=%NEW_LUA_CPATH%>> %TORCHACTIVATE_CMD%
