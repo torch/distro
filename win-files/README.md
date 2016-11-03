@@ -20,16 +20,17 @@ Self-contained Torch installation for windows
 #### Optional
 
 - [MKL](https://software.intel.com/intel-mkl), better performance blas/lapack library
-- [Gnuplot](https://sourceforge.net/projects/gnuplot/files/latest)
+- [Gnuplot](https://sourceforge.net/projects/gnuplot/files/latest), for plotting
 - [GraphicsMagick](https://sourceforge.net/projects/graphicsmagick/files/latest), optional for image package
 
 ## Install
-Open "Windows Command Prompt" or a "Visual Studio Native Tools Command Prompt" and run:
+Open "Windows Command Prompt" or "Visual Studio Native Tools Command Prompt" and run:
 ```bat
 install.bat
 ```
 X64 Torch will be installed by default if using "Windows Command Prompt" without MSVC setup. By default Torch will be
-installed under install\ with LuaJIT 2.1 and openlblas from conda environment 'torch-vcversion'.
+installed under install\ with LuaJIT 2.1 and openlblas from conda environment 'torch-vcversion'. Choose X64 conda for
+X64 Torch and X86 conda for X86 Torch. X86 Torch will not contain cuda packages and has 2G memory limitation.
 There are a few customizable environment variables listed on top of install-deps.bat. There is no need to run
 install-deps.bat before run install.bat, it sets variables in global and it will be called directly by install.bat.
 **Do not** use lua instead of luajit because currently lua version Torch will use luaffifb for ffi which has bugs on windows
@@ -68,6 +69,8 @@ th
 qlua
 ```
 Trepl on windows should work similarly as on linux or macos. qlua should be used to run qt related lua codes.
+
+#### Packages
 
 ## Clean or Uninstall
 To remove all the temporary compilation files:

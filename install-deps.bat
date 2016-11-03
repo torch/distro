@@ -69,12 +69,17 @@ if "%PreferredToolArchitecture%" == "x64" (
 ) else (
   if "%CommandPromptType%" == "Cross" (
     if "%Platform%" == "ARM" set TORCH_VS_PLATFORM=x86_arm
-    if "%Platform%" == "x64" set TORCH_VS_PLATFORM=x64_amd64
+    if "%Platform%" == "x64" set TORCH_VS_PLATFORM=x86_amd64
   )
   if "%CommandPromptType%" == "Native" (
     if "%Platform%" == "X64" set TORCH_VS_PLATFORM=x64
   )
   if "%Platform%" == ""      set TORCH_VS_PLATFORM=x86
+)
+
+if not "%TORCH_VS_PLATFORM%"=="x64" if not "%TORCH_VS_PLATFORM%"=="x86" (
+  echo %ECHO_PREFIX% It is suggested to compile x64 or x86 Torch7 directly instead of cross compilation %TORCH_VS_PLATFORM%
+  pause
 )
 
 ::::  validate lua version  ::::
@@ -132,10 +137,9 @@ echo %ECHO_PREFIX% Inc: %TORCH_INSTALL_INC%
 ::::   Setup dependencies   ::::
 
 :: has blas/lapack?
-if not "%INTEL_MKL_DIR%" == "" if exist %INTEL_MKL_DIR% set TORCH_SETUP_HAS_MKL=1
+if not "%INTEL_MKL_DIR%" == "" if exist %INTEL_MKL_DIR% ( set "TORCH_SETUP_HAS_MKL=1" && set "TORCH_SETUP_HAS_BLAS=1" && set "TORCH_SETUP_HAS_LAPACK=1" )
 if not "%BLAS_LIBRARIES%" == "" if exist %BLAS_LIBRARIES% set TORCH_SETUP_HAS_BLAS=1
 if not "%LAPACK_LIBRARIES%" == "" if exist %LAPACK_LIBRARIES% set TORCH_SETUP_HAS_LAPACK=1
-if not "%TORCH_SETUP_HAS_MKL%" == "1" if not "%TORCH_SETUP_HAS_BLAS%" == "1" set TORCH_SETUP_NO_BLAS=1
 
 :: has cuda?
 for /f "delims=" %%i in ('where nvcc') do (
@@ -154,7 +158,7 @@ for /f "delims=" %%i in ('where conda') do (
 
 if "%CONDA_CMD%" == "" (
   echo %ECHO_PREFIX% Can not find conda, some dependencies can not be resolved
-  if "%TORCH_SETUP_NO_BLAS%" == "1" (
+  if not "%TORCH_SETUP_HAS_BLAS%" == "1" (
     echo %ECHO_PREFIX% Can not install torch, please either specify the blas library or install conda
     goto :FAIL
   )
@@ -193,13 +197,23 @@ if "%CMAKE_CMD%" == "" (
 )
 :AFTER_CMAKE
 
+:: need openblas?
 findstr "openblas" "%TORCH_CONDA_PKGS%" >nul
-if not errorlevel 1 set TORCH_SETUP_NO_BLAS=
-if "%TORCH_SETUP_NO_BLAS%" == "1" (
-  echo %ECHO_PREFIX% Installing openblas by conda, since there is no blas library specified
-  conda install -n %TORCH_CONDA_ENV% -c ukoethe openblas --yes || goto :Fail
-)
+if not errorlevel 1 ( set "TORCH_SETUP_HAS_BLAS=1" && set "TORCH_SETUP_HAS_LAPACK=1" )
 
+if not "%TORCH_SETUP_HAS_BLAS%"   == "1" goto :CONDA_INSTALL_OPENBLAS
+if not "%TORCH_SETUP_HAS_LAPACK%" == "1" goto :CONDA_INSTALL_OPENBLAS
+goto :AFTER_OPENBLAS
+
+:CONDA_INSTALL_OPENBLAS
+echo %ECHO_PREFIX% Installing openblas by conda, since there is no blas library specified
+conda install -n %TORCH_CONDA_ENV% -c omnia openblas --yes || goto :Fail
+
+:AFTER_OPENBLAS
+if "%BLAS_LIBRARIES%"   == "" set BLAS_LIBRARIES=%TORCH_CONDA_LIBRARY%\\lib\\libopenblaspy.dll.a
+if "%LAPACK_LIBRARIES%" == "" set LAPACK_LIBRARIES=%TORCH_CONDA_LIBRARY%\\lib\\libopenblaspy.dll.a
+
+:: other dependencies
 findstr "jpeg" "%TORCH_CONDA_PKGS%" >nul
 if errorlevel 1 set TORCH_DEPENDENCIES=%TORCH_DEPENDENCIES% jpeg
 findstr "libpng" "%TORCH_CONDA_PKGS%" >nul
@@ -293,8 +307,7 @@ cd dlfcn-win32 && ( if "%TORCH_UPDATE_DEPS%" == "1" git pull )
 cmake -E make_directory build && cd build && cmake .. -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=..\ && nmake install
 set WIN_DLFCN_INCDIR=%TORCH_DISTRO:\=\\%\\win-files\\3rd\\dlfcn-win32\\include
 set WIN_DLFCN_LIBDIR=%TORCH_DISTRO:\=\\%\\win-files\\3rd\\dlfcn-win32\\lib
-
-set NEW_PATH=%TORCH_DISTRO%\win-files\3rd\dlfcn-win32\bin;%NEW_PATH%
+copy /y %TORCH_DISTRO%\win-files\3rd\dlfcn-win32\bin\*.dll %TORCH_INSTALL_BIN%\
 
 ::::   download graphviz   ::::
 

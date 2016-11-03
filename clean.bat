@@ -38,6 +38,9 @@ cd %TORCH_DISTRO%\extra\nngraph && git clean -fdx
 cd %TORCH_DISTRO%\pkg\image && git clean -fdx
 cd %TORCH_DISTRO%\pkg\optim && git clean -fdx
 
+cd %TORCH_DISTRO%\extra\cutorch && git clean -fdx
+cd %TORCH_DISTRO%\extra\cunn && git clean -fdx
+
 cd %TORCH_DISTRO%\pkg\gnuplot && git clean -fdx
 cd %TORCH_DISTRO%\exe\env && git clean -fdx
 cd %TORCH_DISTRO%\extra\nnx && git clean -fdx
@@ -46,8 +49,7 @@ cd %TORCH_DISTRO%\pkg\qttorch && git clean -fdx
 cd %TORCH_DISTRO%\extra\threads && git clean -fdx
 cd %TORCH_DISTRO%\extra\argcheck && git clean -fdx
 
-cd %TORCH_DISTRO%\extra\graphicsmagick && git clean -fdx
-cd %TORCH_DISTRO%\extra\totem && git clean -fdx
+cd %TORCH_DISTRO%\extra\cudnn && git clean -fdx
 
 echo Cleaning is finished
 @endlocal

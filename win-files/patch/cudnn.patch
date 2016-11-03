@@ -1,33 +1,21 @@
 diff --git a/init.lua b/init.lua
-index b5270e3..5abb5db 100644
+index b5270e3..7fb9f2b 100644
 --- a/init.lua
 +++ b/init.lua
 @@ -4,6 +4,7 @@ cudnn = require 'cudnn.env'
  require('cudnn.ffi')
  local C = cudnn.C
  local ffi = require 'ffi'
-+local ffiC = ffi.os == 'Windows' and ffi.load('THC') or ffi.C
++local THC = ffi.os == 'Windows' and ffi.load('THC') or ffi.C
  
  cudnn.benchmark = false
  cudnn.fastest = false
-@@ -108,7 +109,7 @@ function cudnn.getHandle()
-         local status = C['cudnnCreate'](cudnn.handle
-                                         + (((device-1) * maxStreamsPerDevice)
-                                                 + stream))
--        if status ~= ffi.C.CUDNN_STATUS_SUCCESS then
-+        if status ~= ffiC.CUDNN_STATUS_SUCCESS then
-             local str = ffi.string(C.cudnnGetErrorString(status))
-             error('Error in CuDNN: ' .. str)
-         end
-@@ -119,9 +120,9 @@ end
+@@ -119,7 +120,7 @@ end
  
  local errcheck = function(f, ...)
      C.cudnnSetStream(cudnn.getHandle(),
 -                     ffi.C.THCState_getCurrentStream(cutorch.getState()))
-+                     ffiC.THCState_getCurrentStream(cutorch.getState()))
++                     THC.THCState_getCurrentStream(cutorch.getState()))
     local status = C[f](...)
--   if status ~= ffi.C.CUDNN_STATUS_SUCCESS then
-+   if status ~= ffiC.CUDNN_STATUS_SUCCESS then
+    if status ~= ffi.C.CUDNN_STATUS_SUCCESS then
        local str = ffi.string(C.cudnnGetErrorString(status))
-       error('Error in CuDNN: ' .. str .. ' ('..f..')')
-    end
