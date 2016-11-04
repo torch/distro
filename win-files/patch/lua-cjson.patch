@@ -1,12 +1,27 @@
+diff --git a/fpconv.h b/fpconv.h
+index 7b0d0ee..f674e41 100644
+--- a/fpconv.h
++++ b/fpconv.h
+@@ -4,6 +4,10 @@
+  *
+  * Longest double printed with %.14g is 21 characters long:
+  * -1.7976931348623e+308 */
++#ifdef _MSC_VER
++#define inline __inline
++#define snprintf _snprintf
++#endif
+ # define FPCONV_G_FMT_BUFSIZE   32
+ 
+ #ifdef USE_INTERNAL_FPCONV
 diff --git a/lua-cjson-2.1devel-1.rockspec b/lua-cjson-2.1devel-1.rockspec
-index 154e333..ae25872 100644
+index 154e333..0f7652e 100644
 --- a/lua-cjson-2.1devel-1.rockspec
 +++ b/lua-cjson-2.1devel-1.rockspec
 @@ -47,6 +47,7 @@ build = {
      -- Override default build options (per platform)
      platforms = {
          win32 = { modules = { cjson = { defines = {
-+            "strncasecmp=strnicmp",
++            "strncasecmp=_strnicmp",
              "DISABLE_INVALID_NUMBERS"
          } } } }
      },
@@ -36,3 +51,17 @@ index ac779e4..c3272f0 100644
      }
  
      s->size = newsize;
+diff --git a/strbuf.h b/strbuf.h
+index d861108..b135560 100644
+--- a/strbuf.h
++++ b/strbuf.h
+@@ -24,6 +24,9 @@
+ 
+ #include <stdlib.h>
+ #include <stdarg.h>
++#ifdef _MSC_VER
++#define inline __inline
++#endif
+ 
+ /* Size: Total bytes allocated to *buf
+  * Length: String length, excluding optional NULL terminator.

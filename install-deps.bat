@@ -13,10 +13,10 @@
 REM  set TORCH_LUA_VERSION=LUAJIT21
 
 :: where to install Torch7, default to install\ under distro\
-REM  set TORCH_INSTALL_DIR=install
+REM  set TORCH_INSTALL_DIR=D:\Torch\
 
-:: conda environment name for Torch7, default to torch
-REM  set TORCH_CONDA_ENV=torch
+:: conda environment name for Torch7, default to torch-vcversion
+REM  set TORCH_CONDA_ENV=mytorch7
 
 :: which blas/lapack libraries will be used, default to openblas installed by conda
 :: [1] mkl: download from https://software.intel.com/intel-mkl, install and set following two variables
@@ -25,7 +25,7 @@ REM  set INTEL_COMPILER_DIR=D:\\Intel\\SWTools\\compilers_and_libraries\\windows
 :: [2] other: set path to the blas library and path to the laback library
 :: both BLAS and LAPACK should be set even if they refer to the same library
 :: take openblas for example: download latest release from https://github.com/xianyi/OpenBLAS/releases/latest
-:: use mingw cross compiler tools in cygwin, since mingw windows native gfortrain is available in cygwin but not msys2
+:: use mingw cross compiler tools in cygwin, since mingw windows native gfortrain is available in cygwin but not in msys2
 :: compilation command in cygwin: make CC=x86_64-w64-mingw32-gcc FC=x86_64-w64-mingw32-gfortran CROSS_SUFFIX=x86_64-w64-mingw32-
 :: please refer to openblas's README for detailed installation instructions
 REM  set BLAS_LIBRARIES=D:\\Libraries\\lib\libopenblas.dll.a
@@ -74,13 +74,12 @@ if "%PreferredToolArchitecture%" == "x64" (
   if "%CommandPromptType%" == "Native" (
     if "%Platform%" == "X64" set TORCH_VS_PLATFORM=x64
   )
-  if "%Platform%" == ""      set TORCH_VS_PLATFORM=x86
+  if "%Platform%"   == ""    set TORCH_VS_PLATFORM=x86
 )
 
-if not "%TORCH_VS_PLATFORM%"=="x64" if not "%TORCH_VS_PLATFORM%"=="x86" (
-  echo %ECHO_PREFIX% It is suggested to compile x64 or x86 Torch7 directly instead of cross compilation %TORCH_VS_PLATFORM%
-  pause
-)
+if     "%TORCH_VS_PLATFORM%" == "x86"                       set TORCH_VS_TOOL=x86
+if not "%TORCH_VS_PLATFORM%" == "%TORCH_VS_PLATFORM:x86_=%" set TORCH_VS_TOOL=x86
+if     "%TORCH_VS_TOOL%"     == ""                          set TORCH_VS_TOOL=x64
 
 ::::  validate lua version  ::::
 
@@ -165,6 +164,17 @@ if "%CONDA_CMD%" == "" (
   goto :NO_CONDA
 )
 
+set TORCH_CONDA_INFO=%TORCH_DISTRO%\win-files\check_conda_info_for_torch.txt
+conda info > %TORCH_CONDA_INFO%
+if "%TORCH_VS_TOOL%" == "x64" set TORCH_CONDA_PLATFORM=win-64
+if "%TORCH_VS_TOOL%" == "x86" set TORCH_CONDA_PLATFORM=win-86
+
+findstr "%TORCH_CONDA_PLATFORM%" "%TORCH_CONDA_INFO%" >nul
+if errorlevel 1 (
+  echo %ECHO_PREFIX% %TORCH_VS_TOOL% Torch7 requires %TORCH_CONDA_PLATFORM% conda, installation will continue without conda
+  goto :NO_CONDA
+)
+
 if %TORCH_VS_VERSION% GEQ 14 ( set CONDA_VS_VERSION=14&& goto :CONDA_SETUP )
 if %TORCH_VS_VERSION% GEQ 10 ( set CONDA_VS_VERSION=10&& goto :CONDA_SETUP )
 set CONDA_VS_VERSION=9
@@ -207,11 +217,18 @@ goto :AFTER_OPENBLAS
 
 :CONDA_INSTALL_OPENBLAS
 echo %ECHO_PREFIX% Installing openblas by conda, since there is no blas library specified
-conda install -n %TORCH_CONDA_ENV% -c omnia openblas --yes || goto :Fail
+if "%TORCH_VS_TOOL%" == "x64" conda install -n %TORCH_CONDA_ENV% -c ukoethe openblas --yes || goto :Fail
+if "%TORCH_VS_TOOL%" == "x86" conda install -n %TORCH_CONDA_ENV% -c omnia   openblas --yes || goto :Fail
 
 :AFTER_OPENBLAS
-if "%BLAS_LIBRARIES%"   == "" set BLAS_LIBRARIES=%TORCH_CONDA_LIBRARY%\\lib\\libopenblaspy.dll.a
-if "%LAPACK_LIBRARIES%" == "" set LAPACK_LIBRARIES=%TORCH_CONDA_LIBRARY%\\lib\\libopenblaspy.dll.a
+if "%TORCH_VS_TOOL%" == "x64" (
+  if "%BLAS_LIBRARIES%"   == "" set BLAS_LIBRARIES=%TORCH_CONDA_LIBRARY%\\lib\\libopenblas.lib
+  if "%LAPACK_LIBRARIES%" == "" set LAPACK_LIBRARIES=%TORCH_CONDA_LIBRARY%\\lib\\libopenblas.lib
+)
+if "%TORCH_VS_TOOL%" == "x86" (
+  if "%BLAS_LIBRARIES%"   == "" set BLAS_LIBRARIES=%TORCH_CONDA_LIBRARY%\\lib\\libopenblaspy.dll.a
+  if "%LAPACK_LIBRARIES%" == "" set LAPACK_LIBRARIES=%TORCH_CONDA_LIBRARY%\\lib\\libopenblaspy.dll.a
+)
 
 :: other dependencies
 findstr "jpeg" "%TORCH_CONDA_PKGS%" >nul
@@ -225,14 +242,14 @@ if errorlevel 1 set TORCH_DEPENDENCIES=%TORCH_DEPENDENCIES% libxml2
 findstr "qt" "%TORCH_CONDA_PKGS%" >nul
 if errorlevel 1 set TORCH_DEPENDENCIES=%TORCH_DEPENDENCIES% qt=4.8.7
 
-del /q %TORCH_CONDA_PKGS%
-
 if not "%TORCH_DEPENDENCIES%" == "" (
   echo %ECHO_PREFIX% Installing %TORCH_DEPENDENCIES% by conda for Torch7
   conda install -n %TORCH_CONDA_ENV% -c conda-forge %TORCH_DEPENDENCIES% --yes
 )
 
 :NO_CONDA
+del /q %TORCH_CONDA_INFO%
+del /q %TORCH_CONDA_PKGS%
 
 ::::  git clone luarocks   ::::
 
@@ -297,7 +314,7 @@ cd %TORCH_DISTRO%\win-files\3rd\
 wget -nc https://sourceforge.net/projects/mingweditline/files/latest --no-check-certificate -O wineditline.zip
 7z x wineditline.zip -y >NUL
 cd wineditline*
-cmake -E make_directory build && cd build && cmake .. -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=..\ && nmake install
+cmake -E make_directory build && cd build && cmake .. -G "NMake Makefiles" -DLIB_SUFFIX="64" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=..\ && nmake install
 
 ::::  install dlfcn-win32  ::::
 echo %ECHO_PREFIX% Installing dlfcn-win32 for thread package

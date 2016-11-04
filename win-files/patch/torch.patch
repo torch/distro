@@ -1,16 +1,3 @@
-diff --git a/lib/TH/THDiskFile.c b/lib/TH/THDiskFile.c
-index 2ded7bd..ad81b2e 100644
---- a/lib/TH/THDiskFile.c
-+++ b/lib/TH/THDiskFile.c
-@@ -2,7 +2,7 @@
- #include "THDiskFile.h"
- #include "THFilePrivate.h"
- 
--#ifdef _WIN64
-+#ifdef _MSC_VER
- #include <stdint.h>
- #endif
- 
 diff --git a/lib/luaT/luaT.c b/lib/luaT/luaT.c
 index 95166ed..2dc307a 100644
 --- a/lib/luaT/luaT.c
