@@ -13,7 +13,7 @@
 REM  set TORCH_LUA_VERSION=LUAJIT21
 
 :: where to install Torch7, default to install\ under distro\
-REM  set TORCH_INSTALL_DIR=D:\Torch\
+REM  set TORCH_INSTALL_DIR=D:\Torch
 
 :: conda environment name for Torch7, default to torch-vcversion
 REM  set TORCH_CONDA_ENV=mytorch7
@@ -77,9 +77,10 @@ if "%PreferredToolArchitecture%" == "x64" (
   if "%Platform%"   == ""    set TORCH_VS_PLATFORM=x86
 )
 
-if     "%TORCH_VS_PLATFORM%" == "x86"                       set TORCH_VS_TOOL=x86
-if not "%TORCH_VS_PLATFORM%" == "%TORCH_VS_PLATFORM:x86_=%" set TORCH_VS_TOOL=x86
-if     "%TORCH_VS_TOOL%"     == ""                          set TORCH_VS_TOOL=x64
+if     "%TORCH_VS_PLATFORM%" == "x86"                       set TORCH_VS_TARGET=x86
+if not "%TORCH_VS_PLATFORM%" == "%TORCH_VS_PLATFORM:_x86=%" set TORCH_VS_TARGET=x86
+if not "%TORCH_VS_PLATFORM%" == "%TORCH_VS_PLATFORM:_arm=%" set TORCH_VS_TARGET=arm
+if     "%TORCH_VS_TARGET%"   == ""                          set TORCH_VS_TARGET=x64
 
 ::::  validate lua version  ::::
 
@@ -166,12 +167,13 @@ if "%CONDA_CMD%" == "" (
 
 set TORCH_CONDA_INFO=%TORCH_DISTRO%\win-files\check_conda_info_for_torch.txt
 conda info > %TORCH_CONDA_INFO%
-if "%TORCH_VS_TOOL%" == "x64" set TORCH_CONDA_PLATFORM=win-64
-if "%TORCH_VS_TOOL%" == "x86" set TORCH_CONDA_PLATFORM=win-86
+if "%TORCH_VS_TARGET%" == "x64" set TORCH_CONDA_PLATFORM=win-64
+if "%TORCH_VS_TARGET%" == "arm" set TORCH_CONDA_PLATFORM=win-64
+if "%TORCH_VS_TARGET%" == "x86" set TORCH_CONDA_PLATFORM=win-32
 
 findstr "%TORCH_CONDA_PLATFORM%" "%TORCH_CONDA_INFO%" >nul
 if errorlevel 1 (
-  echo %ECHO_PREFIX% %TORCH_VS_TOOL% Torch7 requires %TORCH_CONDA_PLATFORM% conda, installation will continue without conda
+  echo %ECHO_PREFIX% %TORCH_VS_TARGET% Torch7 requires %TORCH_CONDA_PLATFORM% conda, installation will continue without conda
   goto :NO_CONDA
 )
 
@@ -217,15 +219,15 @@ goto :AFTER_OPENBLAS
 
 :CONDA_INSTALL_OPENBLAS
 echo %ECHO_PREFIX% Installing openblas by conda, since there is no blas library specified
-if "%TORCH_VS_TOOL%" == "x64" conda install -n %TORCH_CONDA_ENV% -c ukoethe openblas --yes || goto :Fail
-if "%TORCH_VS_TOOL%" == "x86" conda install -n %TORCH_CONDA_ENV% -c omnia   openblas --yes || goto :Fail
+if not "%TORCH_VS_TARGET%" == "x86" conda install -n %TORCH_CONDA_ENV% -c ukoethe openblas --yes || goto :Fail
+if     "%TORCH_VS_TARGET%" == "x86" conda install -n %TORCH_CONDA_ENV% -c omnia   openblas --yes || goto :Fail
 
 :AFTER_OPENBLAS
-if "%TORCH_VS_TOOL%" == "x64" (
+if not "%TORCH_VS_TARGET%" == "x86" (
   if "%BLAS_LIBRARIES%"   == "" set BLAS_LIBRARIES=%TORCH_CONDA_LIBRARY%\\lib\\libopenblas.lib
   if "%LAPACK_LIBRARIES%" == "" set LAPACK_LIBRARIES=%TORCH_CONDA_LIBRARY%\\lib\\libopenblas.lib
 )
-if "%TORCH_VS_TOOL%" == "x86" (
+if     "%TORCH_VS_TARGET%" == "x86" (
   if "%BLAS_LIBRARIES%"   == "" set BLAS_LIBRARIES=%TORCH_CONDA_LIBRARY%\\lib\\libopenblaspy.dll.a
   if "%LAPACK_LIBRARIES%" == "" set LAPACK_LIBRARIES=%TORCH_CONDA_LIBRARY%\\lib\\libopenblaspy.dll.a
 )
@@ -248,8 +250,8 @@ if not "%TORCH_DEPENDENCIES%" == "" (
 )
 
 :NO_CONDA
-del /q %TORCH_CONDA_INFO%
-del /q %TORCH_CONDA_PKGS%
+if exist "%TORCH_CONDA_INFO%" del /q %TORCH_CONDA_INFO%
+if exist "%TORCH_CONDA_PKGS%" del /q %TORCH_CONDA_PKGS%
 
 ::::  git clone luarocks   ::::
 
