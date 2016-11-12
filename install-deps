@@ -138,8 +138,11 @@ elif [[ "$(uname)" == 'Linux' ]]; then
     elif [[ "$DISTRO" = "debian" ]]; then
 	distribution="debian"
 	debian_major_version="$VERSION"
+    elif [[ "$DISTRO" = "neon" ]]; then
+	distribution="ubuntu"
+	ubuntu_major_version="${VERSION%%.*}"
     else
-        echo '==> Only Ubuntu, elementary OS, Fedora, Archlinux, OpenSUSE, Debian and CentOS distributions are supported.'
+        echo '==> Only Ubuntu, elementary OS, Fedora, Archlinux, OpenSUSE, Debian, CentOS and KDE neon distributions are supported.'
         exit 1
     fi
 
