@@ -89,12 +89,12 @@ if     "%TORCH_VS_TARGET%"   == ""                          set TORCH_VS_TARGET=
 
 if "%TORCH_LUA_VERSION%" == "" set TORCH_LUA_VERSION=LUAJIT21
 if "%TORCH_LUA_VERSION%" == "LUAJIT21" (
-  set TORCH_LUAJIT_VERSION=2.1
+  set TORCH_LUAJIT_BRANCH=v2.1
   set TORCH_LUA_SOURCE=luajit-2.1
   set TORCH_LUAROCKS_LUA=5.1
 )
 if "%TORCH_LUA_VERSION%" == "LUAJIT20" (
-  set TORCH_LUAJIT_VERSION=2.0
+  set TORCH_LUAJIT_BRANCH=master
   set TORCH_LUA_SOURCE=luajit-2.0
   set TORCH_LUAROCKS_LUA=5.1
 )
@@ -126,7 +126,7 @@ set TORCH_INSTALL_ROC=%TORCH_INSTALL_DIR%\luarocks
 if not exist %TORCH_INSTALL_BIN% md %TORCH_INSTALL_BIN%
 if not exist %TORCH_INSTALL_LIB% md %TORCH_INSTALL_LIB%
 if not exist %TORCH_INSTALL_INC% md %TORCH_INSTALL_INC%
-if not %TORCH_LUAJIT_VERSION% == "" if not exist %TORCH_INSTALL_BIN%\lua\jit md %TORCH_INSTALL_BIN%\lua\jit
+if not %TORCH_LUAJIT_BRANCH% == "" if not exist %TORCH_INSTALL_BIN%\lua\jit md %TORCH_INSTALL_BIN%\lua\jit
 if not exist %TORCH_DISTRO%\win-files\3rd md %TORCH_DISTRO%\win-files\3rd
 
 echo %ECHO_PREFIX% Torch7 will be installed under %TORCH_INSTALL_DIR% with %TORCH_LUA_SOURCE%, vs%TORCH_VS_VERSION% %TORCH_VS_PLATFORM%
@@ -192,7 +192,7 @@ set CONDA_DIR=%CONDA_CMD:\Scripts\conda.exe=%
 set TORCH_CONDA_LIBRARY=%CONDA_DIR%\envs\%TORCH_CONDA_ENV%\Library
 set TORCH_CONDA_LIBRARY=%TORCH_CONDA_LIBRARY:\=\\%
 set PATH=%TORCH_CONDA_LIBRARY%\bin;%PATH%;
-set NEW_PATH=%TORCH_CONDA_LIBRARY%\bin;%NEW_PATH%
+set NEW_PATH=%CONDA_DIR%\Scripts;%TORCH_CONDA_LIBRARY%\bin;%NEW_PATH%
 
 set TORCH_CONDA_PKGS=%TORCH_DISTRO%\win-files\check_conda_packages_for_torch.txt
 conda list -n %TORCH_CONDA_ENV% > %TORCH_CONDA_PKGS%
@@ -264,14 +264,14 @@ set PATH=%TORCH_DISTRO%\exe\luarocks\win32\tools\;%PATH%;
 
 echo %ECHO_PREFIX% Installing %TORCH_LUA_SOURCE%
 cd %TORCH_DISTRO%\exe\
-if not "%TORCH_LUAJIT_VERSION%" == "" (
-if not exist %TORCH_LUA_SOURCE%\.git git clone -b v%TORCH_LUAJIT_VERSION% http://luajit.org/git/luajit-2.0.git %TORCH_LUA_SOURCE% || goto :Fail
+if not "%TORCH_LUAJIT_BRANCH%" == "" (
+if not exist %TORCH_LUA_SOURCE%\.git git clone -b %TORCH_LUAJIT_BRANCH% http://luajit.org/git/luajit-2.0.git %TORCH_LUA_SOURCE% || goto :Fail
   cd %TORCH_LUA_SOURCE% && ( if "%TORCH_UPDATE_DEPS%" == "1" git pull ) & cd src
 ) else (
   wget -nc https://www.lua.org/ftp/%TORCH_LUA_SOURCE%.tar.gz --no-check-certificate || goto :Fail
   7z x %TORCH_LUA_SOURCE%.tar.gz -y >NUL && 7z x %TORCH_LUA_SOURCE%.tar -y >NUL && cd %TORCH_LUA_SOURCE%\src
 )
-if not "%TORCH_LUAJIT_VERSION%"=="" (
+if not "%TORCH_LUAJIT_BRANCH%"=="" (
   call msvcbuild.bat || goto :FAIL
   copy /y jit\* %TORCH_INSTALL_BIN%\lua\jit\
   copy /y luajit.h %TORCH_INSTALL_INC%\luajit.h
@@ -319,6 +319,7 @@ cd wineditline*
 cmake -E make_directory build && cd build && cmake .. -G "NMake Makefiles" -DLIB_SUFFIX="64" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=..\ && nmake install
 
 ::::  install dlfcn-win32  ::::
+
 echo %ECHO_PREFIX% Installing dlfcn-win32 for thread package
 cd %TORCH_DISTRO%\win-files\3rd\
 if not exist dlfcn-win32\.git git clone https://github.com/dlfcn-win32/dlfcn-win32.git
@@ -334,8 +335,10 @@ echo %ECHO_PREFIX% Downloading graphviz for graph package
 cd %TORCH_DISTRO%\win-files\3rd\
 wget -nc https://github.com/mahkoCosmo/GraphViz_x64/raw/master/graphviz-2.38_x64.tar.gz --no-check-certificate -O graphviz-2.38_x64.tar.gz
 7z x graphviz-2.38_x64.tar.gz -y && 7z x graphviz-2.38_x64.tar -ographviz-2.38_x64 -y >NUL
+if not exist %TORCH_INSTALL_BIN%\graphviz md %TORCH_INSTALL_BIN%\graphviz
+copy /y %TORCH_DISTRO%\win-files\3rd\graphviz-2.38_x64\bin\ %TORCH_INSTALL_BIN%\graphviz\
 
-set NEW_PATH=%TORCH_DISTRO%\win-files\3rd\graphviz-2.38_x64\bin;%NEW_PATH%
+set NEW_PATH=%NEW_PATH%;%TORCH_INSTALL_BIN%\graphviz
 
 ::::    create cmd utils   ::::
 

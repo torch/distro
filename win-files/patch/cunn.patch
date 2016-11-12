@@ -1,350 +1,85 @@
-diff --git a/lib/THCUNN/AbsCriterion.cu b/lib/THCUNN/AbsCriterion.cu
-index fd19cae..fcb1239 100644
---- a/lib/THCUNN/AbsCriterion.cu
-+++ b/lib/THCUNN/AbsCriterion.cu
-@@ -20,7 +20,7 @@ void THNN_CudaAbsCriterion_updateOutput(THCState *state, THCudaTensor *input, TH
- {
-   THCUNN_assertSameGPU(state, 2, input, target);
+diff --git a/THCUNN.lua b/THCUNN.lua
+index 490cd5c..9924944 100644
+--- a/THCUNN.lua
++++ b/THCUNN.lua
+@@ -6,6 +6,9 @@ local THCUNN = {}
+ -- load libTHCUNN
+ THCUNN.C = ffi.load(package.searchpath('libTHCUNN', package.cpath))
  
--  long size = THCudaTensor_nElement(state, input);
-+  ptrdiff_t size = THCudaTensor_nElement(state, input);
- 
-   input = THCudaTensor_newContiguous(state, input);
-   target = THCudaTensor_newContiguous(state, target);
-@@ -56,7 +56,7 @@ void THNN_CudaAbsCriterion_updateGradInput(THCState *state, THCudaTensor *input,
- {
-   THCUNN_assertSameGPU(state, 3, input, target, gradInput);
- 
--  long size = THCudaTensor_nElement(state, input);
-+  ptrdiff_t size = THCudaTensor_nElement(state, input);
-   float norm = (sizeAverage ? 1./size : 1.);
- 
-   input = THCudaTensor_newContiguous(state, input);
-diff --git a/lib/THCUNN/BCECriterion.cu b/lib/THCUNN/BCECriterion.cu
-index c8edcfe..098c50c 100644
---- a/lib/THCUNN/BCECriterion.cu
-+++ b/lib/THCUNN/BCECriterion.cu
-@@ -7,7 +7,16 @@
- #include <thrust/transform.h>
- #include <thrust/transform_reduce.h>
- 
-+#ifndef _MSC_VER
-+// got compilation error: identifier "eps" is undefined in device code
-+// on x64 windows with msvc19 and cuda 8.0 when eps is defined as below
- const float eps = 1e-12f;
-+#else
-+#ifdef eps
-+#error eps has alread been defined!
-+#endif
-+#define eps 1e-12f
-+#endif
- 
- struct bce_functor
- {
-@@ -38,7 +47,7 @@ void THNN_CudaBCECriterion_updateOutput(THCState *state, THCudaTensor *input, TH
- {
-   THCUNN_assertSameGPU(state, 3, input, target, weights);
- 
--  long size = THCudaTensor_nElement(state, input);
-+  ptrdiff_t size = THCudaTensor_nElement(state, input);
- 
-   input = THCudaTensor_newContiguous(state, input);
-   target = THCudaTensor_newContiguous(state, target);
-@@ -114,11 +123,15 @@ struct bce_updateGradInput_functor_weights
-   }
- };
- 
-+#ifdef _MSC_VER
-+#undef eps
-+#endif
++-- load THC
++local THC = ffi.os == 'Windows' and ffi.load('THC') or ffi.C
 +
- void THNN_CudaBCECriterion_updateGradInput(THCState *state, THCudaTensor *input, THCudaTensor *target, THCudaTensor *gradInput, bool sizeAverage, THCudaTensor *weights)
- {
-   THCUNN_assertSameGPU(state, 4, input, target, gradInput, weights);
+ local THCState_ptr = ffi.typeof('THCState*')
  
--  long size = THCudaTensor_nElement(state, input);
-+  ptrdiff_t size = THCudaTensor_nElement(state, input);
-   float norm = (sizeAverage ? 1./size : 1.);
+ function THCUNN.getState()
+@@ -139,7 +142,7 @@ local transform_reals_to_half = function(func_name, real_args, ...)
+     end
+     for k,v in ipairs(real_args[func_name]) do
+         -- first argument (THCState) is added implicitly by bind
+-        t[v-1] = ffi.C.THC_float2half(t[v-1])
++        t[v-1] = THC.THC_float2half(t[v-1])
+     end
+     return t
+ end
+diff --git a/test.lua b/test.lua
+index 7cb2854..ea214c3 100644
+--- a/test.lua
++++ b/test.lua
+@@ -5,6 +5,9 @@ local precision_backward = 1e-2
+ local nloop = 1
+ local times = {}
  
-   input = THCudaTensor_newContiguous(state, input);
-diff --git a/lib/THCUNN/CMakeLists.txt b/lib/THCUNN/CMakeLists.txt
-index 8492503..7750a80 100644
---- a/lib/THCUNN/CMakeLists.txt
-+++ b/lib/THCUNN/CMakeLists.txt
-@@ -25,6 +25,11 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-   endif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "4.9.3")
- endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
- 
-+IF(MSVC)
-+  LIST(APPEND CUDA_NVCC_FLAGS "-Xcompiler /wd4819")
-+  ADD_DEFINITIONS(-DTH_EXPORTS)
-+ENDIF()
++-- load THC
++local THC = ffi.os == 'Windows' and ffi.load('THC') or ffi.C
 +
- IF(NOT THCUNN_INSTALL_LIB_SUBDIR)
-   SET(THCUNN_INSTALL_LIB_SUBDIR "lib" CACHE PATH "THCUNN install library directory")
- ENDIF()
-@@ -33,6 +38,12 @@ FILE(GLOB src-cuda *.cu)
+ --e.g.: th -lcunn -e "nn.testcuda{'Sigmoid_forward'}"
  
- CUDA_ADD_LIBRARY(THCUNN MODULE ${src-cuda})
+ local typenames = {
+@@ -348,17 +351,17 @@ function cunntest.Square_transposed()
+ end
  
-+IF(MSVC)
-+  SET_TARGET_PROPERTIES(THCUNN PROPERTIES
-+    PREFIX "lib"
-+    IMPORT_PREFIX "lib")
-+ENDIF()
-+
- INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
- TARGET_LINK_LIBRARIES(THCUNN THC TH ${CUDA_cusparse_LIBRARY})
+ function cunntest.SoftShrink_forward()
+-  local r = ffi.C.THC_half2float(ffi.C.THC_float2half(math.random()))
++  local r = THC.THC_half2float(THC.THC_float2half(math.random()))
+   pointwise_forward(nn.SoftShrink(r), 'SoftShrink', precision_forward)
+ end
  
-diff --git a/lib/THCUNN/DistKLDivCriterion.cu b/lib/THCUNN/DistKLDivCriterion.cu
-index 2984672..ec42d45 100644
---- a/lib/THCUNN/DistKLDivCriterion.cu
-+++ b/lib/THCUNN/DistKLDivCriterion.cu
-@@ -24,7 +24,7 @@ void THNN_CudaDistKLDivCriterion_updateOutput(THCState *state, THCudaTensor *inp
+ function cunntest.SoftShrink_backward()
+-  local r = ffi.C.THC_half2float(ffi.C.THC_float2half(math.random()))
++  local r = THC.THC_half2float(THC.THC_float2half(math.random()))
+   pointwise_backward(nn.SoftShrink(r), 'SoftShrink', precision_backward)
+ end
  
-   float sum;
+ function cunntest.SoftShrink_transposed()
+-  local r = ffi.C.THC_half2float(ffi.C.THC_float2half(math.random()))
++  local r = THC.THC_half2float(THC.THC_float2half(math.random()))
+   pointwise_transposed(nn.SoftShrink(r), 'SoftShrink', precision_backward)
+ end
  
--  long size = THCudaTensor_nElement(state, input);
-+  ptrdiff_t size = THCudaTensor_nElement(state, input);
+@@ -3377,7 +3380,7 @@ function cunntest.mse()
+          local cgin = cmod:backward(cinput,ctarget)
  
-   input = THCudaTensor_newContiguous(state, input);
-   target = THCudaTensor_newContiguous(state, target);
-@@ -63,7 +63,7 @@ void THNN_CudaDistKLDivCriterion_updateGradInput(THCState *state, THCudaTensor *
-   THArgCheck(THCudaTensor_nElement(state, input) == THCudaTensor_nElement(state, target), 2,
-              "input and target need to have the same number of elements");
+          if (typename == 'torch.CudaHalfTensor') then
+-            fout = ffi.C.THC_half2float(ffi.C.THC_float2half(fout))
++            fout = THC.THC_half2float(THC.THC_float2half(fout))
+          end
+          mytester:assertlt(math.abs(fout-cout), precision_forward_type(0.02, typename),
+             string.format('error  on output with %s', typename))
+@@ -3411,7 +3414,7 @@ function cunntest.SmoothL1()
+          local cgin = cmod:backward(cinput,ctarget)
  
--  long size = THCudaTensor_nElement(state, input);
-+  ptrdiff_t size = THCudaTensor_nElement(state, input);
-   float norm = (sizeAverage ? 1./size : 1.);
+          if (typename == 'torch.CudaHalfTensor') then
+-            fout = ffi.C.THC_half2float(ffi.C.THC_float2half(fout))
++            fout = THC.THC_half2float(THC.THC_float2half(fout))
+          end
+          mytester:assertlt(math.abs(fout-cout), 0.01, string.format('error  on output with %s', typename))
+          local gerr = cgin:double() - fgin:double()
+@@ -3976,7 +3979,7 @@ function cunntest.l1cost()
+      local cgin = cmod:backward(cinput)
  
-   input = THCudaTensor_newContiguous(state, input);
-diff --git a/lib/THCUNN/L1Cost.cu b/lib/THCUNN/L1Cost.cu
-index 7dd6bb2..89bb853 100644
---- a/lib/THCUNN/L1Cost.cu
-+++ b/lib/THCUNN/L1Cost.cu
-@@ -17,7 +17,7 @@ void THNN_CudaL1Cost_updateOutput(THCState *state, THCudaTensor *input, THCudaTe
- {
-   THCUNN_assertSameGPU(state, 1, input);
-   float sum;
--  long size = THCudaTensor_nElement(state, input);
-+  ptrdiff_t size = THCudaTensor_nElement(state, input);
-   input = THCudaTensor_newContiguous(state, input);
-   thrust::device_ptr<float> input_data(THCudaTensor_data(state, input));
-   sum = thrust::reduce(input_data, input_data+size, (float) 0, l1cost_functor());
-@@ -43,7 +43,7 @@ struct l1cost_updateGradInput_functor
- void THNN_CudaL1Cost_updateGradInput(THCState *state, THCudaTensor *input, THCudaTensor *gradOutput, THCudaTensor *gradInput)
- {
-   THCUNN_assertSameGPU(state, 2, input, gradInput);
--  long size = THCudaTensor_nElement(state, input);
-+  ptrdiff_t size = THCudaTensor_nElement(state, input);
- 
-   input = THCudaTensor_newContiguous(state, input);
-   THCudaTensor_resizeAs(state, gradInput, input);
-diff --git a/lib/THCUNN/LookupTable.cu b/lib/THCUNN/LookupTable.cu
-index 2b2040e..9fa1dec 100644
---- a/lib/THCUNN/LookupTable.cu
-+++ b/lib/THCUNN/LookupTable.cu
-@@ -50,7 +50,7 @@ __device__ __forceinline__ bool warpHasCollision(int val)
- }
- 
- __global__ void cunn_LookupTable_accGradParametersKernelByFeature(
--  long *input, float *gradOutput, float *gradWeight, float scale, long numel,
-+  long *input, float *gradOutput, float *gradWeight, float scale, ptrdiff_t numel,
-   long stride, int paddingValue) {
- 
-   const int featureDim = blockIdx.x * 4 + threadIdx.x / 32;
-@@ -72,7 +72,7 @@ __global__ void cunn_LookupTable_accGradParametersKernelByFeature(
-   // updates are serialized in their order of execution by using the
-   // warp-wide collision detector `warpHasCollision`.
-   const int laneId = threadIdx.x % 32;
--  for (int i = laneId; i < numel; i += WARP_SIZE) {
-+  for (ptrdiff_t i = laneId; i < numel; i += WARP_SIZE) {
-     const int weightIndex = (int) (input[i] - TH_INDEX_BASE);
-     if (weightIndex == paddingValue - TH_INDEX_BASE) {
-       continue;
-@@ -97,7 +97,7 @@ __global__ void cunn_LookupTable_accGradParametersKernelByFeature(
- 
- __global__ void cunn_LookupTable_accGradParametersKernel(
-   long *input, long *indices, float *gradOutput, float *gradWeight,
--  long *count, float defaultScale, long numel, long stride, int paddingValue) {
-+  long *count, float defaultScale, ptrdiff_t numel, long stride, int paddingValue) {
- 
-   int idx = blockIdx.x * 4 + threadIdx.y;
- 
-@@ -183,7 +183,7 @@ void THNN_CudaLookupTable_accGradParameters(
-   if (nDim != 1 && nDim != 2)
-     THError("input must be a vector or matrix");
- 
--  long numel = THIndexTensor_(nElement)(state, input);
-+  ptrdiff_t numel = THIndexTensor_(nElement)(state, input);
-   long stride = gradWeight->stride[0];
- 
-   cudaStream_t stream = THCState_getCurrentStream(state);
-@@ -314,7 +314,7 @@ void THNN_CudaLookupTable_renorm(
-   if (normType <= 0)
-     THError("non-positive-norm not supported");
- 
--  long numel = THIndexTensor_(nElement)(state, idx);
-+  ptrdiff_t numel = THIndexTensor_(nElement)(state, idx);
-   long stride = weight->stride[0];
- 
-   // get the unique indices
-@@ -326,7 +326,7 @@ void THNN_CudaLookupTable_renorm(
-   pow_v<float> unary_pow(normType);
-   thrust::plus<float> binary_plus;
-   // numel << stride, since idx usually contains sparse row indices
--  for (long i = 0; i < numel; i++)
-+  for (ptrdiff_t i = 0; i < numel; i++)
-   {
-     long k = idx_ptr[i] - TH_INDEX_BASE;
-     thrust::device_ptr<float> row_ptr = weight_ptr + k * stride;
-diff --git a/lib/THCUNN/MSECriterion.cu b/lib/THCUNN/MSECriterion.cu
-index 982e19a..98ce4cd 100644
---- a/lib/THCUNN/MSECriterion.cu
-+++ b/lib/THCUNN/MSECriterion.cu
-@@ -28,7 +28,7 @@ void THNN_CudaMSECriterion_updateOutput(THCState *state, THCudaTensor *input, TH
-     "input and target need to have the same number of elements"
-   );
- 
--  long size = THCudaTensor_nElement(state, input);
-+  ptrdiff_t size = THCudaTensor_nElement(state, input);
- 
-   input = THCudaTensor_newContiguous(state, input);
-   target = THCudaTensor_newContiguous(state, target);
-@@ -72,7 +72,7 @@ void THNN_CudaMSECriterion_updateGradInput(THCState *state, THCudaTensor *input,
-     "input and target need to have the same number of elements"
-   );
- 
--  long size = THCudaTensor_nElement(state, input);
-+  ptrdiff_t size = THCudaTensor_nElement(state, input);
-   float norm = sizeAverage ? 2.f/size : 2.f;
- 
-   input = THCudaTensor_newContiguous(state, input);
-diff --git a/lib/THCUNN/MarginCriterion.cu b/lib/THCUNN/MarginCriterion.cu
-index b49e1dc..038d03f 100644
---- a/lib/THCUNN/MarginCriterion.cu
-+++ b/lib/THCUNN/MarginCriterion.cu
-@@ -26,7 +26,7 @@ void THNN_CudaMarginCriterion_updateOutput(THCState *state, THCudaTensor *input,
- {
-   THCUNN_assertSameGPU(state, 2, input, target);
- 
--  long size = THCudaTensor_nElement(state, input);
-+  ptrdiff_t size = THCudaTensor_nElement(state, input);
- 
-   input = THCudaTensor_newContiguous(state, input);
-   target = THCudaTensor_newContiguous(state, target);
-@@ -63,7 +63,7 @@ void THNN_CudaMarginCriterion_updateGradInput(THCState *state, THCudaTensor *inp
- {
-   THCUNN_assertSameGPU(state, 3, input, target, gradInput);
- 
--  long size = THCudaTensor_nElement(state, input);
-+  ptrdiff_t size = THCudaTensor_nElement(state, input);
-   float norm = sizeAverage ? 1.f/size : 1;
- 
-   input = THCudaTensor_newContiguous(state, input);
-diff --git a/lib/THCUNN/RReLU.cu b/lib/THCUNN/RReLU.cu
-index 245598b..6f5cb07 100644
---- a/lib/THCUNN/RReLU.cu
-+++ b/lib/THCUNN/RReLU.cu
-@@ -6,9 +6,9 @@
- // copied from cutorch/lib/THC/THCTensorRandom.cu
- #define MAX_NUM_BLOCKS 64
- #define BLOCK_SIZE 256
--#define NUM_BLOCKS(n) min((int)THCCeilDiv(n, (long) BLOCK_SIZE), MAX_NUM_BLOCKS)
-+#define NUM_BLOCKS(n) min((int)THCCeilDiv(n, (ptrdiff_t) BLOCK_SIZE), MAX_NUM_BLOCKS)
- 
--__global__ void rreluUpdateOutputTrain(int n, curandStateMtgp32 *state,
-+__global__ void rreluUpdateOutputTrain(ptrdiff_t n, curandStateMtgp32 *state,
-   float *input, float* noise, float *output, double a, double b)
- {
-   CUDA_KERNEL_LOOP(i, n)
-@@ -73,7 +73,7 @@ void THNN_CudaRReLU_updateOutput(THCState *state, THCudaTensor *input, THCudaTen
-     THCudaTensor_resizeAs(state, noise, input);
-     float *input_data = THCudaTensor_data(state, input);
-     float *noise_data = THCudaTensor_data(state, noise);
--    long n = THCudaTensor_nElement(state, input);
-+    ptrdiff_t n = THCudaTensor_nElement(state, input);
-     if (inplace)
-     {
-       rreluUpdateOutputTrain<<<NUM_BLOCKS(n), BLOCK_SIZE, 0, THCState_getCurrentStream(state)>>>(
-diff --git a/lib/THCUNN/SmoothL1Criterion.cu b/lib/THCUNN/SmoothL1Criterion.cu
-index 2b528ef..7ff96a3 100644
---- a/lib/THCUNN/SmoothL1Criterion.cu
-+++ b/lib/THCUNN/SmoothL1Criterion.cu
-@@ -29,7 +29,7 @@ void THNN_CudaSmoothL1Criterion_updateOutput(THCState *state, THCudaTensor *inpu
-     "input and target need to have the same number of elements"
-   );
- 
--  long size = THCudaTensor_nElement(state, input);
-+  ptrdiff_t size = THCudaTensor_nElement(state, input);
- 
-   input = THCudaTensor_newContiguous(state, input);
-   target = THCudaTensor_newContiguous(state, target);
-@@ -81,7 +81,7 @@ void THNN_CudaSmoothL1Criterion_updateGradInput(THCState *state, THCudaTensor *i
-     "input and target need to have the same number of elements"
-   );
- 
--  long size = THCudaTensor_nElement(state, input);
-+  ptrdiff_t size = THCudaTensor_nElement(state, input);
-   float norm = sizeAverage ? 1./size : 1.;
- 
-   input = THCudaTensor_newContiguous(state, input);
-diff --git a/lib/THCUNN/SoftMarginCriterion.cu b/lib/THCUNN/SoftMarginCriterion.cu
-index 2a15f4a..cbf8f8b 100644
---- a/lib/THCUNN/SoftMarginCriterion.cu
-+++ b/lib/THCUNN/SoftMarginCriterion.cu
-@@ -26,7 +26,7 @@ void THNN_CudaSoftMarginCriterion_updateOutput(THCState *state,
-   THCUNN_assertSameGPU(state, 2, input, target);
-   float sum;
- 
--  long size = THCudaTensor_nElement(state, input);
-+  ptrdiff_t size = THCudaTensor_nElement(state, input);
- 
-   input = THCudaTensor_newContiguous(state, input);
-   target = THCudaTensor_newContiguous(state, target);
-@@ -68,7 +68,7 @@ void THNN_CudaSoftMarginCriterion_updateGradInput(THCState *state,
- {
-   THCUNN_assertSameGPU(state, 3, input, target, gradInput);
- 
--  long size = THCudaTensor_nElement(state, input);
-+  ptrdiff_t size = THCudaTensor_nElement(state, input);
-   float norm = (sizeAverage ? 1./size : 1.);
- 
-   input = THCudaTensor_newContiguous(state, input);
-diff --git a/lib/THCUNN/SpatialClassNLLCriterion.cu b/lib/THCUNN/SpatialClassNLLCriterion.cu
-index 0469520..f52707f 100644
---- a/lib/THCUNN/SpatialClassNLLCriterion.cu
-+++ b/lib/THCUNN/SpatialClassNLLCriterion.cu
-@@ -116,7 +116,7 @@ void THNN_CudaSpatialClassNLLCriterion_updateOutput(
-   float *total_weight_data = THCudaTensor_data(state, total_weight);
- 
-   long batch_size = THCudaLongTensor_size(state, target, 0);
--  long map_nelem = THCudaLongTensor_nElement(state, target) / batch_size;
-+  ptrdiff_t map_nelem = THCudaLongTensor_nElement(state, target) / batch_size;
-   int blocks_per_sample = GET_BLOCKS(map_nelem) / 128;
-   blocks_per_sample = (blocks_per_sample == 0) ? 1 : blocks_per_sample;
-   int total_blocks = blocks_per_sample * batch_size;
-@@ -179,7 +179,7 @@ void THNN_CudaSpatialClassNLLCriterion_updateGradInput(
-   float *total_weight_data = THCudaTensor_data(state, total_weight);
- 
-   long batch_size = THCudaLongTensor_size(state, target, 0);
--  long map_nelem = THCudaLongTensor_nElement(state, target) / batch_size;
-+  ptrdiff_t map_nelem = THCudaLongTensor_nElement(state, target) / batch_size;
-   int blocks_per_sample = GET_BLOCKS(map_nelem) / 128;
-   blocks_per_sample = (blocks_per_sample == 0) ? 1 : blocks_per_sample;
-   int total_blocks = blocks_per_sample * batch_size;
-diff --git a/lib/THCUNN/cmake/select_compute_arch.cmake b/lib/THCUNN/cmake/select_compute_arch.cmake
-index 5376e5b..4b27441 100644
---- a/lib/THCUNN/cmake/select_compute_arch.cmake
-+++ b/lib/THCUNN/cmake/select_compute_arch.cmake
-@@ -69,6 +69,10 @@ function(CUDA_DETECT_INSTALLED_GPUS OUT_VARIABLE)
-                     ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
- 
-     if(nvcc_res EQUAL 0)
-+      # only keep the last line of nvcc_out
-+      STRING(REGEX REPLACE ";" "\\\\;" nvcc_out "${nvcc_out}")
-+      STRING(REGEX REPLACE "\n" ";" nvcc_out "${nvcc_out}")
-+      list(GET nvcc_out -1 nvcc_out)
-       string(REPLACE "2.1" "2.1(2.0)" nvcc_out "${nvcc_out}")
-       set(CUDA_GPU_DETECT_OUTPUT ${nvcc_out} CACHE INTERNAL "Returned GPU architetures from detect_gpus tool" FORCE)
-     endif()
+      if (typename == 'torch.CudaHalfTensor') then
+-        fout = ffi.C.THC_half2float(ffi.C.THC_float2half(fout))
++        fout = THC.THC_half2float(THC.THC_float2half(fout))
+      end
+      mytester:assertlt(math.abs(fout-cout), precision_forward_type(precision_forward, typename),
+         string.format('error  on output with %s', typename))

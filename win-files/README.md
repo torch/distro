@@ -53,12 +53,7 @@ path_to_Torch\luajit -ltorch -e "torch.test()"
 The installation will remember which MSVC to use for what platform, so luarocks install can be run in a general "Windows
 Command Prompt".
 ```bat
-path_to_Torch\luarocks install dpnn
-```
-Torch manages a repo for all packages' rockspecs, however the rockspecs may be out-of-date. dpnn is one of that
-case when I tried. In order to install dpnn, git clone the source of [dpnn](https://github.com/Element-Research/dpnn), cd dpnn and run:
-```bat
-path_to_Torch\luarocks make rocks\dpnn-scm-1.rockspec
+path_to_Torch\luarocks install rnn
 ```
 It will automatically install not installed dependencies.
 

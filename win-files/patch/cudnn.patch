@@ -1,5 +1,5 @@
 diff --git a/init.lua b/init.lua
-index b5270e3..7fb9f2b 100644
+index 6c8abd7..322a21d 100644
 --- a/init.lua
 +++ b/init.lua
 @@ -4,6 +4,7 @@ cudnn = require 'cudnn.env'
@@ -8,14 +8,14 @@ index b5270e3..7fb9f2b 100644
  local ffi = require 'ffi'
 +local THC = ffi.os == 'Windows' and ffi.load('THC') or ffi.C
  
- cudnn.benchmark = false
- cudnn.fastest = false
-@@ -119,7 +120,7 @@ end
+ --------------------------------------------------------------------
+ -- defaults, each should be overrideable via env var:
+@@ -151,7 +152,7 @@ end
  
- local errcheck = function(f, ...)
+ function cudnn.call(f, ...)
      C.cudnnSetStream(cudnn.getHandle(),
 -                     ffi.C.THCState_getCurrentStream(cutorch.getState()))
 +                     THC.THCState_getCurrentStream(cutorch.getState()))
-    local status = C[f](...)
-    if status ~= ffi.C.CUDNN_STATUS_SUCCESS then
-       local str = ffi.string(C.cudnnGetErrorString(status))
+     return C[f](...)
+ end
+ 

@@ -12,13 +12,6 @@ if not "%TORCH_SETUP_FAIL%" == "0" goto :FAIL
 echo %ECHO_PREFIX% Updating submodules
 git submodule update --init --recursive
 
-:: [TODO] this part should be removed after distro/master is updated to point to the patched version
-for %%i in (pkg\sundown pkg\paths exe\trepl pkg\sys extra\graph extra\nngraph extra\threads pkg\torch) do (
-  cd %TORCH_DISTRO%\%%i
-  git checkout origin/master
-  git pull origin master
-)
-
 set PATCH_DIR=%TORCH_DISTRO%\win-files\patch
 
 echo %ECHO_PREFIX% Installing common lua packages
