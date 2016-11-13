@@ -3,7 +3,8 @@
 Self-contained Torch installation
 ============
 
-#### Please refer to the [Torch installation guide](http://torch.ch/docs/getting-started.html#_) for details on how to make a fresh install of Torch.
+#### Please refer to the [Torch installation guide](http://torch.ch/docs/getting-started.html#_) for details on how to make a fresh install of Torch on Linux or MacOS.
+#### If on windows with msvc, please refer to this [guide](win-files/README.md) for details on installation and usage.
 
 
 ## Repo content
