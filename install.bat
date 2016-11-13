@@ -27,7 +27,7 @@ cd %TORCH_DISTRO%\pkg\paths && call %LUAROCKS_CMD% make rocks\paths-scm-1.rocksp
 if "%TORCH_SETUP_HAS_MKL%" == "1" (
   cd %TORCH_DISTRO%\pkg\torch && git apply %PATCH_DIR%\torch.patch --whitespace=fix & ( call %LUAROCKS_CMD% make rocks\torch-scm-1.rockspec INTEL_MKL_DIR="%INTEL_MKL_DIR%" INTEL_COMPILER_DIR="%INTEL_COMPILER_DIR%" || goto :FAIL ) & git apply %PATCH_DIR%\torch.patch --reverse --whitespace=fix
 ) else (
-	cd %TORCH_DISTRO%\pkg\torch && git apply %PATCH_DIR%\torch.patch --whitespace=fix & ( call %LUAROCKS_CMD% make rocks\torch-scm-1.rockspec BLAS_LIBRARIES="%BLAS_LIBRARIES%" LAPACK_LIBRARIES="%LAPACK_LIBRARIES%" LAPACK_FOUND=TRUE || goto :FAIL ) & git apply %PATCH_DIR%\torch.patch --reverse --whitespace=fix
+  cd %TORCH_DISTRO%\pkg\torch && git apply %PATCH_DIR%\torch.patch --whitespace=fix & ( call %LUAROCKS_CMD% make rocks\torch-scm-1.rockspec BLAS_LIBRARIES="%BLAS_LIBRARIES%" LAPACK_LIBRARIES="%LAPACK_LIBRARIES%" LAPACK_FOUND=TRUE || goto :FAIL ) & git apply %PATCH_DIR%\torch.patch --reverse --whitespace=fix
 )
 cd %TORCH_DISTRO%\pkg\dok && call %LUAROCKS_CMD% make rocks\dok-scm-1.rockspec || goto :FAIL
 cd %TORCH_DISTRO%\exe\trepl && call %LUAROCKS_CMD% make trepl-scm-1.rockspec || goto :FAIL
