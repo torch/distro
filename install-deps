@@ -214,9 +214,15 @@ elif [[ "$(uname)" == 'Linux' ]]; then
             echo "Some portion of the update failed"
         fi
         sudo zypper install -y -t pattern devel_basis
-        sudo zypper install -y gcc curl cmake readline-devel IPython git-core \
-            libqt4 libjpeg8-devel libpng15-compat-devel imagemagick unzip \
-            gnuplot gcc-fortran libzmq3
+	if [[ $opensuse_major_version == '42.2' ]]; then
+	    sudo zypper install -y gcc curl cmake readline-devel IPython git-core \
+            	libqt4 libjpeg62-devel libpng16-compat-devel ImageMagick unzip \
+            	gnuplot gcc-fortran libzmq5
+	else
+            sudo zypper install -y gcc curl cmake readline-devel IPython git-core \
+            	libqt4 libjpeg8-devel libpng15-compat-devel imagemagick unzip \
+            	gnuplot gcc-fortran libzmq3
+	fi
 
     elif [[ $distribution == 'elementary' ]]; then
         declare -a target_pkgs
