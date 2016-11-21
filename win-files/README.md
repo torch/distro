@@ -65,8 +65,6 @@ qlua
 ```
 Trepl on windows should work similarly as on linux or macos. qlua should be used to run qt related lua codes.
 
-#### Packages
-
 ## Clean or Uninstall
 To remove all the temporary compilation files:
 ```bat
