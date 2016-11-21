@@ -88,29 +88,29 @@ if     "%TORCH_VS_TARGET%"   == ""                          set TORCH_VS_TARGET=
 ::        luajit-rocks is ready for windows
 
 if "%TORCH_LUA_VERSION%" == "" set TORCH_LUA_VERSION=LUAJIT21
-if "%TORCH_LUA_VERSION%" == "LUAJIT21" (
+if /i "%TORCH_LUA_VERSION%" == "LUAJIT21" (
   set TORCH_LUAJIT_BRANCH=v2.1
   set TORCH_LUA_SOURCE=luajit-2.1
   set TORCH_LUAROCKS_LUA=5.1
 )
-if "%TORCH_LUA_VERSION%" == "LUAJIT20" (
+if /i "%TORCH_LUA_VERSION%" == "LUAJIT20" (
   set TORCH_LUAJIT_BRANCH=master
   set TORCH_LUA_SOURCE=luajit-2.0
   set TORCH_LUAROCKS_LUA=5.1
 )
-if "%TORCH_LUA_VERSION%" == "LUA53" (
+if /i "%TORCH_LUA_VERSION%" == "LUA53" (
   set TORCH_LUA_SOURCE=lua-5.3.3
   set TORCH_LUAROCKS_LUA=5.3
 )
-if "%TORCH_LUA_VERSION%" == "LUA52" (
+if /i "%TORCH_LUA_VERSION%" == "LUA52" (
   set TORCH_LUA_SOURCE=lua-5.2.4
   set TORCH_LUAROCKS_LUA=5.2
 )
-if "%TORCH_LUA_VERSION%" == "LUA51" (
+if /i "%TORCH_LUA_VERSION%" == "LUA51" (
   set TORCH_LUA_SOURCE=lua-5.1.5
   set TORCH_LUAROCKS_LUA=5.1
 )
-if "%TORCH_LUA_SOURCE%" == "" (
+if /i "%TORCH_LUA_SOURCE%" == "" (
   echo %ECHO_PREFIX% Bad lua version: %TORCH_LUA_VERSION%, only support LUAJIT21, LUAJIT20, LUA53, LUA52, LUA51
   goto :FAIL
 )
@@ -126,7 +126,7 @@ set TORCH_INSTALL_ROC=%TORCH_INSTALL_DIR%\luarocks
 if not exist %TORCH_INSTALL_BIN% md %TORCH_INSTALL_BIN%
 if not exist %TORCH_INSTALL_LIB% md %TORCH_INSTALL_LIB%
 if not exist %TORCH_INSTALL_INC% md %TORCH_INSTALL_INC%
-if not %TORCH_LUAJIT_BRANCH% == "" if not exist %TORCH_INSTALL_BIN%\lua\jit md %TORCH_INSTALL_BIN%\lua\jit
+if not "%TORCH_LUAJIT_BRANCH%" == "" if not exist %TORCH_INSTALL_BIN%\lua\jit md %TORCH_INSTALL_BIN%\lua\jit
 if not exist %TORCH_DISTRO%\win-files\3rd md %TORCH_DISTRO%\win-files\3rd
 
 echo %ECHO_PREFIX% Torch7 will be installed under %TORCH_INSTALL_DIR% with %TORCH_LUA_SOURCE%, vs%TORCH_VS_VERSION% %TORCH_VS_PLATFORM%
@@ -265,7 +265,7 @@ set PATH=%TORCH_DISTRO%\exe\luarocks\win32\tools\;%PATH%;
 echo %ECHO_PREFIX% Installing %TORCH_LUA_SOURCE%
 cd %TORCH_DISTRO%\exe\
 if not "%TORCH_LUAJIT_BRANCH%" == "" (
-if not exist %TORCH_LUA_SOURCE%\.git git clone -b %TORCH_LUAJIT_BRANCH% http://luajit.org/git/luajit-2.0.git %TORCH_LUA_SOURCE% || goto :Fail
+  if not exist %TORCH_LUA_SOURCE%\.git git clone -b %TORCH_LUAJIT_BRANCH% http://luajit.org/git/luajit-2.0.git %TORCH_LUA_SOURCE% || goto :Fail
   cd %TORCH_LUA_SOURCE% && ( if "%TORCH_UPDATE_DEPS%" == "1" git pull ) & cd src
 ) else (
   wget -nc https://www.lua.org/ftp/%TORCH_LUA_SOURCE%.tar.gz --no-check-certificate || goto :Fail
@@ -313,7 +313,7 @@ set LUAROCKS_CMD=%TORCH_INSTALL_DIR%\luarocks.cmd
 
 echo %ECHO_PREFIX% Installing wineditline for trepl package
 cd %TORCH_DISTRO%\win-files\3rd\
-wget -nc https://sourceforge.net/projects/mingweditline/files/latest --no-check-certificate -O wineditline.zip
+wget -nc https://sourceforge.net/projects/mingweditline/files/wineditline-2.201.zip/download --no-check-certificate -O wineditline.zip
 7z x wineditline.zip -y >NUL
 cd wineditline*
 cmake -E make_directory build && cd build && cmake .. -G "NMake Makefiles" -DLIB_SUFFIX="64" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=..\ && nmake install
