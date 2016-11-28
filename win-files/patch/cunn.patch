@@ -1,5 +1,5 @@
 diff --git a/THCUNN.lua b/THCUNN.lua
-index 490cd5c..9924944 100644
+index ac05ee0..2daf271 100644
 --- a/THCUNN.lua
 +++ b/THCUNN.lua
 @@ -6,6 +6,9 @@ local THCUNN = {}
@@ -12,7 +12,7 @@ index 490cd5c..9924944 100644
  local THCState_ptr = ffi.typeof('THCState*')
  
  function THCUNN.getState()
-@@ -139,7 +142,7 @@ local transform_reals_to_half = function(func_name, real_args, ...)
+@@ -140,7 +143,7 @@ local transform_reals_to_half = function(func_name, real_args, ...)
      end
      for k,v in ipairs(real_args[func_name]) do
          -- first argument (THCState) is added implicitly by bind
@@ -21,8 +21,21 @@ index 490cd5c..9924944 100644
      end
      return t
  end
+diff --git a/lib/THCUNN/CMakeLists.txt b/lib/THCUNN/CMakeLists.txt
+index d86dfdc..bce4cbd 100644
+--- a/lib/THCUNN/CMakeLists.txt
++++ b/lib/THCUNN/CMakeLists.txt
+@@ -10,7 +10,7 @@ IF(NOT CUDA_FOUND)
+ ENDIF()
+ 
+ # Detect CUDA architecture and get best NVCC flags
+-IF(NOT COMMAND CUDA_SELECT_NVCC_ARCH_FLAGS)
++IF(NOT COMMAND CUDA_SELECT_NVCC_ARCH_FLAGS OR MSVC)
+   INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/cmake/select_compute_arch.cmake)
+ ENDIF()
+ CUDA_SELECT_NVCC_ARCH_FLAGS(NVCC_FLAGS_EXTRA $ENV{TORCH_CUDA_ARCH_LIST})
 diff --git a/test.lua b/test.lua
-index 7cb2854..ea214c3 100644
+index 15f9990..d39ee92 100644
 --- a/test.lua
 +++ b/test.lua
 @@ -5,6 +5,9 @@ local precision_backward = 1e-2
@@ -35,7 +48,7 @@ index 7cb2854..ea214c3 100644
  --e.g.: th -lcunn -e "nn.testcuda{'Sigmoid_forward'}"
  
  local typenames = {
-@@ -348,17 +351,17 @@ function cunntest.Square_transposed()
+@@ -362,17 +365,17 @@ function cunntest.Square_transposed()
  end
  
  function cunntest.SoftShrink_forward()
@@ -56,7 +69,7 @@ index 7cb2854..ea214c3 100644
    pointwise_transposed(nn.SoftShrink(r), 'SoftShrink', precision_backward)
  end
  
-@@ -3377,7 +3380,7 @@ function cunntest.mse()
+@@ -3399,7 +3402,7 @@ function cunntest.mse()
           local cgin = cmod:backward(cinput,ctarget)
  
           if (typename == 'torch.CudaHalfTensor') then
@@ -65,7 +78,7 @@ index 7cb2854..ea214c3 100644
           end
           mytester:assertlt(math.abs(fout-cout), precision_forward_type(0.02, typename),
              string.format('error  on output with %s', typename))
-@@ -3411,7 +3414,7 @@ function cunntest.SmoothL1()
+@@ -3433,7 +3436,7 @@ function cunntest.SmoothL1()
           local cgin = cmod:backward(cinput,ctarget)
  
           if (typename == 'torch.CudaHalfTensor') then
@@ -74,7 +87,7 @@ index 7cb2854..ea214c3 100644
           end
           mytester:assertlt(math.abs(fout-cout), 0.01, string.format('error  on output with %s', typename))
           local gerr = cgin:double() - fgin:double()
-@@ -3976,7 +3979,7 @@ function cunntest.l1cost()
+@@ -3998,7 +4001,7 @@ function cunntest.l1cost()
       local cgin = cmod:backward(cinput)
  
       if (typename == 'torch.CudaHalfTensor') then
