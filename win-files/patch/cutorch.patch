@@ -1,0 +1,13 @@
+diff --git a/lib/THC/CMakeLists.txt b/lib/THC/CMakeLists.txt
+index 08e6fbc..bc3cbfb 100644
+--- a/lib/THC/CMakeLists.txt
++++ b/lib/THC/CMakeLists.txt
+@@ -87,7 +87,7 @@ IF(APPLE)
+ ENDIF(APPLE)
+ 
+ # Detect CUDA architecture and get best NVCC flags
+-IF(NOT COMMAND CUDA_SELECT_NVCC_ARCH_FLAGS)
++IF(NOT COMMAND CUDA_SELECT_NVCC_ARCH_FLAGS OR MSVC)
+   INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/cmake/select_compute_arch.cmake)
+ ENDIF()
+ LIST(APPEND CUDA_NVCC_FLAGS $ENV{TORCH_NVCC_FLAGS})

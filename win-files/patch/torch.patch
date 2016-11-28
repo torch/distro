@@ -1,3 +1,16 @@
+diff --git a/lib/TH/generic/THTensorLapack.c b/lib/TH/generic/THTensorLapack.c
+index fb1e246..fe82cc0 100644
+--- a/lib/TH/generic/THTensorLapack.c
++++ b/lib/TH/generic/THTensorLapack.c
+@@ -605,7 +605,7 @@ void THTensor_(potrf)(THTensor *ra_, THTensor *a, const char *uplo)
+   THLapack_(potrf)(uplo[0], n, THTensor_(data)(ra__), lda, &info);
+   THLapackCheckWithCleanup("Lapack Error in %s : the leading minor of order %d is not positive definite",
+                            THCleanup(THTensor_(free)(ra__);),
+-                           "potrf", info);
++                           "potrf", info, "");
+ 
+   THTensor_(clearUpLoTriangle)(ra__, uplo);
+   THTensor_(freeCopyTo)(ra__, ra_);
 diff --git a/lib/luaT/luaT.c b/lib/luaT/luaT.c
 index 95166ed..2dc307a 100644
 --- a/lib/luaT/luaT.c
