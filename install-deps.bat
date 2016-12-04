@@ -246,7 +246,7 @@ if errorlevel 1 set TORCH_DEPENDENCIES=%TORCH_DEPENDENCIES% qt=4.8.7
 
 if not "%TORCH_DEPENDENCIES%" == "" (
   echo %ECHO_PREFIX% Installing %TORCH_DEPENDENCIES% by conda for Torch7
-  conda install -n %TORCH_CONDA_ENV% -c conda-forge %TORCH_DEPENDENCIES% --yes
+  conda install -n %TORCH_CONDA_ENV% -c conda-forge %TORCH_DEPENDENCIES% vc=%CONDA_VS_VERSION% --yes
 )
 
 :NO_CONDA
