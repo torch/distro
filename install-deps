@@ -227,7 +227,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
     elif [[ $distribution == 'elementary' ]]; then
         declare -a target_pkgs
         target_pkgs=( build-essential gcc g++ curl \
-                      cmake libreadline-dev git-core libqt4-core libqt4-gui \
+                      cmake libreadline-dev git-core libqtcore4 libqtgui4 \
                       libqt4-dev libjpeg-dev libpng-dev ncurses-dev \
                       imagemagick libzmq3-dev gfortran unzip gnuplot \
                       gnuplot-x11 ipython )
