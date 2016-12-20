@@ -51,6 +51,14 @@ if [[ `uname` == "Darwin" ]]; then
     export CC=clang
     export CXX=clang++
 fi
+# If we're on Arch linux, use cuda's gcc
+if [[ `uname -a` == *"ARCH"* ]]; then
+    export CC=/opt/cuda/bin/gcc
+    export CXX=/opt/cuda/bin/g++
+    if [[ -f /opt/cuda/bin/nvcc ]]; then {
+        path_to_nvcc=/opt/cuda/bin/nvcc
+    } fi
+fi
 
 echo "Installing Lua version: ${TORCH_LUA_VERSION}"
 mkdir -p install
