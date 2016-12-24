@@ -30,7 +30,7 @@ if "%TORCH_SETUP_HAS_MKL%" == "1" (
   cd %TORCH_DISTRO%\pkg\torch && git apply %PATCH_DIR%\torch.patch --whitespace=fix & ( call %LUAROCKS_CMD% make rocks\torch-scm-1.rockspec BLAS_LIBRARIES="%BLAS_LIBRARIES%" LAPACK_LIBRARIES="%LAPACK_LIBRARIES%" LAPACK_FOUND=TRUE || goto :FAIL ) & git apply %PATCH_DIR%\torch.patch --reverse --whitespace=fix
 )
 cd %TORCH_DISTRO%\pkg\dok && call %LUAROCKS_CMD% make rocks\dok-scm-1.rockspec || goto :FAIL
-cd %TORCH_DISTRO%\exe\trepl && git apply %PATCH_DIR%\trepl.patch --whitespace=fix & ( call %LUAROCKS_CMD% make trepl-scm-1.rockspec || goto :FAIL ) & git apply %PATCH_DIR%\trepl.patch --reverse --whitespace=fix
+cd %TORCH_DISTRO%\exe\trepl && call %LUAROCKS_CMD% make trepl-scm-1.rockspec || goto :FAIL
 cd %TORCH_DISTRO%\pkg\sys && call %LUAROCKS_CMD% make sys-1.1-0.rockspec || goto :FAIL
 cd %TORCH_DISTRO%\pkg\xlua && call %LUAROCKS_CMD% make xlua-1.0-0.rockspec || goto :FAIL
 cd %TORCH_DISTRO%\extra\nn && call %LUAROCKS_CMD% make rocks\nn-scm-1.rockspec || goto :FAIL
@@ -41,7 +41,7 @@ cd %TORCH_DISTRO%\pkg\optim && call %LUAROCKS_CMD% make optim-1.0.5-0.rockspec |
 
 if not "%TORCH_SETUP_HAS_CUDA%" == "" if not "%TORCH_VS_TARGET%" == "x86" (
   echo %ECHO_PREFIX% Found CUDA on your machine. Installing CUDA packages
-  cd %TORCH_DISTRO%\extra\cutorch && git apply %TORCH_DISTRO%\win-files\patch\cutorch.patch --whitespace=fix & ( call %LUAROCKS_CMD% make rocks\cutorch-scm-1.rockspec || goto :FAIL ) & git apply %TORCH_DISTRO%\win-files\patch\cutorch.patch --reverse --whitespace=fix
+  cd %TORCH_DISTRO%\extra\cutorch && call %LUAROCKS_CMD% make rocks\cutorch-scm-1.rockspec || goto :FAIL
   cd %TORCH_DISTRO%\extra\cunn && git apply %TORCH_DISTRO%\win-files\patch\cunn.patch --whitespace=fix & ( call %LUAROCKS_CMD% make rocks\cunn-scm-1.rockspec || goto :FAIL ) & git apply %TORCH_DISTRO%\win-files\patch\cunn.patch --reverse --whitespace=fix
 )
 
