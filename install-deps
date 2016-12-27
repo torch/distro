@@ -359,7 +359,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 		 unzip gnuplot gnuplot-x11 ipython
 
 	    #require for common torch plug-ins
-	    sudo apt-get install libgraphicsmagick1-dev libfftw3-dev sox libsox-dev
+	    sudo apt-get install -y libgraphicsmagick1-dev libfftw3-dev sox libsox-dev
 
 	    install_openblas || true
 	else
