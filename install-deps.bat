@@ -192,7 +192,7 @@ set CONDA_DIR=%CONDA_CMD:\Scripts\conda.exe=%
 set TORCH_CONDA_LIBRARY=%CONDA_DIR%\envs\%TORCH_CONDA_ENV%\Library
 set TORCH_CONDA_LIBRARY=%TORCH_CONDA_LIBRARY:\=\\%
 set PATH=%TORCH_CONDA_LIBRARY%\bin;%PATH%;
-set NEW_PATH=%CONDA_DIR%\Scripts;%TORCH_CONDA_LIBRARY%\bin;%NEW_PATH%
+set NEW_PATH=%%CONDA_DIR%%\Scripts;%%CONDA_DIR%%\envs\%TORCH_CONDA_ENV%\Library\bin;%NEW_PATH%
 
 set TORCH_CONDA_PKGS=%TORCH_DISTRO%\win-files\check_conda_packages_for_torch.txt
 conda list -n %TORCH_CONDA_ENV% > %TORCH_CONDA_PKGS%
@@ -338,7 +338,7 @@ wget -nc https://github.com/mahkoCosmo/GraphViz_x64/raw/master/graphviz-2.38_x64
 if not exist %TORCH_INSTALL_BIN%\graphviz md %TORCH_INSTALL_BIN%\graphviz
 copy /y %TORCH_DISTRO%\win-files\3rd\graphviz-2.38_x64\bin\ %TORCH_INSTALL_BIN%\graphviz\
 
-set NEW_PATH=%NEW_PATH%;%TORCH_INSTALL_BIN%\graphviz
+set NEW_PATH=%NEW_PATH%;%%TORCH_INSTALL_DIR%%\bin\graphviz
 
 ::::    create cmd utils   ::::
 
@@ -348,14 +348,15 @@ if not "%LUAJIT_CMD%" == "" (
   echo %ECHO_PREFIX% Creating torch-activate.cmd lua.cmd luac.cmd luarocks.cmd cmake.cmd
 )
 
-set NEW_PATH=%TORCH_INSTALL_DIR%;%TORCH_INSTALL_BIN%;%TORCH_INSTALL_ROC%;%TORCH_INSTALL_ROC%\tools;%TORCH_INSTALL_ROC%\systree\bin;%NEW_PATH%;%%PATH%%;;
-set NEW_LUA_PATH=%TORCH_INSTALL_ROC%\lua\?.lua;%TORCH_INSTALL_ROC%\lua\?\init.lua;%TORCH_INSTALL_ROC%\systree\share\lua\%TORCH_LUAROCKS_LUA%\?.lua;%TORCH_INSTALL_ROC%\systree\share\lua\%TORCH_LUAROCKS_LUA%\?\init.lua;;
-set NEW_LUA_CPATH=%TORCH_INSTALL_ROC%\systree\lib\lua\%TORCH_LUAROCKS_LUA%\?.dll;;
+set NEW_PATH=%%TORCH_INSTALL_DIR%%;%%TORCH_INSTALL_DIR%%\bin;%%TORCH_INSTALL_DIR%%\luarocks;%%TORCH_INSTALL_DIR%%\luarocks\tools;%%TORCH_INSTALL_DIR%%\luarocks\systree\bin;%NEW_PATH%;%%PATH%%;;
+set NEW_LUA_PATH=%%TORCH_INSTALL_DIR%%\luarocks\lua\?.lua;%%TORCH_INSTALL_DIR%%\luarocks\lua\?\init.lua;%%TORCH_INSTALL_DIR%%\luarocks\systree\share\lua\%TORCH_LUAROCKS_LUA%\?.lua;%%TORCH_INSTALL_DIR%%\luarocks\systree\share\lua\%TORCH_LUAROCKS_LUA%\?\init.lua;;
+set NEW_LUA_CPATH=%%TORCH_INSTALL_DIR%%\luarocks\systree\lib\lua\%TORCH_LUAROCKS_LUA%\?.dll;;
 
 set TORCHACTIVATE_CMD=%TORCH_INSTALL_DIR%\torch-activate.cmd
 if exist %TORCHACTIVATE_CMD% del %TORCHACTIVATE_CMD%
 echo @echo off>> %TORCHACTIVATE_CMD%
-echo set TORCH_INSTALL_DIR=%TORCH_INSTALL_DIR%>> %TORCHACTIVATE_CMD%
+echo set CONDA_DIR=%CONDA_DIR%>> %TORCHACTIVATE_CMD%
+echo set TORCH_INSTALL_DIR=%%~dp0.>> %TORCHACTIVATE_CMD%
 echo set TORCH_CONDA_ENV=%TORCH_CONDA_ENV%>> %TORCHACTIVATE_CMD%
 echo set TORCH_VS_VERSION=%TORCH_VS_VERSION%>> %TORCHACTIVATE_CMD%
 echo set TORCH_VS_PLATFORM=%TORCH_VS_PLATFORM%>> %TORCHACTIVATE_CMD%
@@ -369,8 +370,8 @@ if not "%LUAJIT_CMD%" == "" (
   if exist "%LUAJIT_CMD%" del %LUAJIT_CMD%
   echo @echo off>> "%LUAJIT_CMD%"
   echo setlocal>> "%LUAJIT_CMD%"
-  echo call %TORCHACTIVATE_CMD%>> "%LUAJIT_CMD%"
-  echo %TORCH_INSTALL_DIR%\bin\luajit.exe %%*>> "%LUAJIT_CMD%"
+  echo call %%TORCH_INSTALL_DIR%%\torch-activate.cmd>> "%LUAJIT_CMD%"
+  echo %%TORCH_INSTALL_DIR%%\bin\luajit.exe %%*>> "%LUAJIT_CMD%"
   echo endlocal>> "%LUAJIT_CMD%"
 )
 
@@ -378,8 +379,8 @@ if not "%LUA_CMD%" == "" (
   if exist "%LUA_CMD%" del %LUA_CMD%
   echo @echo off>> "%LUA_CMD%"
   echo setlocal>> "%LUA_CMD%"
-  echo call %TORCHACTIVATE_CMD%>> "%LUA_CMD%"
-  echo %TORCH_INSTALL_DIR%\bin\lua.exe %%*>> "%LUA_CMD%"
+  echo call %%TORCH_INSTALL_DIR%%\torch-activate.cmd>> "%LUA_CMD%"
+  echo %%TORCH_INSTALL_DIR%%\bin\lua.exe %%*>> "%LUA_CMD%"
   echo endlocal>> "%LUA_CMD%"
 )
 
@@ -387,16 +388,16 @@ if not "%LUAC_CMD%" == "" (
   if exist "%LUAC_CMD%" del %LUAC_CMD%
   echo @echo off>> "%LUAC_CMD%"
   echo setlocal>> "%LUAC_CMD%"
-  echo call %TORCHACTIVATE_CMD%>> "%LUAC_CMD%"
-  echo %TORCH_INSTALL_DIR%\bin\luac.exe %%*>> "%LUAC_CMD%"
+  echo call %%TORCH_INSTALL_DIR%%\torch-activate.cmd>> "%LUAC_CMD%"
+  echo %%TORCH_INSTALL_DIR%%\bin\luac.exe %%*>> "%LUAC_CMD%"
   echo endlocal>> "%LUAC_CMD%"
 )
 
 if exist %LUAROCKS_CMD% del %LUAROCKS_CMD%
 echo @echo off>> %LUAROCKS_CMD%
 echo setlocal>> %LUAROCKS_CMD%
-echo call %TORCHACTIVATE_CMD%>> %LUAROCKS_CMD%
-echo call %TORCH_INSTALL_DIR%\luarocks\luarocks.bat %%*>> %LUAROCKS_CMD%
+echo call %%TORCH_INSTALL_DIR%%\torch-activate.cmd>> %LUAROCKS_CMD%
+echo call %%TORCH_INSTALL_DIR%%\luarocks\luarocks.bat %%*>> %LUAROCKS_CMD%
 echo endlocal>> %LUAROCKS_CMD%
 
 set CMAKE_CMD=%TORCH_INSTALL_DIR%\cmake.cmd

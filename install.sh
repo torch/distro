@@ -51,6 +51,15 @@ if [[ `uname` == "Darwin" ]]; then
     export CC=clang
     export CXX=clang++
 fi
+# If we're on Arch linux, use gcc v5
+if [[ `uname -a` == *"ARCH"* ]]; then
+    path_to_gcc5=$(which gcc-5)
+    if [ -x "$path_to_gcc5" ]; then
+      export CC="$path_to_gcc5"
+    else
+      echo "Warning: GCC v5 not found. CUDA v8 is incompatible with GCC v6, if installation fails, consider running \$ pacman -S gcc5"
+    fi
+fi
 
 echo "Installing Lua version: ${TORCH_LUA_VERSION}"
 mkdir -p install
@@ -65,6 +74,9 @@ path_to_nvcc=$(which nvcc)
 if [ $? == 1 ]; then { # look for it in /usr/local
   if [[ -f /usr/local/cuda/bin/nvcc ]]; then {
     path_to_nvcc=/usr/local/cuda/bin/nvcc
+  } 
+  elif [[ -f /opt/cuda/bin/nvcc ]]; then { # default path for arch
+    path_to_nvcc=/opt/cuda/bin/nvcc
   } fi
 } fi
 
