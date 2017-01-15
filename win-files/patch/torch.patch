@@ -1,29 +1,3 @@
-diff --git a/lib/TH/generic/THTensorLapack.c b/lib/TH/generic/THTensorLapack.c
-index fb1e246..fe82cc0 100644
---- a/lib/TH/generic/THTensorLapack.c
-+++ b/lib/TH/generic/THTensorLapack.c
-@@ -605,7 +605,7 @@ void THTensor_(potrf)(THTensor *ra_, THTensor *a, const char *uplo)
-   THLapack_(potrf)(uplo[0], n, THTensor_(data)(ra__), lda, &info);
-   THLapackCheckWithCleanup("Lapack Error in %s : the leading minor of order %d is not positive definite",
-                            THCleanup(THTensor_(free)(ra__);),
--                           "potrf", info);
-+                           "potrf", info, "");
- 
-   THTensor_(clearUpLoTriangle)(ra__, uplo);
-   THTensor_(freeCopyTo)(ra__, ra_);
-diff --git a/lib/luaT/luaT.c b/lib/luaT/luaT.c
-index 95166ed..2dc307a 100644
---- a/lib/luaT/luaT.c
-+++ b/lib/luaT/luaT.c
-@@ -151,7 +151,7 @@ const char* luaT_newlocalmetatable(lua_State *L, const char *tname, const char *
- {
-   lua_pushcfunction(L, luaT_lua_newmetatable);
-   lua_pushstring(L, tname);
--  (parent_tname ? lua_pushstring(L, parent_tname) : lua_pushnil(L));
-+  (parent_tname ? (void)lua_pushstring(L, parent_tname) : lua_pushnil(L));
-   (constructor ? lua_pushcfunction(L, constructor) : lua_pushnil(L));
-   (destructor ? lua_pushcfunction(L, destructor) : lua_pushnil(L));
-   (factory ? lua_pushcfunction(L, factory) : lua_pushnil(L));
 diff --git a/rocks/torch-scm-1.rockspec b/rocks/torch-scm-1.rockspec
 index 2228726..451f1aa 100644
 --- a/rocks/torch-scm-1.rockspec
