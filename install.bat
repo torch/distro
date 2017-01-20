@@ -11,9 +11,6 @@ if not "%TORCH_SETUP_FAIL%" == "0" goto :FAIL
 
 echo %ECHO_PREFIX% Updating submodules
 git submodule update --init --recursive
-cd %TORCH_DISTRO%\pkg\torch && git checkout master && git pull && git checkout f624ae98624d4e356eebee00ddcd3e721c90f7ba
-cd %TORCH_DISTRO%\extra\cunn && git checkout master && git pull && git checkout 349df42dfa550389f04ac90ea621f21b2838b00c
-cd %TORCH_DISTRO%\extra\cudnn && git checkout master && git pull && git checkout 99bc14eac2e3653adb87348e28d39ec1f40012b0
 
 set PATCH_DIR=%TORCH_DISTRO%\win-files\patch
 
@@ -44,7 +41,7 @@ cd %TORCH_DISTRO%\pkg\optim && call %LUAROCKS_CMD% make optim-1.0.5-0.rockspec |
 
 if not "%TORCH_SETUP_HAS_CUDA%" == "" if not "%TORCH_VS_TARGET%" == "x86" (
   echo %ECHO_PREFIX% Found CUDA on your machine. Installing CUDA packages
-  cd %TORCH_DISTRO%\extra\cutorch && call %LUAROCKS_CMD% make rocks\cutorch-scm-1.rockspec || goto :FAIL
+  cd %TORCH_DISTRO%\extra\cutorch && git apply %PATCH_DIR%\cutorch.patch --whitespace=fix & ( call %LUAROCKS_CMD% make rocks\cutorch-scm-1.rockspec || goto :FAIL ) & git apply %PATCH_DIR%\cutorch.patch --reverse --whitespace=fix
   cd %TORCH_DISTRO%\extra\cunn && call %LUAROCKS_CMD% make rocks\cunn-scm-1.rockspec || goto :FAIL
 )
 
