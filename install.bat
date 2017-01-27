@@ -11,9 +11,6 @@ if not "%TORCH_SETUP_FAIL%" == "0" goto :FAIL
 
 echo %ECHO_PREFIX% Updating submodules
 git submodule update --init --recursive
-cd %TORCH_DISTRO%\pkg\torch && git checkout master && git pull && git checkout f624ae98624d4e356eebee00ddcd3e721c90f7ba
-cd %TORCH_DISTRO%\extra\cunn && git checkout master && git pull && git checkout 349df42dfa550389f04ac90ea621f21b2838b00c
-cd %TORCH_DISTRO%\extra\cudnn && git checkout master && git pull && git checkout 99bc14eac2e3653adb87348e28d39ec1f40012b0
 
 set PATCH_DIR=%TORCH_DISTRO%\win-files\patch
 

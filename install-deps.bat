@@ -370,6 +370,7 @@ if not "%LUAJIT_CMD%" == "" (
   if exist "%LUAJIT_CMD%" del %LUAJIT_CMD%
   echo @echo off>> "%LUAJIT_CMD%"
   echo setlocal>> "%LUAJIT_CMD%"
+  echo set TORCH_INSTALL_DIR=%%~dp0.>> "%LUAJIT_CMD%"
   echo call %%TORCH_INSTALL_DIR%%\torch-activate.cmd>> "%LUAJIT_CMD%"
   echo %%TORCH_INSTALL_DIR%%\bin\luajit.exe %%*>> "%LUAJIT_CMD%"
   echo endlocal>> "%LUAJIT_CMD%"
@@ -379,6 +380,7 @@ if not "%LUA_CMD%" == "" (
   if exist "%LUA_CMD%" del %LUA_CMD%
   echo @echo off>> "%LUA_CMD%"
   echo setlocal>> "%LUA_CMD%"
+  echo set TORCH_INSTALL_DIR=%%~dp0.>> "%LUA_CMD%"
   echo call %%TORCH_INSTALL_DIR%%\torch-activate.cmd>> "%LUA_CMD%"
   echo %%TORCH_INSTALL_DIR%%\bin\lua.exe %%*>> "%LUA_CMD%"
   echo endlocal>> "%LUA_CMD%"
@@ -388,6 +390,7 @@ if not "%LUAC_CMD%" == "" (
   if exist "%LUAC_CMD%" del %LUAC_CMD%
   echo @echo off>> "%LUAC_CMD%"
   echo setlocal>> "%LUAC_CMD%"
+  echo set TORCH_INSTALL_DIR=%%~dp0.>> "%LUAC_CMD%"
   echo call %%TORCH_INSTALL_DIR%%\torch-activate.cmd>> "%LUAC_CMD%"
   echo %%TORCH_INSTALL_DIR%%\bin\luac.exe %%*>> "%LUAC_CMD%"
   echo endlocal>> "%LUAC_CMD%"
@@ -396,6 +399,7 @@ if not "%LUAC_CMD%" == "" (
 if exist %LUAROCKS_CMD% del %LUAROCKS_CMD%
 echo @echo off>> %LUAROCKS_CMD%
 echo setlocal>> %LUAROCKS_CMD%
+echo set TORCH_INSTALL_DIR=%%~dp0.>> %LUAROCKS_CMD%
 echo call %%TORCH_INSTALL_DIR%%\torch-activate.cmd>> %LUAROCKS_CMD%
 echo call %%TORCH_INSTALL_DIR%%\luarocks\luarocks.bat %%*>> %LUAROCKS_CMD%
 echo endlocal>> %LUAROCKS_CMD%
