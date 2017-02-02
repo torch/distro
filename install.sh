@@ -32,7 +32,7 @@ done
 # It has a malformed MKL library (as of 1/17/2015)
 OLDPATH=$PATH
 if [[ $(echo $PATH | grep conda) ]]; then
-    export PATH=$(echo $PATH | tr ':' '\n' | grep -v "conda[2-9]\?/bin" | grep -v "conda[2-9]\?/lib" | grep -v "conda[2-9]\?/include" | uniq | tr '\n' ':')
+    export PATH=$(echo $PATH | tr ':' '\n' | grep -v "conda[2-9]\?" | uniq | tr '\n' ':')
 fi
 
 echo "Prefix set to $PREFIX"
