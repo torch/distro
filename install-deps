@@ -83,7 +83,11 @@ if [[ `uname` == 'Darwin' ]]; then
 
 elif [[ "$(uname)" == 'Linux' ]]; then
 
-    if [[ -r /etc/os-release ]]; then
+    if [ -f /etc/lsb-release ]; then
+        DISTRO=$(lsb_release -si) # easiest way to get distro name
+	DISTRO=${DISTRO,,} # in case their is an upper case letter, convert it to lower case
+        VERSION=$(lsb_release -sr) # easiest way to get version number
+    elif [[ -r /etc/os-release ]]; then
         # this will get the required information without dirtying any env state
         DIST_VERS="$( ( . /etc/os-release &>/dev/null
                         echo "$ID $VERSION_ID") )"
@@ -141,8 +145,12 @@ elif [[ "$(uname)" == 'Linux' ]]; then
     elif [[ "$DISTRO" = "neon" ]]; then
 	distribution="ubuntu"
 	ubuntu_major_version="${VERSION%%.*}"
+    # Detect Zorin
+    elif [[ "$DISTRO" == "zorin" ]]; then
+        distribution="zorin"
+        zorin_major_version="$VERSION"
     else
-        echo '==> Only Ubuntu, elementary OS, Fedora, Archlinux, OpenSUSE, Debian, CentOS and KDE neon distributions are supported.'
+        echo '==> Only Ubuntu, elementary OS, Fedora, Archlinux, OpenSUSE, Debian, CentOS, Zorin and KDE neon distributions are supported.'
         exit 1
     fi
 
@@ -191,6 +199,44 @@ elif [[ "$(uname)" == 'Linux' ]]; then
             sudo apt-get install libqt4-core libqt4-gui
         fi
 
+        install_openblas || true
+
+    elif [[ $distribution == 'zorin' ]]; then
+        if sudo apt-get update ; then
+            echo "Updated successfully."
+        else
+            echo "Some portion of the update has failed"
+        fi
+        # python-software-properties is required for apt-add-repository
+        sudo apt-get install -y python-software-properties
+        echo "==> Found Zorin version ${zorin_major_version}.xx"
+        if [[ $zorin_major_version -lt '12' ]]; then
+            echo '==> This script has not been tested on a Zorin version below 12.'
+            exit 1
+        else
+            sudo apt-get install -y software-properties-common \
+                libgraphicsmagick1-dev libfftw3-dev sox libsox-dev \
+                libsox-fmt-all
+        fi
+
+        if sudo apt-get update ; then
+            echo "Updated successfully."
+        else
+            echo "Some portion of the update has failed"
+        fi
+        sudo apt-get install -y build-essential gcc g++ curl \
+            cmake libreadline-dev git-core libqt4-dev libjpeg-dev \
+            libpng-dev ncurses-dev imagemagick libzmq3-dev gfortran \
+            unzip gnuplot gnuplot-x11 ipython
+
+        gcc_major_version=$(gcc --version | grep ^gcc | awk '{print $4}' | \
+                            cut -c 1)
+        if [[ $gcc_major_version == '5' ]]; then
+            echo '==> Found GCC 5, installing GCC 4.9.'
+            sudo apt-get install -y gcc-4.9 libgfortran-4.9-dev g++-4.9
+        fi
+
+        sudo apt-get install libqtcore4 libqtgui4
         install_openblas || true
 
     elif [[ $distribution == 'raspbian' ]]; then

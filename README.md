@@ -52,4 +52,4 @@ You can test that all libraries are installed properly by running:
 ./test.sh
 ```
 
-Tested on Ubuntu 14.04, CentOS/RHEL 6.3 and OSX
+Tested on Ubuntu 16.04/14.04, CentOS/RHEL 6.3 and OSX
