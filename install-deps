@@ -115,6 +115,10 @@ elif [[ "$(uname)" == 'Linux' ]]; then
         export DEBIAN_FRONTEND=noninteractive
         distribution="ubuntu"
         ubuntu_major_version="${VERSION%%.*}"
+    elif [[ "$DISTRO" = "linuxmint" ]]; then
+        export DEBIAN_FRONTEND=noninteractive
+        distribution="ubuntu"
+        ubuntu_major_version="16"
     # Detect elementary OS
     elif [[ "$DISTRO" = "elementary" ]]; then
         export DEBIAN_FRONTEND=noninteractive
