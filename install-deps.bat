@@ -415,10 +415,12 @@ echo shift>> %CMAKE_CMD%
 echo cmake.exe .. -G "NMake Makefiles" %%*>> %CMAKE_CMD%
 
 set TORCH_SETUP_FAIL=0
+cd %TORCH_DISTRO%
 echo %ECHO_PREFIX% Setup succeed!
 goto :END
 
 :FAIL
+cd %TORCH_DISTRO%
 echo %ECHO_PREFIX% Setup fail!
 
 :END
