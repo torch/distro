@@ -268,7 +268,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
             cmake curl readline ncurses git \
             gnuplot unzip libjpeg-turbo libpng libpng \
             imagemagick graphicsmagick fftw sox zeromq \
-            ipython qt4 qtwebkit || exit 1
+            ipython qt4 qt5-webkit-ng || exit 1
         pacman -Sl multilib &>/dev/null
         if [[ $? -ne 0 ]]; then
             gcc_package="gcc"
