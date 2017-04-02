@@ -46,6 +46,7 @@ set TORCH_SETUP_FAIL=1
 :::: validate msvc version  ::::
 
 if "%VisualStudioVersion%" == "" (
+  if not "%VS150COMNTOOLS%" == "" ( call "%VS150COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat" x64 && goto :VS_SETUP)
   if not "%VS140COMNTOOLS%" == "" ( call "%VS140COMNTOOLS%..\..\VC\vcvarsall.bat" x64 && goto :VS_SETUP)
   if not "%VS120COMNTOOLS%" == "" ( call "%VS120COMNTOOLS%..\..\VC\vcvarsall.bat" x64 && goto :VS_SETUP)
   if not "%VS110COMNTOOLS%" == "" ( call "%VS110COMNTOOLS%..\..\VC\vcvarsall.bat" x64 && goto :VS_SETUP)
@@ -65,14 +66,17 @@ if "%PreferredToolArchitecture%" == "x64" (
   if "%CommandPromptType%" == "Cross" (
     if "%Platform%" == "ARM" set TORCH_VS_PLATFORM=amd64_arm
     if "%Platform%" == "X86" set TORCH_VS_PLATFORM=amd64_x86
+    if "%Platform%" == "x86" set TORCH_VS_PLATFORM=amd64_x86
   )
 ) else (
   if "%CommandPromptType%" == "Cross" (
     if "%Platform%" == "ARM" set TORCH_VS_PLATFORM=x86_arm
+    if "%Platform%" == "X64" set TORCH_VS_PLATFORM=x86_amd64
     if "%Platform%" == "x64" set TORCH_VS_PLATFORM=x86_amd64
   )
   if "%CommandPromptType%" == "Native" (
     if "%Platform%" == "X64" set TORCH_VS_PLATFORM=x64
+    if "%Platform%" == "x64" set TORCH_VS_PLATFORM=x64
   )
   if "%Platform%"   == ""    set TORCH_VS_PLATFORM=x86
 )
@@ -360,7 +364,12 @@ echo set TORCH_INSTALL_DIR=%%~dp0.>> %TORCHACTIVATE_CMD%
 echo set TORCH_CONDA_ENV=%TORCH_CONDA_ENV%>> %TORCHACTIVATE_CMD%
 echo set TORCH_VS_VERSION=%TORCH_VS_VERSION%>> %TORCHACTIVATE_CMD%
 echo set TORCH_VS_PLATFORM=%TORCH_VS_PLATFORM%>> %TORCHACTIVATE_CMD%
-echo for /f "delims=" %%%%i in ('call echo %%%%VS%TORCH_VS_VERSION%0COMNTOOLS%%%%') do call "%%%%i..\..\VC\vcvarsall.bat" %TORCH_VS_PLATFORM%>> %TORCHACTIVATE_CMD%
+if "%TORCH_VS_VERSION%" == "15" (
+  set VCVARSALL_BAT_PATH=..\..\VC\Auxiliary\Build\vcvarsall.bat
+) else (
+  set VCVARSALL_BAT_PATH=..\..\VC\vcvarsall.bat
+)
+echo for /f "delims=" %%%%i in ('call echo %%%%VS%TORCH_VS_VERSION%0COMNTOOLS%%%%') do call "%%%%i%VCVARSALL_BAT_PATH%" %TORCH_VS_PLATFORM%>> %TORCHACTIVATE_CMD%
 echo set PATH=%NEW_PATH%>> %TORCHACTIVATE_CMD%
 echo set LUA_PATH=%NEW_LUA_PATH%>> %TORCHACTIVATE_CMD%
 echo set LUA_CPATH=%NEW_LUA_CPATH%>> %TORCHACTIVATE_CMD%
