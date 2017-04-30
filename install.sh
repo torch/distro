@@ -6,8 +6,7 @@ BATCH_INSTALL=0
 THIS_DIR=$(cd $(dirname $0); pwd)
 if [[ "$THIS_DIR" == *" "* ]]; then
     echo "$THIS_DIR: Torch cannot install to a path containing whitespace.
-Please try a different path, one without any spaces.
-"
+Please try a different path, one without any spaces."
     exit 1
 fi
 PREFIX=${PREFIX:-"${THIS_DIR}/install"}
