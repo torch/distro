@@ -193,7 +193,7 @@ fi
 
 WRITE_PATH_TO_PROFILE=0
 if [[ $BATCH_INSTALL == 0 ]]; then
-    if [ -f $RC_FILE ]; then
+    if [ -f "$RC_FILE" ]; then
         echo "
 
 Do you want to automatically prepend the Torch install location
@@ -216,7 +216,7 @@ to PATH and LD_LIBRARY_PATH in your $RC_FILE? (yes/no)
         fi
     fi
 else
-    if [[ $RC_FILE ]]; then
+    if [[ "$RC_FILE" ]]; then
         WRITE_PATH_TO_PROFILE=1
     fi
 fi
@@ -224,7 +224,7 @@ fi
 if [[ $WRITE_PATH_TO_PROFILE == 1 ]]; then
     echo "
 
-. $PREFIX/bin/torch-activate" >> $RC_FILE
+. $PREFIX/bin/torch-activate" >> "$RC_FILE"
     echo "
 
 . $PREFIX/bin/torch-activate" >> "$HOME"/.profile
