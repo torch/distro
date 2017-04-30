@@ -221,7 +221,7 @@ if [[ $WRITE_PATH_TO_PROFILE == 1 ]]; then
 . $PREFIX/bin/torch-activate" >> $RC_FILE
     echo "
 
-. $PREFIX/bin/torch-activate" >> $HOME/.profile
+. $PREFIX/bin/torch-activate" >> "$HOME"/.profile
 
 else
     echo "
