@@ -43,7 +43,7 @@ fi
 echo "Prefix set to $PREFIX"
 
 if [[ `uname` == 'Linux' ]]; then
-    export CMAKE_LIBRARY_PATH=/opt/OpenBLAS/include:/opt/OpenBLAS/lib:$CMAKE_LIBRARY_PATH
+    export CMAKE_LIBRARY_PATH=$PREFIX/include:/opt/OpenBLAS/include:$PREFIX/lib:/opt/OpenBLAS/lib:$CMAKE_LIBRARY_PATH
 fi
 export CMAKE_PREFIX_PATH=$PREFIX
 
