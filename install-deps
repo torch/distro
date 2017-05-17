@@ -366,7 +366,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 
         install_openblas || true
     elif [[ $distribution == 'debian' ]]; then
-	if [[ $debian_major_version == '8' ]]; then
+	if [[ $debian_major_version == '8' ]] || [[ $debian_major_version == '9' ]]; then
 	    echo "==> Found Debian version ${debian_major_version}"
 	    if sudo apt-get update ; then
 	       echo "Updated successfully."
@@ -384,7 +384,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 
 	    install_openblas || true
 	else
-	    echo "Only Jessie Debian 8 is supported for now, aborting."
+	    echo "Only Jessie Debian 8 and 9 is supported for now, aborting."
 	    exit 1
 	fi
     fi
