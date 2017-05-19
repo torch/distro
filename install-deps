@@ -8,25 +8,42 @@ set -e
 
 install_openblas() {
     # Get and build OpenBlas (Torch is much better with a decent Blas)
-    cd /tmp/
-    rm -rf OpenBLAS
-    git clone https://github.com/xianyi/OpenBLAS.git
-    cd OpenBLAS
-    if [ $(getconf _NPROCESSORS_CONF) == 1 ]; then
-        make NO_AFFINITY=1 USE_OPENMP=0 USE_THREAD=0
+    # Optionally set environment variable PREFIX to control
+    # the installation directory.
+
+
+    local PATH=$PATH:/sbin ## improve chances of finding ldconfig
+    # Only proceed installing OpenBLAS if either ldconfig is unavailable, or ldconfig
+    # reports that OpenBLAS is not already installed.
+    if ! type ldconfig >/dev/null || ! ldconfig -p | grep -q "lib\(open\)\?blas.so"; then
+        local tempdir=$(mktemp -d)
+
+        git clone https://github.com/xianyi/OpenBLAS.git "$tempdir"/OpenBLAS  || { echo "Error. Cannot clone OpenBLAS." >&2 ; exit 1 ; }
+        cd "$tempdir"/OpenBLAS || { echo "Error. Cannot create tempdir." >&2 ; exit 1 ; }
+        if [ $(getconf _NPROCESSORS_CONF) == 1 ]; then
+            make NO_AFFINITY=1 USE_OPENMP=0 USE_THREAD=0
+        else
+            make NO_AFFINITY=1 USE_OPENMP=1
+        fi
+        RET=$?;
+        if [ $RET -ne 0 ]; then
+            echo "Error. OpenBLAS could not be compiled";
+            exit $RET;
+        fi
+        if [ ! -z "$PREFIX" ]; then
+            sudo make install PREFIX="$PREFIX"
+        else
+            sudo make install
+        fi
+        RET=$?;
+        if [ $RET -ne 0 ]; then
+            echo "Error. OpenBLAS could not be installed";
+            exit $RET;
+        fi
+        cd -
+        rm -rf "$tempdir"
     else
-        make NO_AFFINITY=1 USE_OPENMP=1
-    fi
-    RET=$?;
-    if [ $RET -ne 0 ]; then
-        echo "Error. OpenBLAS could not be compiled";
-        exit $RET;
-    fi
-    sudo make install
-    RET=$?;
-    if [ $RET -ne 0 ]; then
-        echo "Error. OpenBLAS could not be installed";
-        exit $RET;
+        echo "Skipping install of OpenBLAS - it is already installed." >&2
     fi
 }
 
@@ -349,7 +366,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 
         install_openblas || true
     elif [[ $distribution == 'debian' ]]; then
-	if [[ $debian_major_version == '8' ]]; then
+	if [[ $debian_major_version == '8' ]] || [[ $debian_major_version == '9' ]]; then
 	    echo "==> Found Debian version ${debian_major_version}"
 	    if sudo apt-get update ; then
 	       echo "Updated successfully."
@@ -367,7 +384,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 
 	    install_openblas || true
 	else
-	    echo "Only Jessie Debian 8 is supported for now, aborting."
+	    echo "Only Jessie Debian 8 and 9 is supported for now, aborting."
 	    exit 1
 	fi
     fi
