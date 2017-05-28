@@ -322,7 +322,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
                                 sox-devel sox qt-devel qtwebkit-devel \
                                 python-ipython czmq czmq-devel
             install_openblas || true
-        elif [[ $fedora_major_version == '24' ]]; then
+        elif [[ $fedora_major_version == '24' ||  $fedora_major_version == '25' ]]; then
             sudo dnf install -y make cmake curl readline-devel ncurses-devel \
                                 gcc-c++ gcc-gfortran git gnuplot unzip \
                                 libjpeg-turbo-devel libpng-devel \
@@ -331,7 +331,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
                                 python-ipython czmq czmq-devel
             install_openblas || true
         else
-            echo "Only Fedora 20-24 are supported for now, aborting."
+            echo "Only Fedora 20-25 are supported for now, aborting."
             exit 1
         fi
     elif [[ $distribution == 'centos' ]]; then
