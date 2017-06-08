@@ -66,13 +66,32 @@ if [[ `uname -a` == *"ARCH"* ]]; then
     fi
 fi
 
+# Install Lua/LuaJIT (w/o luarocks)
 echo "Installing Lua version: ${TORCH_LUA_VERSION}"
 mkdir -p install
 mkdir -p build
 cd build
-cmake .. -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_${TORCH_LUA_VERSION}=ON 2>&1 >>$PREFIX/install.log || exit 1
+cmake .. -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_${TORCH_LUA_VERSION}=ON -DWITH_LUAROCKS=OFF 2>&1 >>$PREFIX/install.log || exit 1
 (make 2>&1 >>$PREFIX/install.log  || exit 1) && (make install 2>&1 >>$PREFIX/install.log || exit 1)
 cd ..
+
+# Install luarocks
+cd build
+wget http://luarocks.org/releases/luarocks-2.3.0.tar.gz
+tar -xvzf luarocks-2.3.0.tar.gz
+cd luarocks-2.3.0
+#git clone https://github.com/keplerproject/luarocks.git
+#cd luarocks
+if [[ $TORCH_LUA_VERSION == "LUAJIT21" ]] || [[ $TORCH_LUA_VERSION == "SYSTEM_LUAJIT" ]]; then
+  ./configure --with-lua="${PREFIX}" --prefix="${PREFIX}" --lua-suffix="jit" --with-lua-include="${PREFIX}/include"
+  make build
+  make install
+else
+  ./configure --with-lua="${PREFIX}" --prefix="${PREFIX}" --with-lua-include="${PREFIX}/include"
+  make build
+  make install
+fi
+cd ../.. 
 
 # Check for a CUDA install (using nvcc instead of nvidia-smi for cross-platform compatibility)
 path_to_nvcc=$(which nvcc)
@@ -111,6 +130,9 @@ echo "Installing common Lua packages"
 cd ${THIS_DIR}/extra/luafilesystem && $PREFIX/bin/luarocks make rockspecs/luafilesystem-1.6.3-1.rockspec || exit 1
 cd ${THIS_DIR}/extra/penlight && $PREFIX/bin/luarocks make penlight-scm-1.rockspec || exit 1
 cd ${THIS_DIR}/extra/lua-cjson && $PREFIX/bin/luarocks make lua-cjson-2.1devel-1.rockspec || exit 1
+
+# install luaffifb
+cd ${THIS_DIR}/extra/luaffifb && $PREFIX/bin/luarocks make
 
 echo "Installing core Torch packages"
 cd ${THIS_DIR}/extra/luaffifb && $PREFIX/bin/luarocks make luaffi-scm-1.rockspec       || exit 1
