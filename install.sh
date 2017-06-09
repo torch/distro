@@ -163,10 +163,10 @@ fi
 
 cat <<EOF >$PREFIX/bin/torch-activate
 $setup_lua_env_cmd
-export PATH=$PREFIX/bin:\$PATH
-export LD_LIBRARY_PATH=$PREFIX/lib:\$LD_LIBRARY_PATH
-export DYLD_LIBRARY_PATH=$PREFIX/lib:\$DYLD_LIBRARY_PATH
-export LUA_CPATH='$CLIB_LUA_CPATH;'\$LUA_CPATH
+export PATH=$PREFIX/bin\${PATH:+:\$PATH}
+export LD_LIBRARY_PATH=$PREFIX/lib\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}
+export DYLD_LIBRARY_PATH=$PREFIX/lib\${DYLD_LIBRARY_PATH:+:\$DYLD_LIBRARY_PATH}
+export LUA_CPATH='$CLIB_LUA_CPATH'\${LUA_CPATH:+;\$LUA_CPATH}
 EOF
 chmod +x $PREFIX/bin/torch-activate
 
