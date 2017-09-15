@@ -288,12 +288,12 @@ elif [[ "$(uname)" == 'Linux' ]]; then
             ipython qt4 qt5-webkit || exit 1
         pacman -Sl multilib &>/dev/null
         if [[ $? -ne 0 ]]; then
-            gcc_package="gcc"
+            multilib=
         else
-            gcc_package="gcc-multilib"
+            multilib=-multilib
         fi
         sudo pacman -S --quiet --noconfirm --needed \
-            ${gcc_package} gcc-fortran || exit 1
+            gcc${multilib} gcc-fortran${multilib} || exit 1
         # if openblas is not installed yet
         pacman -Qs openblas &> /dev/null
         if [[ $? -ne 0 ]]; then
