@@ -57,7 +57,7 @@ if [[ `uname` == "Darwin" ]]; then
     export CXX=clang++
 fi
 # If we're on Arch linux, use gcc v5
-if [[ `uname -a` == *"ARCH"* ]]; then
+if [[ `uname -a` == *"ARCH"* || `uname -a` == *"MANJARO"* ]]; then
     path_to_gcc5=$(which gcc-5)
     if [ -x "$path_to_gcc5" ]; then
       export CC="$path_to_gcc5"
