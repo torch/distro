@@ -82,3 +82,6 @@
 [submodule "extra/lua-cjson"]
 	path = extra/lua-cjson
 	url = https://github.com/mpx/lua-cjson
+[submodule "extra/moses"]
+	path = extra/moses
+	url = https://github.com/Yonaba/Moses.git
