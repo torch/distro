@@ -125,7 +125,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
         distribution="fedora"
         fedora_major_version="$VERSION"
     # Detect archlinux
-    elif [[ "$DISTRO" = "arch" ]]; then
+    elif [[ "$DISTRO" = "arch" || "$DISTRO" == "manjaro" ]]; then
         distribution="archlinux"
     # Detect Ubuntu
     elif [[ "$DISTRO" = "ubuntu" ]]; then
