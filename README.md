@@ -22,6 +22,11 @@ The self-contained Lua and Torch installations are performed via:
 ./install.sh
 ```
 
+Torch does not support half-precision floating-point type in cuda 7.5 or higher. If you have CUDA 7.5 or higher, you should use the following command:
+```bash
+$ TORCH_NVCC_FLAGS="-D__CUDA_NO_HALF_OPERATORS__" ./install.sh
+```
+
 By default Torch will install LuaJIT 2.1. If you want other options, you can use the command:
 ```bash
 # If a different version was installed, used ./clean.sh to clean it
