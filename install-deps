@@ -174,8 +174,8 @@ elif [[ "$(uname)" == 'Linux' ]]; then
         else
             echo "Some portion of the update is failed"
         fi
-        # python-software-properties is required for apt-add-repository
-        sudo apt-get install -y python-software-properties
+        # software-properties-common is required for apt-add-repository
+        sudo apt-get install -y software-properties-common
         echo "==> Found Ubuntu version ${ubuntu_major_version}.xx"
         if [[ $ubuntu_major_version -lt '12' ]]; then
             echo '==> Ubuntu version not supported.'
@@ -183,10 +183,9 @@ elif [[ "$(uname)" == 'Linux' ]]; then
         elif [[ $ubuntu_major_version -lt '14' ]]; then # 12.xx
             sudo -E add-apt-repository -y ppa:chris-lea/zeromq
         elif [[ $ubuntu_major_version -lt '15' ]]; then # 14.xx
-	    sudo -E apt-get install -y software-properties-common
             sudo -E add-apt-repository -y ppa:jtaylor/ipython
         else
-            sudo apt-get install -y software-properties-common \
+            sudo apt-get install -y \
                 libgraphicsmagick1-dev libfftw3-dev sox libsox-dev \
                 libsox-fmt-all
         fi
@@ -257,11 +256,11 @@ elif [[ "$(uname)" == 'Linux' ]]; then
         else
             echo "Some portion of the update is failed"
         fi
-        # python-software-properties is required for apt-add-repository
-        sudo apt-get install -y python-software-properties
+        # software-properties-common is required for apt-add-repository
+        sudo apt-get install -y software-properties-common
         if [[ $elementary_version == '0.3' ]]; then
             echo '==> Found Ubuntu version 14.xx based elementary installation, installing dependencies'
-            sudo apt-get install -y software-properties-common \
+            sudo apt-get install -y \
                 libgraphicsmagick1-dev libfftw3-dev sox libsox-dev \
                 libsox-fmt-all
 
