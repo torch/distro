@@ -155,6 +155,9 @@ elif [[ "$(uname)" == 'Linux' ]]; then
     elif [[ "$DISTRO" == "opensuse" ]]; then
 	distribution="opensuse"
 	opensuse_major_version="$VERSION"
+    elif [[ "$DISTRO" == "opensuse-tumbleweed" ]]; then
+	distribution="opensuse"
+	opensuse_major_version="$VERSION"
     # Detect Debian
     elif [[ "$DISTRO" = "debian" ]]; then
 	distribution="debian"
