@@ -55,3 +55,10 @@ You can test that all libraries are installed properly by running:
 ```
 
 Tested on Ubuntu 14.04, CentOS/RHEL 6.3 and OSX
+
+https://github.com/torch/torch7/issues/1086
+
+
+export TORCH_NVCC_FLAGS="-D__CUDA_NO_HALF_OPERATORS__"
+bash install-deps
+yes | bash ./install.sh
