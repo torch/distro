@@ -174,13 +174,13 @@ elif [[ "$(uname)" == 'Linux' ]]; then
         else
             echo "Some portion of the update is failed"
         fi
-        # python-software-properties is required for apt-add-repository
-        sudo apt-get install -y python-software-properties
         echo "==> Found Ubuntu version ${ubuntu_major_version}.xx"
         if [[ $ubuntu_major_version -lt '12' ]]; then
             echo '==> Ubuntu version not supported.'
             exit 1
         elif [[ $ubuntu_major_version -lt '14' ]]; then # 12.xx
+            # python-software-properties is required for apt-add-repository
+            sudo apt-get install -y python-software-properties
             sudo -E add-apt-repository -y ppa:chris-lea/zeromq
         elif [[ $ubuntu_major_version -lt '15' ]]; then # 14.xx
 	    sudo -E apt-get install -y software-properties-common
