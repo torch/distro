@@ -175,7 +175,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
             echo "Some portion of the update is failed"
         fi
         # python-software-properties is required for apt-add-repository
-        sudo apt-get install -y python-software-properties
+        sudo apt-get install -y software-properties-common
         echo "==> Found Ubuntu version ${ubuntu_major_version}.xx"
         if [[ $ubuntu_major_version -lt '12' ]]; then
             echo '==> Ubuntu version not supported.'
@@ -258,7 +258,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
             echo "Some portion of the update is failed"
         fi
         # python-software-properties is required for apt-add-repository
-        sudo apt-get install -y python-software-properties
+        sudo apt-get install -y software-properties-common
         if [[ $elementary_version == '0.3' ]]; then
             echo '==> Found Ubuntu version 14.xx based elementary installation, installing dependencies'
             sudo apt-get install -y software-properties-common \
