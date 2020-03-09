@@ -56,7 +56,7 @@ if "%VisualStudioVersion%" == "" (
 :VS_SETUP
 
 if "%VisualStudioVersion%" == "" (
-  echo %ECHO_PREFIX% Can not find environment variable VisualStudioVersion, msvc is not setup porperly
+  echo %ECHO_PREFIX% Can not find environment variable VisualStudioVersion, msvc is not setup properly
   goto :FAIL
 )
 
