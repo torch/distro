@@ -1,0 +1,733 @@
+Subject: [PATCH] torch-static
+---
+Index: pkg/torch/lib/TH/THAllocator.c
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pkg/torch/lib/TH/THAllocator.c b/pkg/torch/lib/TH/THAllocator.c
+--- a/pkg/torch/lib/TH/THAllocator.c	(revision 1600de6d4b9f9df15c02bd2969f09ed9e8973dfe)
++++ b/pkg/torch/lib/TH/THAllocator.c	(date 1753084737000)
+@@ -105,6 +105,10 @@
+ 
+ static void *_map_alloc(void* ctx_, ptrdiff_t size)
+ {
++  if (size == 0) {
++    return NULL;
++  }
++
+   THMapAllocatorContext *ctx = ctx_;
+   void *data = NULL;
+ 
+@@ -332,6 +336,9 @@
+ }
+ 
+ static void THMapAllocator_free(void* ctx_, void* data) {
++  if (data == NULL)
++    return;
++
+   THMapAllocatorContext *ctx = ctx_;
+ 
+ #ifdef _WIN32
+Index: extra/nn/rocks/nn-scm-1.rockspec
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extra/nn/rocks/nn-scm-1.rockspec b/extra/nn/rocks/nn-scm-1.rockspec
+--- a/extra/nn/rocks/nn-scm-1.rockspec	(revision 1e668eabf80c8214a58f7a5b5c318b338c2eefee)
++++ b/extra/nn/rocks/nn-scm-1.rockspec	(date 1756378843580)
+@@ -2,7 +2,7 @@
+ version = "scm-1"
+ 
+ source = {
+-   url = "git://github.com/torch/nn.git",
++   url = "https://github.com/torch/nn.git",
+ }
+ 
+ description = {
+Index: pkg/torch/lib/TH/generic/THTensorMath.c
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pkg/torch/lib/TH/generic/THTensorMath.c b/pkg/torch/lib/TH/generic/THTensorMath.c
+--- a/pkg/torch/lib/TH/generic/THTensorMath.c	(revision 1600de6d4b9f9df15c02bd2969f09ed9e8973dfe)
++++ b/pkg/torch/lib/TH/generic/THTensorMath.c	(date 1753084737000)
+@@ -1595,10 +1595,6 @@
+     THLongTensor_zero(indices_);
+ 
+     if(t->size[dimension] == 1) {
+-      if (!keepdim) {
+-        THTensor_(squeeze1d)(values_, values_, dimension);
+-        THLongTensor_squeeze1d(indices_, indices_, dimension);
+-      }
+       return;
+     }
+ 
+@@ -1675,10 +1671,6 @@
+     THLongTensor_zero(indices_);
+ 
+     if(t->size[dimension] == 1) {
+-      if (!keepdim) {
+-        THTensor_(squeeze1d)(values_, values_, dimension);
+-        THLongTensor_squeeze1d(indices_, indices_, dimension);
+-      }
+       return;
+     }
+ 
+@@ -1927,18 +1919,6 @@
+   THTensor_(zero)(r_);
+ }
+ 
+-void THTensor_(zerosLike)(THTensor *r_, THTensor *input)
+-{
+-  THTensor_(resizeAs)(r_, input);
+-  THTensor_(zero)(r_);
+-}
+-
+-void THTensor_(onesLike)(THTensor *r_, THTensor *input)
+-{
+-  THTensor_(resizeAs)(r_, input);
+-  THTensor_(fill)(r_, 1);
+-}
+-
+ void THTensor_(ones)(THTensor *r_, THLongStorage *size)
+ {
+   THTensor_(resize)(r_, size, NULL);
+@@ -2856,14 +2836,19 @@
+     TH_TENSOR_APPLY2(real, t, real, r_, *r__data = CFUNC(*t_data);); \
+   }                                                           \
+ 
++#define LAB_IMPLEMENT_BASIC_FUNCTION_VALUE(NAME, CFUNC)                 \
++  void THTensor_(NAME)(THTensor *r_, THTensor *t, real value)              \
++  {                                                                     \
++    THTensor_(resizeAs)(r_, t);                                         \
++    TH_TENSOR_APPLY2(real, t, real, r_, *r__data = CFUNC(*t_data, value);); \
++  }                                                                     \
++
+ #if defined(TH_REAL_IS_LONG)
+ LAB_IMPLEMENT_BASIC_FUNCTION(abs,labs)
+-LAB_IMPLEMENT_BASIC_FUNCTION(neg,-)
+ #endif /* long only part */
+ 
+ #if defined(TH_REAL_IS_SHORT) || defined(TH_REAL_IS_INT)
+ LAB_IMPLEMENT_BASIC_FUNCTION(abs,abs)
+-LAB_IMPLEMENT_BASIC_FUNCTION(neg,-)
+ #endif /* int only part */
+ 
+ #if defined(TH_REAL_IS_BYTE)
+@@ -2905,6 +2890,7 @@
+ LAB_IMPLEMENT_BASIC_FUNCTION(tan,TH_MATH_NAME(tan))
+ LAB_IMPLEMENT_BASIC_FUNCTION(atan,TH_MATH_NAME(atan))
+ LAB_IMPLEMENT_BASIC_FUNCTION(tanh,TH_MATH_NAME(tanh))
++LAB_IMPLEMENT_BASIC_FUNCTION_VALUE(pow,TH_MATH_NAME(pow))
+ LAB_IMPLEMENT_BASIC_FUNCTION(sqrt,TH_MATH_NAME(sqrt))
+ LAB_IMPLEMENT_BASIC_FUNCTION(rsqrt,TH_MATH_NAME(TH_rsqrt))
+ LAB_IMPLEMENT_BASIC_FUNCTION(ceil,TH_MATH_NAME(ceil))
+@@ -2917,35 +2903,6 @@
+ LAB_IMPLEMENT_BASIC_FUNCTION(cinv, TH_MATH_NAME(1.0) / )
+ 
+ 
+-void THTensor_(pow)(THTensor *r_, THTensor *t, real value)
+-{
+-  THTensor_(resizeAs)(r_, t);
+-  if(value == 1){
+-    THTensor_(copy)(r_, t);
+-  }
+-  else if(value == 2){
+-    THTensor_(cmul)(r_, t, t);
+-  }
+-  else if(value == 3){
+-    TH_TENSOR_APPLY2(real, t, real, r_, *r__data = *t_data * *t_data * *t_data;);
+-  }
+-  else if(value == 0.5){
+-    THTensor_(sqrt)(r_, t);
+-  }
+-  else if(value == -0.5){
+-    THTensor_(rsqrt)(r_, t);
+-  }
+-  else if(value == -1){
+-    THTensor_(cinv)(r_, t);
+-  }
+-  else if(value == -2){
+-    TH_TENSOR_APPLY2(real, t, real, r_, *r__data = TH_MATH_NAME(1.0) / (*t_data * *t_data););
+-  }
+-  else{
+-    TH_TENSOR_APPLY2(real, t, real, r_, *r__data = TH_MATH_NAME(pow)(*t_data, value););
+-  }
+-}
+-
+ void THTensor_(atan2)(THTensor *r_, THTensor *tx, THTensor *ty)
+ {
+   THTensor_(resizeAs)(r_, tx);
+@@ -3201,7 +3158,10 @@
+   }
+ 
+   if(n == 1) {
+-    THTensor_(set1d)(r_, 0, a);
++     TH_TENSOR_APPLY(real, r_,
++             *r__data = a;
++             i++;
++           );
+   } else {
+      TH_TENSOR_APPLY(real, r_,
+              *r__data = a + i*(b-a)/((real)(n-1));
+@@ -3221,7 +3181,10 @@
+   }
+ 
+   if(n == 1) {
+-    THTensor_(set1d)(r_, 0, TH_MATH_NAME(pow)(10.0, a));
++    TH_TENSOR_APPLY(real, r_,
++        *r__data = TH_MATH_NAME(pow)(10.0, a);
++        i++;
++        );
+   } else {
+     TH_TENSOR_APPLY(real, r_,
+         *r__data = TH_MATH_NAME(pow)(10.0, a + i*(b-a)/((real)(n-1)));
+Index: exe/qtlua/rocks/qtlua-scm-1.rockspec
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/exe/qtlua/rocks/qtlua-scm-1.rockspec b/exe/qtlua/rocks/qtlua-scm-1.rockspec
+--- a/exe/qtlua/rocks/qtlua-scm-1.rockspec	(revision 8b80419ca2458e172b0d245999114f2b9d4ac118)
++++ b/exe/qtlua/rocks/qtlua-scm-1.rockspec	(date 1756115680926)
+@@ -2,7 +2,7 @@
+ version = "scm-1"
+ 
+ source = {
+-   url = "git://github.com/torch/qtlua.git",
++   url = "https://github.com/torch/qtlua.git",
+ }
+ 
+ description = {
+Index: pkg/torch/lib/TH/generic/THTensorMath.h
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pkg/torch/lib/TH/generic/THTensorMath.h b/pkg/torch/lib/TH/generic/THTensorMath.h
+--- a/pkg/torch/lib/TH/generic/THTensorMath.h	(revision 1600de6d4b9f9df15c02bd2969f09ed9e8973dfe)
++++ b/pkg/torch/lib/TH/generic/THTensorMath.h	(date 1753084737000)
+@@ -90,9 +90,7 @@
+ TH_API void THTensor_(cminValue)(THTensor *r, THTensor *t, real value);
+ 
+ TH_API void THTensor_(zeros)(THTensor *r_, THLongStorage *size);
+-TH_API void THTensor_(zerosLike)(THTensor *r_, THTensor *input);
+ TH_API void THTensor_(ones)(THTensor *r_, THLongStorage *size);
+-TH_API void THTensor_(onesLike)(THTensor *r_, THTensor *input);
+ TH_API void THTensor_(diag)(THTensor *r_, THTensor *t, int k);
+ TH_API void THTensor_(eye)(THTensor *r_, long n, long m);
+ TH_API void THTensor_(arange)(THTensor *r_, accreal xmin, accreal xmax, accreal step);
+Index: pkg/torch/rocks/torch-scm-1.rockspec
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pkg/torch/rocks/torch-scm-1.rockspec b/pkg/torch/rocks/torch-scm-1.rockspec
+--- a/pkg/torch/rocks/torch-scm-1.rockspec	(revision 1600de6d4b9f9df15c02bd2969f09ed9e8973dfe)
++++ b/pkg/torch/rocks/torch-scm-1.rockspec	(date 1756115513782)
+@@ -2,7 +2,7 @@
+ version = "scm-1"
+ 
+ source = {
+-   url = "git://github.com/torch/torch7.git",
++   url = "https://github.com/torch/torch7.git",
+ }
+ 
+ description = {
+Index: pkg/torch/lib/TH/THStorage.c
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pkg/torch/lib/TH/THStorage.c b/pkg/torch/lib/TH/THStorage.c
+--- a/pkg/torch/lib/TH/THStorage.c	(revision 1600de6d4b9f9df15c02bd2969f09ed9e8973dfe)
++++ b/pkg/torch/lib/TH/THStorage.c	(date 1753084737000)
+@@ -34,11 +34,11 @@
+   if (dim_infer != -1) {
+     THDescBuff buf = THLongStorage_sizeDesc(size);
+     THArgCheck(total_size > 0 && nElement % total_size == 0, 2,
+-        "size '%s' is invalid for input with %td elements", buf.str, nElement);
++        "size '%s' is invalid for input of with %td elements", buf.str, nElement);
+   } else {
+     THDescBuff buf = THLongStorage_sizeDesc(size);
+     THArgCheck(nElement == total_size, 2,
+-        "size '%s' is invalid for input with %td elements", buf.str, nElement);
++        "size '%s' is invalid for input of with %td elements", buf.str, nElement);
+   }
+   THLongStorage* copy = THLongStorage_newWithSize(size->size);
+   THLongStorage_copy(copy, size);
+@@ -132,16 +132,6 @@
+     long stride = (dim >= 0) ?
+         tensorStrides[dim] : expandedSizesCalc[i + 1] * expandedStridesCalc[i+1];
+     long targetSize = THLongStorage_data(sizes)[i];
+-    if (targetSize == -1) {
+-      if (dim < 0) {
+-        THFree(expandedSizesCalc);
+-        THFree(expandedStridesCalc);
+-        snprintf(error_buffer, buffer_len, "The expanded size of the tensor (%ld) isn't allowed in a leading, non-existing dimension %ld.", targetSize, i);
+-        return -1;
+-      } else {
+-        targetSize = size;
+-      }
+-    }
+     if (size != targetSize) {
+       if (size == 1) {
+         size = targetSize;
+Index: pkg/paths/rocks/paths-scm-1.rockspec
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pkg/paths/rocks/paths-scm-1.rockspec b/pkg/paths/rocks/paths-scm-1.rockspec
+--- a/pkg/paths/rocks/paths-scm-1.rockspec	(revision 4ebe222ba12589fb9d86c1d3895d7f509df77b6a)
++++ b/pkg/paths/rocks/paths-scm-1.rockspec	(date 1756116527364)
+@@ -2,7 +2,7 @@
+ version = "scm-1"
+ 
+ source = {
+-   url = "git://github.com/torch/paths.git",
++   url = "https://github.com/torch/paths.git",
+ }
+ 
+ description = {
+Index: pkg/torch/lib/TH/generic/THTensorRandom.h
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pkg/torch/lib/TH/generic/THTensorRandom.h b/pkg/torch/lib/TH/generic/THTensorRandom.h
+--- a/pkg/torch/lib/TH/generic/THTensorRandom.h	(revision 1600de6d4b9f9df15c02bd2969f09ed9e8973dfe)
++++ b/pkg/torch/lib/TH/generic/THTensorRandom.h	(date 1753084737000)
+@@ -3,8 +3,6 @@
+ #else
+ 
+ TH_API void THTensor_(random)(THTensor *self, THGenerator *_generator);
+-TH_API void THTensor_(clampedRandom)(THTensor *self, THGenerator *_generator, long min, long max);
+-TH_API void THTensor_(cappedRandom)(THTensor *self, THGenerator *_generator, long max);
+ TH_API void THTensor_(geometric)(THTensor *self, THGenerator *_generator, double p);
+ TH_API void THTensor_(bernoulli)(THTensor *self, THGenerator *_generator, double p);
+ TH_API void THTensor_(bernoulli_FloatTensor)(THTensor *self, THGenerator *_generator, THFloatTensor *p);
+@@ -13,9 +11,6 @@
+ #if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+ TH_API void THTensor_(uniform)(THTensor *self, THGenerator *_generator, double a, double b);
+ TH_API void THTensor_(normal)(THTensor *self, THGenerator *_generator, double mean, double stdv);
+-TH_API void THTensor_(normal_means)(THTensor *self, THGenerator *gen, THTensor *means, double stddev);
+-TH_API void THTensor_(normal_stddevs)(THTensor *self, THGenerator *gen, double mean, THTensor *stddevs);
+-TH_API void THTensor_(normal_means_stddevs)(THTensor *self, THGenerator *gen, THTensor *means, THTensor *stddevs);
+ TH_API void THTensor_(exponential)(THTensor *self, THGenerator *_generator, double lambda);
+ TH_API void THTensor_(cauchy)(THTensor *self, THGenerator *_generator, double median, double sigma);
+ TH_API void THTensor_(logNormal)(THTensor *self, THGenerator *_generator, double mean, double stdv);
+Index: exe/luajit-rocks/lua-5.1/CMakeLists.txt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/exe/luajit-rocks/lua-5.1/CMakeLists.txt b/exe/luajit-rocks/lua-5.1/CMakeLists.txt
+--- a/exe/luajit-rocks/lua-5.1/CMakeLists.txt	(revision 20184a238783b5f6ed909f4dd40c443d42eaa606)
++++ b/exe/luajit-rocks/lua-5.1/CMakeLists.txt	(date 1753266004552)
+@@ -91,13 +91,16 @@
+   PREFIX "lib" IMPORT_PREFIX "lib" OUTPUT_NAME "lua")
+ ADD_EXECUTABLE(lua src/lua.c ${SRC_LIB})
+ ADD_EXECUTABLE(luac src/luac.c src/print.c ${SRC_LIB})
+-TARGET_LINK_LIBRARIES(liblua ${LIBS})
+-TARGET_LINK_LIBRARIES(lua ${LIBS})
++
+ 
+ if(CMAKE_CROSSCOMPILING)
+   target_link_libraries(luac ${LIBS} dl)
++  TARGET_LINK_LIBRARIES(liblua ${LIBS} dl)
++  TARGET_LINK_LIBRARIES(lua ${LIBS} dl)
+ else()
+   target_link_libraries(luac ${LIBS})
++  TARGET_LINK_LIBRARIES(liblua ${LIBS})
++  TARGET_LINK_LIBRARIES(lua ${LIBS})
+ endif()
+ 
+ 
+Index: pkg/torch/lib/TH/CMakeLists.txt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pkg/torch/lib/TH/CMakeLists.txt b/pkg/torch/lib/TH/oldfCMakeLists.txt
+rename from pkg/torch/lib/TH/CMakeLists.txt
+rename to pkg/torch/lib/TH/oldfCMakeLists.txt
+--- a/pkg/torch/lib/TH/CMakeLists.txt	(revision 1600de6d4b9f9df15c02bd2969f09ed9e8973dfe)
++++ b/pkg/torch/lib/TH/oldfCMakeLists.txt	(date 1756279809000)
+@@ -8,6 +8,9 @@
+ SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+ SET(CMAKE_LIBRARY_PATH /usr/lib/x86_64-linux-gnu/ ${CMAKE_LIBRARY_PATH})
+ 
++set(CMAKE_POSITION_INDEPENDENT_CODE ON)
++
++
+ # Can be compiled standalone
+ IF(NOT TH_INSTALL_BIN_SUBDIR
+     OR NOT TH_INSTALL_LIB_SUBDIR
+@@ -82,6 +85,7 @@
+   ENDIF ()
+ ENDIF ()
+ 
++SET(WITH_OPENMP OFF CACHE BOOL "OpenMP support if available?" FORCE)
+ IF (WITH_OPENMP)
+   FIND_PACKAGE(OpenMP)
+   IF(OPENMP_FOUND)
+@@ -154,7 +158,7 @@
+   MESSAGE(STATUS "SSE3 Found")
+   SET(CMAKE_C_FLAGS "${C_SSE3_FLAGS} -DUSE_SSE3 ${CMAKE_C_FLAGS}")
+ ENDIF(C_SSE3_FOUND)
+-# we don't set -mavx and -mavx2 flags globally, but only for specific files
++# we dont set -mavx and -mavx2 flags globally, but only for specific files
+ # however, we want to enable the AVX codepaths, so we still need to
+ # add USE_AVX and USE_AVX2 macro defines
+ IF(C_AVX_FOUND)
+@@ -300,26 +304,20 @@
+   ENDIF()
+ ENDIF()
+ 
+-FIND_PACKAGE(BLAS)
+-IF(BLAS_FOUND)
+-  SET(USE_BLAS 1)
+-  IF ($ENV{TH_BINARY_BUILD})
+-    MESSAGE(STATUS "TH_BINARY_BUILD detected. Enabling special linkage.")
+-    TARGET_LINK_LIBRARIES(TH "${BLAS_LIBRARIES};${BLAS_LIBRARIES};${BLAS_LIBRARIES}")
+-  ELSE ($ENV{TH_BINARY_BUILD})
+-    TARGET_LINK_LIBRARIES(TH ${BLAS_LIBRARIES})
+-  ENDIF ($ENV{TH_BINARY_BUILD})
+-  
+-  IF(BLAS_INFO STREQUAL "mkl")
+-    ADD_DEFINITIONS(-DTH_BLAS_MKL)
+-  ENDIF()
+-ENDIF(BLAS_FOUND)
++#FIND_PACKAGE(BLAS)
++#IF(BLAS_FOUND)
++#  SET(USE_BLAS 1)
++#  TARGET_LINK_LIBRARIES(TH ${BLAS_LIBRARIES})
++#  IF(BLAS_INFO STREQUAL "mkl")
++#    ADD_DEFINITIONS(-DTH_BLAS_MKL)
++#  ENDIF()
++#ENDIF(BLAS_FOUND)
+ 
+-FIND_PACKAGE(LAPACK)
+-IF(LAPACK_FOUND)
+-  SET(USE_LAPACK 1)
+-  TARGET_LINK_LIBRARIES(TH ${LAPACK_LIBRARIES})
+-ENDIF(LAPACK_FOUND)
++#FIND_PACKAGE(LAPACK)
++#IF(LAPACK_FOUND)
++#  SET(USE_LAPACK 1)
++#  TARGET_LINK_LIBRARIES(TH ${LAPACK_LIBRARIES})
++#ENDIF(LAPACK_FOUND)
+ 
+ IF (UNIX AND NOT APPLE)
+    INCLUDE(CheckLibraryExists)
+@@ -358,15 +356,15 @@
+ ENDIF(NOT MSVC)
+ 
+ # Is __thread supported?
+-IF(NOT MSVC)
+-  CHECK_C_SOURCE_COMPILES("static __thread int x = 1; int main() { return x; }" C_HAS_THREAD)
+-ELSE(NOT MSVC)
+-  CHECK_C_SOURCE_COMPILES("static __declspec( thread ) int x = 1; int main() { return x; }" C_HAS_THREAD)
+-ENDIF(NOT MSVC)
++#IF(NOT MSVC)
++#  CHECK_C_SOURCE_COMPILES("static __thread int x = 1; int main() { return x; }" C_HAS_THREAD)
++#ELSE(NOT MSVC)
++#  CHECK_C_SOURCE_COMPILES("static __declspec( thread ) int x = 1; int main() { return x; }" C_HAS_THREAD)
++#ENDIF(NOT MSVC)
+ IF(NOT C_HAS_THREAD)
+   MESSAGE(STATUS "Warning: __thread is not supported, generating thread-unsafe code")
+-ELSE(NOT C_HAS_THREAD)
+-  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DTH_HAVE_THREAD")
++#ELSE(NOT C_HAS_THREAD)
++#  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DTH_HAVE_THREAD")
+ ENDIF(NOT C_HAS_THREAD)
+ 
+ INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}")
+@@ -473,12 +471,14 @@
+     Install_Required_Library(${BLAS_openblas_LIBRARY})
+     Install_Required_Library("${libpath}/libquadmath")
+     Install_Required_Library("${libpath}/libgfortran")
++    Install_Required_Library("${libpath}/libquadmath")
+     Install_Required_Library("${libpath}/libgcc")
+   ENDIF()
+ ENDIF()
+ 
+ # Create THConfig.cmake
+ set(TH_LOCATION "$<TARGET_FILE:TH>")
++
+ SET(TH_LIBRARIES "${CMAKE_INSTALL_PREFIX}/${TH_INSTALL_LIB_SUBDIR}/${TH_OUTPUT_NAME}")
+ SET(TH_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/${TH_INSTALL_INCLUDE_SUBDIR}/TH")
+ CONFIGURE_FILE(THConfig.cmake.in "${CMAKE_CURRENT_BINARY_DIR}/cmake-exports/THConfig.cmake")
+Index: pkg/torch/lib/TH/cmake/FindMKL.cmake
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pkg/torch/lib/TH/cmake/FindMKL.cmake b/pkg/torch/lib/TH/cmake/FindMKL.cmake
+--- a/pkg/torch/lib/TH/cmake/FindMKL.cmake	(revision 1600de6d4b9f9df15c02bd2969f09ed9e8973dfe)
++++ b/pkg/torch/lib/TH/cmake/FindMKL.cmake	(date 1753084737000)
+@@ -50,7 +50,7 @@
+ IF(CMAKE_COMPILER_IS_GNUCC)
+   SET(mklthreads "mkl_gnu_thread" "mkl_intel_thread")
+   SET(mklifaces  "gf" "intel")
+-  SET(mklrtls "gomp" "iomp5")
++  SET(mklrtls "iomp5")
+ ELSE(CMAKE_COMPILER_IS_GNUCC)
+   SET(mklthreads "mkl_intel_thread")
+   SET(mklifaces  "intel")
+@@ -92,7 +92,7 @@
+ # Try linking multiple libs
+ MACRO(CHECK_ALL_LIBRARIES LIBRARIES _name _list _flags)
+   # This macro checks for the existence of the combination of libraries given by _list.
+-  # If the combination is found, this macro checks whether we can link against that library
++  # If the combination is found, this macro whether we can link against that library
+   # combination using the name of a routine given by _name using the linker
+   # flags given by _flags.  If the combination of libraries is found and passes
+   # the link test, LIBRARIES is set to the list of complete library paths that
+@@ -116,15 +116,8 @@
+   message(STATUS "Checking for [${__list}]")
+   FOREACH(_library ${_list})
+     SET(_combined_name ${_combined_name}_${_library})
+-    IF(_libraries_work)
+-      IF(${_library} STREQUAL "gomp")
+-          FIND_PACKAGE(OpenMP)
+-          IF(OPENMP_FOUND)
+-	      SET(${_prefix}_${_library}_LIBRARY ${OpenMP_C_FLAGS})
+-          ENDIF(OPENMP_FOUND)
+-      ELSE(${_library} STREQUAL "gomp")
+-          FIND_LIBRARY(${_prefix}_${_library}_LIBRARY NAMES ${_library})
+-      ENDIF(${_library} STREQUAL "gomp")
++    IF(_libraries_work)      
++      FIND_LIBRARY(${_prefix}_${_library}_LIBRARY NAMES ${_library})
+       MARK_AS_ADVANCED(${_prefix}_${_library}_LIBRARY)
+       SET(${LIBRARIES} ${${LIBRARIES}} ${${_prefix}_${_library}_LIBRARY})
+       SET(_libraries_work ${${_prefix}_${_library}_LIBRARY})
+@@ -138,7 +131,6 @@
+   # Test this combination of libraries.
+   IF(_libraries_work)
+     SET(CMAKE_REQUIRED_LIBRARIES ${_flags} ${${LIBRARIES}})
+-    SET(CMAKE_REQUIRED_LIBRARIES "${CMAKE_REQUIRED_LIBRARIES};${CMAKE_REQUIRED_LIBRARIES}")
+     CHECK_FUNCTION_EXISTS(${_name} ${_prefix}${_combined_name}_WORKS)
+     SET(CMAKE_REQUIRED_LIBRARIES)
+     MARK_AS_ADVANCED(${_prefix}${_combined_name}_WORKS)
+@@ -158,11 +150,6 @@
+   set(mkl_m "m")
+ endif(WIN32)
+ 
+-if(UNIX AND NOT APPLE)
+-  set(mkl_dl "${CMAKE_DL_LIBS}")
+-else(UNIX AND NOT APPLE)
+-  set(mkl_dl "")
+-endif(UNIX AND NOT APPLE)
+ 
+ # Check for version 10/11
+ IF (NOT MKL_LIBRARIES)
+@@ -174,7 +161,7 @@
+       FOREACH(mklthread ${mklthreads})
+         IF (NOT MKL_LIBRARIES AND NOT INTEL_MKL_SEQUENTIAL)
+           CHECK_ALL_LIBRARIES(MKL_LIBRARIES cblas_sgemm
+-            "mkl_${mkliface}${mkl64};${mklthread};mkl_core;${mklrtl};pthread;${mkl_m};${mkl_dl}" "")
++            "mkl_${mkliface}${mkl64};${mklthread};mkl_core;${mklrtl};pthread;${mkl_m}" "")
+         ENDIF (NOT MKL_LIBRARIES AND NOT INTEL_MKL_SEQUENTIAL)          
+       ENDFOREACH(mklthread)
+     ENDFOREACH(mkl64)
+@@ -185,7 +172,7 @@
+     FOREACH(mkl64 ${mkl64s} "")
+       IF (NOT MKL_LIBRARIES)
+         CHECK_ALL_LIBRARIES(MKL_LIBRARIES cblas_sgemm
+-          "mkl_${mkliface}${mkl64};mkl_sequential;mkl_core;${mkl_m};${mkl_dl}" "")
++          "mkl_${mkliface}${mkl64};mkl_sequential;mkl_core;${mkl_m}" "")
+         IF (MKL_LIBRARIES)
+           SET(mklseq "_sequential")
+         ENDIF (MKL_LIBRARIES)
+@@ -199,7 +186,7 @@
+       FOREACH(mklthread ${mklthreads})
+         IF (NOT MKL_LIBRARIES)
+           CHECK_ALL_LIBRARIES(MKL_LIBRARIES cblas_sgemm
+-            "mkl_${mkliface}${mkl64};${mklthread};mkl_core;${mklrtl};pthread;${mkl_m};${mkl_dl}" "")
++            "mkl_${mkliface}${mkl64};${mklthread};mkl_core;${mklrtl};pthread;${mkl_m}" "")
+         ENDIF (NOT MKL_LIBRARIES)          
+       ENDFOREACH(mklthread)
+     ENDFOREACH(mkl64)
+Index: pkg/torch/lib/TH/cmake/FindARM.cmake
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pkg/torch/lib/TH/cmake/FindARM.cmake b/pkg/torch/lib/TH/cmake/FindARM.cmake
+--- a/pkg/torch/lib/TH/cmake/FindARM.cmake	(revision 1600de6d4b9f9df15c02bd2969f09ed9e8973dfe)
++++ b/pkg/torch/lib/TH/cmake/FindARM.cmake	(date 1753084737000)
+@@ -5,7 +5,7 @@
+    EXEC_PROGRAM(cat ARGS "/proc/cpuinfo" OUTPUT_VARIABLE CPUINFO)
+ 
+    #neon instruction can be found on the majority part of modern ARM processor
+-   STRING(REGEX REPLACE "^.*(neon).*$" "\\1" NEON_THERE "${CPUINFO}")
++   STRING(REGEX REPLACE "^.*(neon).*$" "\\1" NEON_THERE ${CPUINFO})
+    STRING(COMPARE EQUAL "neon" "${NEON_THERE}" NEON_TRUE)
+    IF (NEON_TRUE)
+       set(NEON_FOUND true CACHE BOOL "NEON available on host")
+@@ -14,7 +14,7 @@
+    ENDIF (NEON_TRUE)
+ 
+    # on ARMv8, neon is inherit and instead listed as 'asimd' in /proc/cpuinfo
+-   STRING(REGEX REPLACE "^.*(asimd).*$" "\\1" ASIMD_THERE "${CPUINFO}")
++   STRING(REGEX REPLACE "^.*(asimd).*$" "\\1" ASIMD_THERE ${CPUINFO})
+    STRING(COMPARE EQUAL "asimd" "${ASIMD_THERE}" ASIMD_TRUE)
+    IF (ASIMD_TRUE)
+       set(ASIMD_FOUND true CACHE BOOL "ASIMD/NEON available on host")
+@@ -23,7 +23,7 @@
+    ENDIF (ASIMD_TRUE)
+ 
+    #Find the processor type (for now OMAP3 or OMAP4)
+-   STRING(REGEX REPLACE "^.*(OMAP3).*$" "\\1" OMAP3_THERE "${CPUINFO}")
++   STRING(REGEX REPLACE "^.*(OMAP3).*$" "\\1" OMAP3_THERE ${CPUINFO})
+    STRING(COMPARE EQUAL "OMAP3" "${OMAP3_THERE}" OMAP3_TRUE)
+    IF (OMAP3_TRUE)
+       set(CORTEXA8_FOUND true CACHE BOOL "OMAP3 available on host")
+@@ -32,7 +32,7 @@
+    ENDIF (OMAP3_TRUE)
+ 
+    #Find the processor type (for now OMAP3 or OMAP4)
+-   STRING(REGEX REPLACE "^.*(OMAP4).*$" "\\1" OMAP4_THERE "${CPUINFO}")
++   STRING(REGEX REPLACE "^.*(OMAP4).*$" "\\1" OMAP4_THERE ${CPUINFO})
+    STRING(COMPARE EQUAL "OMAP4" "${OMAP4_THERE}" OMAP4_TRUE)
+    IF (OMAP4_TRUE)
+       set(CORTEXA9_FOUND true CACHE BOOL "OMAP4 available on host")
+@@ -45,7 +45,7 @@
+       CPUINFO)
+ 
+    #neon instruction can be found on the majority part of modern ARM processor
+-   STRING(REGEX REPLACE "^.*(neon).*$" "\\1" NEON_THERE "${CPUINFO}")
++   STRING(REGEX REPLACE "^.*(neon).*$" "\\1" NEON_THERE ${CPUINFO})
+    STRING(COMPARE EQUAL "neon" "${NEON_THERE}" NEON_TRUE)
+    IF (NEON_TRUE)
+       set(NEON_FOUND true CACHE BOOL "NEON available on host")
+Index: pkg/torch/lib/TH/generic/THTensorRandom.c
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pkg/torch/lib/TH/generic/THTensorRandom.c b/pkg/torch/lib/TH/generic/THTensorRandom.c
+--- a/pkg/torch/lib/TH/generic/THTensorRandom.c	(revision 1600de6d4b9f9df15c02bd2969f09ed9e8973dfe)
++++ b/pkg/torch/lib/TH/generic/THTensorRandom.c	(date 1753084737000)
+@@ -23,16 +23,6 @@
+ #endif
+ }
+ 
+-void THTensor_(clampedRandom)(THTensor *self, THGenerator *_generator, long min, long max) {
+-  THArgCheck(max > min, 2, "max must be greater than min");
+-  TH_TENSOR_APPLY(real, self, *self_data = (real)((THRandom_random(_generator) % (max - min)) + min);)
+-}
+-
+-void THTensor_(cappedRandom)(THTensor *self, THGenerator *_generator, long max) {
+-  THArgCheck(max > 0, 1, "max must be positive");
+-  THTensor_(clampedRandom)(self, _generator, 0, max);
+-}
+-
+ void THTensor_(geometric)(THTensor *self, THGenerator *_generator, double p)
+ {
+   TH_TENSOR_APPLY(real, self, *self_data = (real)THRandom_geometric(_generator, p););
+@@ -65,29 +55,6 @@
+   TH_TENSOR_APPLY(real, self, *self_data = (real)THRandom_normal(_generator, mean, stdv););
+ }
+ 
+-void THTensor_(normal_means)(THTensor *self, THGenerator *gen, THTensor *means, double stddev)
+-{
+-  THTensor_(resizeAs)(self, means);
+-  THTensor_(normal)(self, gen, 0, stddev);
+-  THTensor_(cadd)(self, self, 1, means);
+-}
+-
+-void THTensor_(normal_stddevs)(THTensor *self, THGenerator *gen, double mean, THTensor *stddevs)
+-{
+-  THTensor_(resizeAs)(self, stddevs);
+-  THTensor_(normal)(self, gen, 0, 1);
+-  THTensor_(cmul)(self, self, stddevs);
+-  THTensor_(add)(self, self, mean);
+-}
+-
+-void THTensor_(normal_means_stddevs)(THTensor *self, THGenerator *gen, THTensor *means, THTensor *stddevs)
+-{
+-  THTensor_(resizeAs)(self, means);
+-  THTensor_(normal)(self, gen, 0, 1);
+-  THTensor_(cmul)(self, self, stddevs);
+-  THTensor_(cadd)(self, self, 1, means);
+-}
+-
+ void THTensor_(exponential)(THTensor *self, THGenerator *_generator, double lambda)
+ {
+   TH_TENSOR_APPLY(real, self, *self_data = (real)THRandom_exponential(_generator, lambda););
+@@ -147,7 +114,7 @@
+       THTensor_fastSet1d(J, small, large);
+       q_data[large * q->stride[0]] -= 1.0 - THTensor_fastGet1d(q, small);
+ 
+-      if(q_data[large * q->stride[0]] < 1.0)
++      if(q_data[large] < 1.0)
+         {
+           THTensor_fastSet1d(smaller, small_c-1, large);
+           large_c -= 1;
+Index: pkg/torch/lib/TH/vector/VSX.c
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pkg/torch/lib/TH/vector/VSX.c b/pkg/torch/lib/TH/vector/VSX.c
+--- a/pkg/torch/lib/TH/vector/VSX.c	(revision 1600de6d4b9f9df15c02bd2969f09ed9e8973dfe)
++++ b/pkg/torch/lib/TH/vector/VSX.c	(date 1753084737000)
+@@ -1345,7 +1345,7 @@
+ //	TODO
+ //
+ //
+-//    Finished running all tests. All tests PASSED.
++//    Finished runnning all tests. All tests PASSED.
+ //
+ //------------------------------------------------
+ #ifdef RUN_VSX_TESTS
+@@ -2509,7 +2509,7 @@
+ 
+ 
+ 
+-    printf("Finished running all tests. All tests PASSED.\n");
++    printf("Finished runnning all tests. All tests PASSED.\n");
+     return 0;
+ }
+ 
+Index: pkg/torch/lib/TH/generic/simd/simd.h
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pkg/torch/lib/TH/generic/simd/simd.h b/pkg/torch/lib/TH/generic/simd/simd.h
+--- a/pkg/torch/lib/TH/generic/simd/simd.h	(revision 1600de6d4b9f9df15c02bd2969f09ed9e8973dfe)
++++ b/pkg/torch/lib/TH/generic/simd/simd.h	(date 1756376075000)
+@@ -54,7 +54,7 @@
+ };
+ 
+ 
+-#if defined(__arm__) || defined(__aarch64__) // incl. armel, armhf, arm64
++#if defined(__arm__) || defined(__aarch64__) || (!defined(__x86_64__) && !defined(__i386__)) // incl. armel, armhf, arm64 // x86
+ 
+  #if defined(__NEON__)
+ 
+@@ -96,7 +96,7 @@
+ 
+  #endif
+ 
+-#else   // x86
++#else
+ static inline void cpuid(uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx)
+ {
+ #if defined(_MSC_VER)
+diff --git a/extra/luaffifb/ffi.c b/extra/luaffifb/ffi.c.backup
+rename from extra/luaffifb/ffi.c
+rename to extra/luaffifb/ffi.c.backup
+diff --git a/extra/nn/lib/THNN/CMakeLists.txt b/extra/nn/lib/THNN/oldCMakeLists.txt
+rename from extra/nn/lib/THNN/CMakeLists.txt
+rename to extra/nn/lib/THNN/oldCMakeLists.txt
+diff --git a/extra/luaffifb/ffi.h b/extra/luaffifb/ffi.h.backup
+rename from extra/luaffifb/ffi.h
+rename to extra/luaffifb/ffi.h.backup
