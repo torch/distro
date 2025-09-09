@@ -1,5 +1,33 @@
 [![Build Status](https://travis-ci.org/torch/distro.svg?branch=master)](https://travis-ci.org/torch/distro)
 
+
+# Torch for RISCV64
+
+Cross-compiled Torch framework for RISCV64 architecture.
+
+## Quick Setup
+
+```shell script
+git clone --recursive <repo-url> torch-riscv
+cd torch-riscv
+patch -p1 < torch-static.patch
+bash install-deps
+./install-x86.sh
+#The crosscompilation step might still use a standard gcc
+#on some steps so we need to manually re-wire it to the riscv one
+mkdir -p /tmp/cross-wrappers
+cp cross-gcc /tmp/cross-wrappers/gcc
+export PATH="/tmp/cross-wrappers:$PATH"
+./riscv64_cross_compilation_setup.sh
+```
+
+## Requirements
+
+- Ubuntu/Debian Linux
+- RISCV64 cross-compiler: `sudo apt install gcc-riscv64-linux-gnu`
+- Standard build tools: `sudo apt install cmake build-essential`
+
+
 #### NOTE: Torch is not actively developed anymore and is in maintenance mode.
 
 Self-contained Torch installation

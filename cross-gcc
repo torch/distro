@@ -1,0 +1,2 @@
+#!/bin/bash
+exec riscv64-linux-gnu-gcc "$@"

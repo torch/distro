@@ -1,4 +1,13 @@
 cmake_minimum_required(VERSION 2.8)
+
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+
+if(CMAKE_CROSSCOMPILING)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ldl")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -ldl")
+endif()
+
 ADD_SUBDIRECTORY(exe)
 
 # If this variable is defined, a pure cmake build is done end-to-end with no luarocks

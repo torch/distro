@@ -1,0 +1,42 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 31884a9..5ee3e0d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,11 @@
+ cmake_minimum_required(VERSION 2.8)
++
++if(CMAKE_CROSSCOMPILING)
++  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ldl")
++  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -ldl")
++endif()
++
++
+ ADD_SUBDIRECTORY(exe)
+ 
+ # If this variable is defined, a pure cmake build is done end-to-end with no luarocks
+diff --git a/exe/luajit-rocks b/exe/luajit-rocks
+--- a/exe/luajit-rocks
++++ b/exe/luajit-rocks
+@@ -1 +1 @@
+-Subproject commit 411f4b9d9c4be176d4aab965ebfce50911583e14
++Subproject commit 411f4b9d9c4be176d4aab965ebfce50911583e14-dirty
+diff --git a/install.sh b/install.sh
+index ad65434..15a9ae2 100755
+--- a/install.sh
++++ b/install.sh
+@@ -70,7 +70,14 @@ echo "Installing Lua version: ${TORCH_LUA_VERSION}"
+ mkdir -p install
+ mkdir -p build
+ cd build
+-cmake .. -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_${TORCH_LUA_VERSION}=ON 2>&1 >>$PREFIX/install.log || exit 1
++
++export CC="/usr/bin/riscv64-linux-gnu-gcc"
++export CXX="riscv64-linux-gnu-g++"
++
++
++TOOLCHAIN_FILE="${THIS_DIR}/riscv64-toolchain.cmake"
++
++cmake .. -DCMAKE_TOOLCHAIN_FILE="${TOOLCHAIN_FILE}"  -DHAVE_DLOPEN=1 -DCMAKE_HAVE_DLOPEN=1 -DLUA_USE_DLOPEN=ON -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_${TORCH_LUA_VERSION}=ON 2>&1 >>$PREFIX/install.log || exit 1
+ (make 2>&1 >>$PREFIX/install.log  || exit 1) && (make install 2>&1 >>$PREFIX/install.log || exit 1)
+ cd ..
+ 
