@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+#This is a truncated version of the original install.sh script
+# which defaults to LUA51 and compiles luarocks to run natievly on the build machine
+
 SKIP_RC=0
 BATCH_INSTALL=0
 
